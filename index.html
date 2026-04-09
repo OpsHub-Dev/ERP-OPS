@@ -1,2701 +1,1727 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <title>OpsHub OS – Enterprise Liquid Glass Console</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Inter Variable Font (UI) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
-    rel="stylesheet"
-  />
-
+  <title>OpsHub-Dev</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
-      /* Liquid Glass Core */
-      --bg: #05060a;
-      --glass-bg: rgba(15, 18, 30, 0.7);
-      --glass-soft: rgba(15, 18, 30, 0.55);
-      --border-glass: rgba(255, 255, 255, 0.18);
-      --blur-strong: 20px;
-
-      /* Typography & Color */
-      --text-main: #f7f7fb;
-      --text-muted: #a3a7c2;
-      --text-soft: #7b7f9b;
-      --accent: #5b8dff;
-      --accent-soft: rgba(91, 141, 255, 0.16);
-      --danger-soft: #ff5b7a;
-      --warning-soft: #f6ad55;
-      --success-soft: #4fd1a5;
-
-      /* Layout */
-      --radius-lg: 18px;
-      --radius-md: 12px;
-      --transition-fast: 160ms ease-out;
-
-      /* Heights */
-      --notif-height: 32px;
+      --bg: #020617;
+      --bg-alt: #020617;
+      --card: #020617;
+      --accent: #22c55e;
+      --accent-soft: rgba(34, 197, 94, 0.12);
+      --accent-strong: #16a34a;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --border: #1f2937;
+      --danger: #f97373;
+      --sidebar-width: 260px;
     }
-
-    /*
-      === PROJECT HANDOVER – LIQUID GLASS & TYPOGRAPHY SUMMARY ===
-      Aesthetic:
-        - No icons anywhere. Status and hierarchy are expressed via font-weight, opacity, and spacing.
-        - Liquid Glass: background rgba(15,18,30,0.7), border 1px solid rgba(255,255,255,0.18),
-          blur: 20px (backdrop-filter / -webkit-backdrop-filter), soft inner border shadow.
-        - Hover states: slightly stronger blur, brighter border, subtle translateY(-1px).
-
-      Typography:
-        - UI: Inter Variable Font ("Inter", wght 100–900) for all interface text.
-          Use font-variation-settings: "wght" 450–700 for hierarchy.
-        - Data: Monospace (ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New")
-          for numbers, SAR values, times, pings, and logs.
-        - Kicker labels: uppercase, letter-spacing ~0.14–0.18em, small size (0.7–0.8rem),
-          weight ~520–600.
-        - No icon fonts, no emoji as icons.
-
-      Core Variables:
-        - Colors: --text-main, --text-muted, --text-soft, --accent, --accent-soft,
-          --danger-soft, --warning-soft, --success-soft.
-        - Glass: --glass-bg, --glass-soft, --border-glass, --blur-strong.
-        - Layout: --radius-lg, --radius-md, --transition-fast.
-
-      Implementation Notes:
-        - Always apply will-change: backdrop-filter, transform on glass containers
-          to keep blur performant on iPad / older GPUs.
-        - Use opacity + font-weight to indicate locked/disabled/secondary states.
-        - Keep all controls text-based (YES/NO, ENABLE/DISABLE, etc.).
-    */
-
+    body.light {
+      --bg: #f3f4f6;
+      --bg-alt: #f9fafb;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+    }
     * {
       box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    body {
       margin: 0;
-      padding: 0;
+      background: radial-gradient(circle at top, #0b1120, #020617);
+      color: var(--text);
+      transition: background 0.25s, color 0.25s;
     }
-
-    html,
-    body {
-      height: 100%;
-      background: radial-gradient(circle at top, #15192b 0, #05060a 55%, #020308 100%);
-      color: var(--text-main);
-      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      font-variation-settings: "wght" 450;
-      -webkit-font-smoothing: antialiased;
+    body.light {
+      background: #e5e7eb;
     }
-
-    body {
-      display: flex;
-      align-items: stretch;
-      justify-content: stretch;
-      padding: 16px;
-    }
-
-    .app-frame {
-      position: relative;
-      width: 100%;
-      max-width: 1440px;
-      margin: 0 auto;
-      border-radius: 22px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      overflow: hidden;
-      box-shadow:
-        0 24px 60px rgba(0, 0, 0, 0.7),
-        0 0 0 1px rgba(255, 255, 255, 0.02) inset;
-      transition: box-shadow 220ms ease-out, border-color 220ms ease-out;
-    }
-
-    .app-shell {
-      display: grid;
-      grid-template-columns: 280px minmax(0, 1fr);
-      gap: 14px;
-      padding: 14px;
-      height: 100%;
-      background: radial-gradient(circle at top left, rgba(91, 141, 255, 0.12), transparent 55%);
-    }
-
-    .glass {
-      background: var(--glass-bg);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-glass);
-      backdrop-filter: blur(var(--blur-strong));
-      -webkit-backdrop-filter: blur(var(--blur-strong));
-      box-shadow:
-        0 18px 45px rgba(0, 0, 0, 0.55),
-        0 0 0 1px rgba(255, 255, 255, 0.02) inset;
-      transition:
-        box-shadow var(--transition-fast),
-        transform var(--transition-fast),
-        border-color var(--transition-fast),
-        background var(--transition-fast),
-        backdrop-filter var(--transition-fast),
-        -webkit-backdrop-filter var(--transition-fast);
-      will-change: backdrop-filter, transform;
-    }
-
-    .glass:hover {
-      box-shadow:
-        0 22px 55px rgba(0, 0, 0, 0.7),
-        0 0 0 1px rgba(255, 255, 255, 0.04) inset;
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-color: rgba(255, 255, 255, 0.24);
-      transform: translateY(-1px);
-    }
-
-    /* SIDEBAR */
-
-    .sidebar {
+    .app {
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding: 14px 12px;
-      gap: 12px;
     }
-
-    .sidebar-title {
-      font-size: 0.9rem;
-      letter-spacing: 0.16em;
+    .app-header {
+      padding: 14px 22px;
+      background: linear-gradient(90deg, #020617, #020617);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    body.light .app-header {
+      background: linear-gradient(90deg, #ffffff, #f9fafb);
+    }
+    .app-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-circle {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #22c55e, #16a34a 40%, #0f172a 80%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+      color: #022c22;
+      box-shadow: 0 0 18px rgba(34, 197, 94, 0.5);
+    }
+    .app-header h1 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: 0.5px;
+    }
+    .app-header-sub {
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .app-header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .badge-pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--muted);
+      font-size: 11px;
+    }
+    body.light .badge-pill {
+      background: #f9fafb;
+    }
+    .toggle-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .toggle-btn {
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--muted);
+      font-size: 11px;
+      cursor: pointer;
+    }
+    body.light .toggle-btn {
+      background: #f9fafb;
+    }
+    .toggle-btn.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.25);
+    }
+    .app-main {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+    }
+    .sidebar {
+      width: var(--sidebar-width);
+      background: rgba(15, 23, 42, 0.98);
+      border-inline-start: 1px solid #020617;
+      border-inline-end: 1px solid var(--border);
+      padding: 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    body.light .sidebar {
+      background: #f9fafb;
+      border-inline-start: 1px solid #e5e7eb;
+      border-inline-end: 1px solid #e5e7eb;
+    }
+    .sidebar-section-title {
+      font-size: 11px;
       text-transform: uppercase;
-      color: var(--text-soft);
-      font-variation-settings: "wght" 560;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin: 4px 4px 2px;
     }
-
-    .sidebar-product {
-      font-size: 1.1rem;
-      font-variation-settings: "wght" 640;
-    }
-
-    .sidebar-section-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--text-soft);
-      margin-top: 6px;
-      margin-bottom: 4px;
-    }
-
-    .sidebar-note {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      line-height: 1.4;
-    }
-
     .nav-group {
       display: flex;
       flex-direction: column;
-      gap: 4px;
-      font-size: 0.8rem;
+      gap: 6px;
+      margin-bottom: 6px;
     }
-
-    .nav-item {
-      padding: 6px 8px;
-      border-radius: 999px;
+    .nav-btn {
+      background: transparent;
       border: 1px solid transparent;
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 9px;
+      text-align: right;
       cursor: pointer;
-      color: var(--text-muted);
-      transition:
-        background var(--transition-fast),
-        border-color var(--transition-fast),
-        color var(--transition-fast),
-        transform var(--transition-fast);
+      transition: 0.18s;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
     }
-
-    .nav-item:hover {
-      background: rgba(255, 255, 255, 0.04);
-      border-color: rgba(255, 255, 255, 0.12);
-      color: var(--text-main);
-      transform: translateY(-1px);
+    .nav-btn span.label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-
-    .nav-item.active {
-      background: rgba(255, 255, 255, 0.06);
-      border-color: rgba(255, 255, 255, 0.18);
-      color: var(--text-main);
-      transform: translateY(-1px);
-      font-variation-settings: "wght" 600;
+    .nav-btn span.icon {
+      font-size: 15px;
+      opacity: 0.9;
     }
-
-    .nav-item.locked {
-      opacity: 0.35;
-      border-style: dashed;
-      cursor: default;
+    .nav-btn:hover {
+      background: rgba(15, 23, 42, 0.9);
+      border-color: var(--border);
     }
-
+    body.light .nav-btn:hover {
+      background: #e5e7eb;
+    }
+    .nav-btn.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.25);
+    }
+    .nav-badge {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    body.light .nav-badge {
+      background: #f3f4f6;
+    }
     .sidebar-footer {
       margin-top: auto;
-      padding-top: 8px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      font-size: 0.75rem;
-      color: var(--text-soft);
+      font-size: 11px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
     }
-
-    .branch-health {
-      margin-top: 6px;
-      font-size: 0.74rem;
-      color: var(--text-muted);
-      line-height: 1.4;
-      max-height: 70px;
-      overflow-y: auto;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
-    }
-
-    .sidebar-search {
-      margin-top: 4px;
-    }
-
-    .sidebar-search-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--text-soft);
+    .sidebar-footer div {
       margin-bottom: 4px;
     }
-
-    .sidebar-search-input {
-      width: 100%;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.26);
-      background: rgba(10, 12, 22, 0.7);
-      padding: 7px 12px;
-      font-size: 0.8rem;
-      color: var(--text-main);
-      outline: none;
-      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      transition:
-        border-color var(--transition-fast),
-        background var(--transition-fast),
-        box-shadow var(--transition-fast),
-        transform var(--transition-fast);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-    }
-
-    .sidebar-search-input::placeholder {
-      color: var(--text-soft);
-    }
-
-    .sidebar-search-input:focus {
-      border-color: var(--accent);
-      background: rgba(10, 12, 22, 0.9);
-      box-shadow: 0 0 0 1px rgba(91, 141, 255, 0.6);
-      transform: translateY(-1px);
-    }
-
-    /* MAIN */
-
-    .main {
+    .content {
+      flex: 1;
+      padding: 20px 22px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 16px;
     }
-
-    .main-header {
-      padding: 12px 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-    }
-
-    .main-title-block {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .main-kicker {
-      font-size: 0.78rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--text-soft);
-      font-variation-settings: "wght" 520;
-    }
-
-    .main-title {
-      font-size: 1.3rem;
-      font-variation-settings: "wght" 640;
-    }
-
-    .main-subtitle {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-    }
-
-    .main-meta {
-      font-size: 0.78rem;
-      color: var(--text-soft);
-      text-align: right;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .main-meta-strong {
-      color: var(--accent);
-      font-variation-settings: "wght" 580;
-    }
-
-    .branch-selector {
-      margin-top: 4px;
-      font-size: 0.78rem;
-    }
-
-    .branch-selector-label {
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--text-soft);
-      font-size: 0.72rem;
-    }
-
-    .branch-selector-select {
-      margin-top: 2px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.26);
-      background: rgba(10, 12, 22, 0.7);
-      padding: 4px 10px;
-      font-size: 0.78rem;
-      color: var(--text-main);
-      outline: none;
-      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-    }
-
-    .content-area {
-      padding: 0 14px 14px;
+    .top-cards {
       display: grid;
-      grid-template-rows: auto minmax(0, 1fr);
-      gap: 10px;
-      height: 100%;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
     }
-
-    .view-tabs {
-      display: inline-flex;
-      gap: 6px;
-      font-size: 0.78rem;
+    .card {
+      background: rgba(15, 23, 42, 0.96);
+      border-radius: 14px;
+      padding: 14px 14px 12px;
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.55);
+      position: relative;
+      overflow: hidden;
     }
-
-    .view-tab {
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      cursor: pointer;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--text-soft);
-      font-variation-settings: "wght" 520;
-      transition:
-        background var(--transition-fast),
-        border-color var(--transition-fast),
-        color var(--transition-fast),
-        transform var(--transition-fast);
+    body.light .card {
+      background: #ffffff;
+      border-color: #e5e7eb;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
     }
-
-    .view-tab.active {
-      background: rgba(255, 255, 255, 0.06);
-      border-color: rgba(255, 255, 255, 0.22);
-      color: var(--text-main);
-      transform: translateY(-1px);
-    }
-
-    .view-container {
-      display: none;
-      height: 100%;
-    }
-
-    .view-container.active {
-      display: block;
-    }
-
-    /* WIDGETS */
-
-    .widgets-grid {
-      display: grid;
-      grid-template-columns: 1.4fr 1.6fr;
-      gap: 10px;
-      height: 100%;
-    }
-
-    .column {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      min-height: 0;
-    }
-
-    .widget {
-      background: var(--glass-soft);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-glass);
-      backdrop-filter: blur(var(--blur-strong));
-      -webkit-backdrop-filter: blur(var(--blur-strong));
-      padding: 12px 12px 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      min-height: 0;
-      will-change: backdrop-filter, transform;
-      cursor: default;
-    }
-
-    .widget-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 8px;
-    }
-
-    .widget-title-block {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .widget-kicker {
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--text-soft);
-      font-variation-settings: "wght" 520;
-    }
-
-    .widget-title {
-      font-size: 0.95rem;
-      font-variation-settings: "wght" 600;
-    }
-
-    .widget-meta {
-      font-size: 0.76rem;
-      color: var(--text-soft);
-      text-align: right;
-    }
-
-    .widget-body {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .widget.locked {
-      opacity: 0.25;
-      filter: blur(1px);
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top left, rgba(34, 197, 94, 0.12), transparent 55%);
+      opacity: 0.9;
       pointer-events: none;
     }
-
-    .widget.locked .widget-meta::after {
-      content: " · Locked";
-      color: var(--danger-soft);
-      font-variation-settings: "wght" 580;
+    .card h2 {
+      margin: 0 0 4px;
+      font-size: 14px;
     }
-
-    .mono {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
+    .card-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 8px;
     }
-
+    .card-metric {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .card-tag {
+      font-size: 11px;
+      color: var(--muted);
+    }
     .pill {
       display: inline-flex;
       align-items: center;
+      gap: 4px;
       padding: 2px 8px;
       border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      margin-right: 4px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--muted);
     }
-
-    .pill-high {
-      border-color: var(--danger-soft);
-      color: var(--danger-soft);
+    body.light .pill {
+      background: #f9fafb;
     }
-
-    .pill-optimal {
-      border-color: var(--success-soft);
-      color: var(--success-soft);
-    }
-
-    .pill-under {
-      border-color: var(--warning-soft);
-      color: var(--warning-soft);
-    }
-
-    /* Branch Status Table */
-
-    .branch-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.78rem;
-    }
-
-    .branch-table th,
-    .branch-table td {
-      padding: 4px 4px;
-      text-align: left;
-    }
-
-    .branch-table th {
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-soft);
-      font-size: 0.7rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-    }
-
-    .branch-table td {
-      color: var(--text-muted);
-    }
-
-    .branch-table tr:nth-child(even) {
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    /* Sales Analytics */
-
-    .sales-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 8px;
-    }
-
-    .sales-main {
-      font-size: 1.4rem;
-      font-variation-settings: "wght" 700;
-    }
-
-    .sales-currency {
-      font-size: 0.8rem;
-      opacity: 0.8;
-      margin-left: 4px;
-    }
-
-    .sales-sub {
-      font-size: 0.78rem;
-      color: var(--text-soft);
-    }
-
-    /* Staff Allocation Table */
-
-    .staff-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.78rem;
-    }
-
-    .staff-table th,
-    .staff-table td {
-      padding: 4px 4px;
-      text-align: left;
-    }
-
-    .staff-table th {
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-soft);
-      font-size: 0.7rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-    }
-
-    .staff-table td {
-      color: var(--text-muted);
-    }
-
-    /* Inventory Health */
-
-    .inventory-line {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.78rem;
-    }
-
-    .inventory-bar {
-      flex: 1;
+    .pill-dot {
+      width: 6px;
       height: 6px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.06);
+      background: var(--accent);
+    }
+    .views-wrapper {
+      display: grid;
+      grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.4fr);
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .view {
+      background: rgba(15, 23, 42, 0.96);
+      border-radius: 14px;
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      padding: 14px 14px 10px;
+      min-height: 220px;
+      position: relative;
       overflow: hidden;
     }
-
-    .inventory-bar-fill {
-      height: 100%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--danger-soft), var(--warning-soft), var(--success-soft));
-      width: 40%;
+    body.light .view {
+      background: #ffffff;
+      border-color: #e5e7eb;
     }
-
-    /* Branch Performance Comparison */
-
-    .performance-list {
-      font-size: 0.78rem;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .performance-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .performance-label {
-      flex: 1.2;
-      color: var(--text-muted);
-    }
-
-    .performance-metric {
-      flex: 0.8;
-      text-align: right;
-      color: var(--text-soft);
-    }
-
-    /* Live Stream */
-
-    .live-stream {
-      font-size: 0.78rem;
-      max-height: 120px;
-      overflow-y: auto;
-      padding-right: 4px;
-    }
-
-    .live-line {
-      white-space: nowrap;
-    }
-
-    /* POS Interface */
-
-    .pos-layout {
-      display: grid;
-      grid-template-columns: 2fr 1.2fr;
-      gap: 10px;
-      height: 100%;
-    }
-
-    .menu-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 8px;
-    }
-
-    .menu-item {
-      background: var(--glass-soft);
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border-glass);
-      padding: 8px 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      cursor: pointer;
-      transition:
-        background var(--transition-fast),
-        border-color var(--transition-fast),
-        transform var(--transition-fast);
-      backdrop-filter: blur(var(--blur-strong));
-      -webkit-backdrop-filter: blur(var(--blur-strong));
-      will-change: backdrop-filter, transform;
-    }
-
-    .menu-item:hover {
-      background: rgba(255, 255, 255, 0.06);
-      border-color: rgba(255, 255, 255, 0.22);
-      transform: translateY(-1px);
-    }
-
-    .menu-name {
-      font-variation-settings: "wght" 650;
-      font-size: 0.9rem;
-    }
-
-    .menu-meta {
-      font-size: 0.76rem;
-      color: var(--text-soft);
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-    }
-
-    .menu-stock {
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-    }
-
-    .checkout-panel {
-      background: var(--glass-soft);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-glass);
-      padding: 10px 10px 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      backdrop-filter: blur(var(--blur-strong));
-      -webkit-backdrop-filter: blur(var(--blur-strong));
-      will-change: backdrop-filter, transform;
-    }
-
-    .checkout-title {
-      font-size: 0.9rem;
-      font-variation-settings: "wght" 620;
-    }
-
-    .checkout-list {
-      font-size: 0.78rem;
-      max-height: 140px;
-      overflow-y: auto;
-      padding-right: 4px;
-    }
-
-    .checkout-line {
-      display: flex;
-      justify-content: space-between;
-      gap: 6px;
-    }
-
-    .checkout-summary {
-      font-size: 0.8rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.12);
-      padding-top: 4px;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .checkout-summary-row {
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .checkout-total {
-      font-size: 1.1rem;
-      font-variation-settings: "wght" 700;
-    }
-
-    .checkout-button {
-      margin-top: 6px;
-      padding: 7px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      background: rgba(255, 255, 255, 0.08);
-      font-size: 0.82rem;
-      font-variation-settings: "wght" 650;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--text-main);
-      cursor: pointer;
-      text-align: center;
-      transition:
-        background var(--transition-fast),
-        border-color var(--transition-fast),
-        box-shadow var(--transition-fast),
-        transform var(--transition-fast);
-    }
-
-    .checkout-button:hover {
-      background: var(--accent-soft);
-      border-color: var(--accent);
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.8);
-      transform: translateY(-1px);
-    }
-
-    .checkout-button:active {
-      transform: translateY(0);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
-    }
-
-    .checkout-status {
-      font-size: 0.78rem;
-      color: var(--success-soft);
-      margin-top: 4px;
-      min-height: 1em;
-    }
-
-    /* HR & Payroll */
-
-    .hr-grid {
-      display: grid;
-      grid-template-columns: 1.4fr 1.6fr;
-      gap: 10px;
-      height: 100%;
-    }
-
-    .roster-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.78rem;
-    }
-
-    .roster-table th,
-    .roster-table td {
-      padding: 4px 4px;
-      text-align: left;
-    }
-
-    .roster-table th {
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-soft);
-      font-size: 0.7rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-    }
-
-    .roster-table td {
-      color: var(--text-muted);
-    }
-
-    .attendance-list {
-      font-size: 0.78rem;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .attendance-row {
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .payroll-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.78rem;
-    }
-
-    .payroll-table th,
-    .payroll-table td {
-      padding: 4px 4px;
-      text-align: left;
-    }
-
-    .payroll-table th {
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-soft);
-      font-size: 0.7rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-    }
-
-    .payroll-table td {
-      color: var(--text-muted);
-    }
-
-    .signature-area {
-      margin-top: 6px;
-      padding-top: 6px;
-      border-top: 1px solid rgba(255, 255, 255, 0.12);
+    .view-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.78rem;
+      margin-bottom: 8px;
     }
-
-    .signature-button {
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      background: rgba(255, 255, 255, 0.06);
-      font-size: 0.78rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition:
-        background var(--transition-fast),
-        border-color var(--transition-fast),
-        transform var(--transition-fast);
+    .view-title {
+      font-size: 14px;
+      font-weight: 500;
     }
-
-    .signature-button:hover {
-      background: var(--accent-soft);
-      border-color: var(--accent);
-      transform: translateY(-1px);
+    .view-sub {
+      font-size: 11px;
+      color: var(--muted);
     }
-
-    /* Insights */
-
-    .insights-grid {
-      display: grid;
-      grid-template-columns: 1.2fr 1.4fr;
-      gap: 10px;
-      height: 100%;
-    }
-
-    .leaderboard-list {
-      font-size: 0.78rem;
+    .view-actions {
       display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .leaderboard-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .leaderboard-rank {
-      width: 1.4em;
-      text-align: right;
-    }
-
-    .leaderboard-name {
-      flex: 1;
-    }
-
-    .leaderboard-metric {
-      flex: 0.8;
-      text-align: right;
-    }
-
-    .heatmap-grid {
-      display: grid;
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      gap: 4px;
-      font-size: 0.72rem;
-    }
-
-    .heat-cell {
-      padding: 4px 4px;
-      border-radius: 8px;
-      text-align: center;
-      background: rgba(255, 255, 255, 0.04);
-      opacity: 0.6;
-    }
-
-    .heat-strong {
-      font-variation-settings: "wght" 650;
-      background: rgba(255, 255, 255, 0.08);
-      opacity: 1;
-    }
-
-    .goal-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.78rem;
-    }
-
-    .filters-row {
-      margin-top: 4px;
-      display: inline-flex;
       gap: 6px;
-      font-size: 0.76rem;
-    }
-
-    .filter-link {
-      cursor: pointer;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      padding: 2px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      color: var(--text-soft);
-      transition:
-        background var(--transition-fast),
-        border-color var(--transition-fast),
-        color var(--transition-fast);
-    }
-
-    .filter-link.active {
-      background: rgba(255, 255, 255, 0.06);
-      border-color: rgba(255, 255, 255, 0.22);
-      color: var(--text-main);
-    }
-
-    /* System Audit */
-
-    .audit-widget {
-      font-size: 0.76rem;
-    }
-
-    .audit-body {
-      max-height: 80px;
-      overflow-y: auto;
-      padding-right: 4px;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
-      color: var(--text-soft);
-    }
-
-    .audit-line {
-      white-space: nowrap;
-    }
-
-    /* Notification bar */
-
-    .ops-notification-bar {
-      position: fixed;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      min-width: 260px;
-      max-width: 480px;
-      height: var(--notif-height);
-      border-radius: 999px;
-      border: 1px solid transparent;
-      display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 0 14px;
-      font-size: 0.78rem;
-      font-variation-settings: "wght" 520;
-      color: var(--text-main);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      background: transparent;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 160ms ease-out, transform 160ms ease-out, background 160ms ease-out, border-color 160ms ease-out;
-      z-index: 40;
     }
-
-    .ops-notification-bar.visible {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateX(-50%) translateY(0);
+    .btn-ghost {
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 11px;
+      padding: 4px 8px;
+      cursor: pointer;
     }
-
-    .ops-notification-bar.ok {
-      background: rgba(79, 209, 165, 0.18);
-      border-color: rgba(79, 209, 165, 0.6);
+    body.light .btn-ghost {
+      background: #f9fafb;
     }
-
-    .ops-notification-bar.error {
-      background: rgba(255, 91, 122, 0.18);
-      border-color: rgba(255, 91, 122, 0.6);
+    .btn-ghost:hover {
+      border-color: var(--accent);
+      color: var(--accent);
     }
-
-    /* Loading overlay */
-
-    .ops-loading-overlay {
+    .btn-primary {
+      background: var(--accent);
+      border-radius: 999px;
+      border: none;
+      color: #022c22;
+      font-size: 11px;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 0 18px rgba(34, 197, 94, 0.45);
+    }
+    .btn-primary:hover {
+      background: var(--accent-strong);
+    }
+    .login-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(5, 6, 10, 0.72);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 30;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 160ms ease-out;
-    }
-
-    .ops-loading-overlay.visible {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .ops-loading-panel {
-      padding: 18px 26px;
-      border-radius: 18px;
-      border: 1px solid rgba(255, 255, 255, 0.22);
-      background: rgba(15, 18, 30, 0.8);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      text-align: center;
-      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7);
-    }
-
-    .ops-loading-title {
-      font-size: 0.9rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: #a3a7c2;
-      margin-bottom: 6px;
-    }
-
-    .ops-loading-text {
-      font-size: 1.1rem;
-      font-variation-settings: "wght" 620;
-      color: #f7f7fb;
-    }
-
-    .ops-loading-stream {
-      margin-top: 10px;
-      font-size: 0.78rem;
-      color: #a3a7c2;
-      text-align: left;
-      max-width: 360px;
-    }
-
-    .ops-loading-stream-line {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    /* Auth overlay */
-
-    .auth-overlay {
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at top, rgba(91, 141, 255, 0.22), rgba(5, 6, 10, 0.96));
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), #020617);
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 50;
     }
-
-    .auth-panel {
+    body.light .login-overlay {
+      background: radial-gradient(circle at top, #e5e7eb, #f3f4f6);
+    }
+    .login-card {
       width: 100%;
-      max-width: 420px;
-      padding: 22px 22px 18px;
-      border-radius: 20px;
-      background: rgba(10, 12, 22, 0.78);
-      border: 1px solid rgba(255, 255, 255, 0.22);
-      backdrop-filter: blur(30px);
-      -webkit-backdrop-filter: blur(30px);
-      box-shadow:
-        0 26px 70px rgba(0, 0, 0, 0.85),
-        0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+      max-width: 360px;
+      background: rgba(15, 23, 42, 0.98);
+      border-radius: 16px;
+      padding: 20px 18px 16px;
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
+      text-align: right;
+    }
+    body.light .login-card {
+      background: #ffffff;
+      border-color: #e5e7eb;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+    }
+    .login-card-header {
       display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .auth-kicker {
-      font-size: 0.78rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--text-soft);
-      font-variation-settings: "wght" 520;
-    }
-
-    .auth-title {
-      font-size: 1.4rem;
-      font-variation-settings: "wght" 640;
-      color: var(--text-main);
-    }
-
-    .auth-subtitle {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    .auth-form {
-      margin-top: 6px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .auth-label {
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--text-soft);
-    }
-
-    .auth-input {
-      width: 100%;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.26);
-      background: rgba(10, 12, 22, 0.7);
-      padding: 8px 14px;
-      font-size: 0.85rem;
-      color: var(--text-main);
-      outline: none;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
-      transition:
-        border-color var(--transition-fast),
-        background var(--transition-fast),
-        box-shadow var(--transition-fast),
-        transform var(--transition-fast);
-    }
-
-    .auth-input::placeholder {
-      color: var(--text-soft);
-    }
-
-    .auth-input:focus {
-      border-color: var(--accent);
-      background: rgba(10, 12, 22, 0.9);
-      box-shadow: 0 0 0 1px rgba(91, 141, 255, 0.6);
-      transform: translateY(-1px);
-    }
-
-    .auth-button {
-      margin-top: 4px;
-      padding: 9px 16px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      background: rgba(255, 255, 255, 0.08);
-      font-size: 0.9rem;
-      font-variation-settings: "wght" 700;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--text-main);
-      cursor: pointer;
-      text-align: center;
-      transition:
-        background var(--transition-fast),
-        border-color var(--transition-fast),
-        box-shadow var(--transition-fast),
-        transform var(--transition-fast);
-    }
-
-    .auth-button:hover {
-      background: var(--accent-soft);
-      border-color: var(--accent);
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.8);
-      transform: translateY(-1px);
-    }
-
-    .auth-button:active {
-      transform: translateY(0);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
-    }
-
-    .auth-hint {
-      font-size: 0.75rem;
-      color: var(--text-soft);
-    }
-
-    .auth-error {
-      font-size: 0.78rem;
-      color: var(--danger-soft);
-      min-height: 1em;
-    }
-
-    /* Session warning */
-
-    .session-warning {
-      position: absolute;
-      bottom: 10px;
-      right: 16px;
-      font-size: 0.78rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--danger-soft);
-      background: rgba(10, 12, 22, 0.8);
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 4px 10px;
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      display: none;
-      z-index: 10;
-    }
-
-    .app-frame.session-pulse {
-      animation: sessionPulse 1.4s infinite;
-    }
-
-    @keyframes sessionPulse {
-      0% {
-        box-shadow:
-          0 24px 60px rgba(0, 0, 0, 0.7),
-          0 0 0 1px rgba(255, 255, 255, 0.02) inset;
-        border-color: rgba(255, 255, 255, 0.16);
-      }
-      50% {
-        box-shadow:
-          0 24px 60px rgba(0, 0, 0, 0.7),
-          0 0 0 2px rgba(255, 91, 122, 0.7) inset;
-        border-color: rgba(255, 91, 122, 0.7);
-      }
-      100% {
-        box-shadow:
-          0 24px 60px rgba(0, 0, 0, 0.7),
-          0 0 0 1px rgba(255, 255, 255, 0.02) inset;
-        border-color: rgba(255, 255, 255, 0.16);
-      }
-    }
-
-    /* Skeleton */
-
-    .skeleton {
-      position: relative;
-      overflow: hidden;
-      background: rgba(255, 255, 255, 0.04);
-      border-radius: 10px;
-      min-height: 60px;
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-    }
-
-    .skeleton::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        120deg,
-        rgba(255, 255, 255, 0.02),
-        rgba(255, 255, 255, 0.12),
-        rgba(255, 255, 255, 0.02)
-      );
-      transform: translateX(-100%);
-      animation: skeletonShimmer 1.4s infinite;
-      opacity: 0.7;
-    }
-
-    .skeleton-lines {
-      position: relative;
-      padding: 10px 10px 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      color: rgba(247, 247, 251, 0.3);
-      font-size: 0.78rem;
-    }
-
-    .skeleton-line {
-      height: 0.9em;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.08);
-      opacity: 0.7;
-    }
-
-    .skeleton-label {
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      font-size: 0.7rem;
-      opacity: 0.8;
-    }
-
-    .skeleton-hidden {
-      display: none;
-    }
-
-    @keyframes skeletonShimmer {
-      0% {
-        transform: translateX(-100%);
-      }
-      100% {
-        transform: translateX(100%);
-      }
-    }
-
-    /* Detail overlay (modal shell) */
-
-    .detail-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(5, 6, 10, 0.8);
-      backdrop-filter: blur(40px);
-      -webkit-backdrop-filter: blur(40px);
-      display: none;
       align-items: center;
-      justify-content: center;
-      z-index: 35;
+      gap: 10px;
+      margin-bottom: 10px;
     }
-
-    .detail-overlay.visible {
-      display: flex;
+    .login-card h2 {
+      margin: 0;
+      font-size: 18px;
     }
-
-    .detail-panel {
-      max-width: 520px;
-      width: 100%;
-      margin: 0 16px;
-      padding: 18px 20px 14px;
-      border-radius: 18px;
-      background: rgba(15, 18, 30, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.24);
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8);
+    .login-card p {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 12px;
     }
-
-    .detail-title {
-      font-size: 1rem;
-      font-variation-settings: "wght" 620;
+    .form-group {
+      margin-bottom: 10px;
+    }
+    .form-label {
+      font-size: 11px;
+      color: var(--muted);
       margin-bottom: 4px;
     }
-
-    .detail-subtitle {
-      font-size: 0.8rem;
-      color: var(--text-soft);
-      margin-bottom: 8px;
+    .form-input,
+    .form-select {
+      width: 100%;
+      padding: 8px 9px;
+      border-radius: 9px;
+      border: 1px solid var(--border);
+      background: #020617;
+      color: var(--text);
+      font-size: 13px;
     }
-
-    .detail-body {
-      font-size: 0.8rem;
-      color: var(--text-muted);
+    body.light .form-input,
+    body.light .form-select {
+      background: #f9fafb;
     }
-
-    .detail-close {
-      margin-top: 10px;
-      font-size: 0.78rem;
+    .form-input:focus,
+    .form-select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.25);
+    }
+    .error {
+      color: var(--danger);
+      font-size: 11px;
+      margin-top: 4px;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      margin-top: 6px;
+    }
+    .table th,
+    .table td {
+      padding: 6px 4px;
+      border-bottom: 1px solid rgba(31, 41, 55, 0.8);
       text-align: right;
+    }
+    body.light .table th,
+    body.light .table td {
+      border-bottom-color: #e5e7eb;
+    }
+    .table th {
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .status-pill {
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 10px;
+      border: 1px solid var(--border);
+    }
+    .status-ok {
+      color: #22c55e;
+      background: rgba(22, 163, 74, 0.12);
+      border-color: rgba(22, 163, 74, 0.6);
+    }
+    .status-warn {
+      color: #facc15;
+      background: rgba(250, 204, 21, 0.12);
+      border-color: rgba(250, 204, 21, 0.6);
+    }
+    .status-bad {
+      color: #fb7185;
+      background: rgba(248, 113, 113, 0.12);
+      border-color: rgba(248, 113, 113, 0.6);
+    }
+    .pill-small {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    body.light .pill-small {
+      background: #f9fafb;
+    }
+    .crud-actions {
+      display: flex;
+      gap: 4px;
+      justify-content: flex-start;
+      margin-top: 6px;
+    }
+    .btn-sm {
+      font-size: 10px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--muted);
       cursor: pointer;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
+    }
+    body.light .btn-sm {
+      background: #f9fafb;
+    }
+    .btn-sm.add {
+      border-color: var(--accent);
       color: var(--accent);
     }
-
+    .btn-sm.edit {
+      border-color: #38bdf8;
+      color: #38bdf8;
+    }
+    .btn-sm.delete {
+      border-color: #fb7185;
+      color: #fb7185;
+    }
+    .chips-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 4px;
+    }
+    .chip {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    body.light .chip {
+      background: #f9fafb;
+    }
     @media (max-width: 960px) {
-      .app-shell {
-        grid-template-columns: minmax(0, 1fr);
-        grid-template-rows: auto auto;
-        height: auto;
+      .app-main {
+        flex-direction: column;
       }
-      .widgets-grid,
-      .pos-layout,
-      .hr-grid,
-      .insights-grid {
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 10px;
+      }
+      .sidebar-section-title,
+      .sidebar-footer {
+        display: none;
+      }
+      .content {
+        padding: 14px;
+      }
+      .views-wrapper {
         grid-template-columns: minmax(0, 1fr);
       }
     }
   </style>
 </head>
-<body>
-  <!-- Notification bar -->
-  <div id="opsNotificationBar" class="ops-notification-bar"></div>
-
-  <!-- Loading overlay -->
-  <div id="opsLoadingOverlay" class="ops-loading-overlay">
-    <div class="ops-loading-panel">
-      <div class="ops-loading-title">OpsHub Sync</div>
-      <div class="ops-loading-text">SYNCHRONIZING...</div>
-      <div class="ops-loading-stream" id="opsLoadingStream"></div>
-    </div>
-  </div>
-
-  <!-- Detail overlay -->
-  <div id="detailOverlay" class="detail-overlay">
-    <div class="detail-panel">
-      <div class="detail-title" id="detailTitle">Detail View</div>
-      <div class="detail-subtitle" id="detailSubtitle">Deep dive into this widget.</div>
-      <div class="detail-body mono" id="detailBody"></div>
-      <div class="detail-close" id="detailClose">CLOSE OVERLAY</div>
-    </div>
-  </div>
-
-  <div class="app-frame" id="appFrame">
-    <div class="app-shell">
-      <!-- SIDEBAR -->
-      <aside class="sidebar glass">
+<body class="dark">
+  <div class="app">
+    <header class="app-header">
+      <div class="app-header-left">
+        <div class="logo-circle">O</div>
         <div>
-          <div class="sidebar-title">OpsHub OS</div>
-          <div class="sidebar-product">7-Branch Restaurant Console</div>
+          <h1 data-i18n="app_name">OpsHub-Dev</h1>
+          <div class="app-header-sub" data-i18n="app_sub">
+            منصة إدارة تشغيلية متعددة الفروع للمطاعم – HQ · فروع · HR · IT · صيانة
+          </div>
         </div>
-
-        <div class="sidebar-search">
-          <div class="sidebar-search-label">Global search</div>
-          <input
-            id="globalSearchInput"
-            class="sidebar-search-input"
-            type="text"
-            placeholder="Search staff or transaction..."
-          />
+      </div>
+      <div class="app-header-right">
+        <div class="badge-pill" data-i18n="mode_label">واجهة متصلة بقاعدة بيانات Firestore (تجريبية)</div>
+        <div class="toggle-group">
+          <button class="toggle-btn active" id="theme-toggle" data-i18n="theme_dark">دارك</button>
+          <button class="toggle-btn" id="lang-ar">عربي</button>
+          <button class="toggle-btn" id="lang-en">EN</button>
         </div>
+        <div id="header-user" data-i18n="user_not_logged">غير مسجل دخول</div>
+      </div>
+    </header>
 
+    <main class="app-main">
+      <aside class="sidebar">
         <div>
-          <div class="sidebar-section-label">Core Layers</div>
+          <div class="sidebar-section-title" data-i18n="section_exec">المستوى التنفيذي</div>
           <div class="nav-group">
-            <div class="nav-item active" data-view="dashboard">Operations</div>
-            <div class="nav-item" data-view="logistics">Logistics</div>
-            <div class="nav-item" data-view="people">People</div>
-            <div class="nav-item" data-view="support">Support</div>
-            <div class="nav-item" data-view="atmosphere">Atmosphere</div>
-            <div class="nav-item" data-view="hr">HR & Payroll</div>
-            <div class="nav-item" data-view="insights">Insights</div>
-            <div class="nav-item" data-view="pos">POS</div>
+            <button class="nav-btn active" data-view="dashboard" data-roles="admin,hq,branch,hr,it,maintenance">
+              <span class="label">
+                <span class="icon">📊</span>
+                <span data-i18n="nav_dashboard">لوحة التحكم العامة</span>
+              </span>
+              <span class="nav-badge">HQ</span>
+            </button>
+            <button class="nav-btn" data-view="branches" data-roles="admin,hq,branch">
+              <span class="label">
+                <span class="icon">🏬</span>
+                <span data-i18n="nav_branches">إدارة الفروع والمبيعات</span>
+              </span>
+              <span class="nav-badge">10</span>
+            </button>
+            <button class="nav-btn" data-view="warehouse" data-roles="admin,hq">
+              <span class="label">
+                <span class="icon">📦</span>
+                <span data-i18n="nav_warehouse">المستودع المركزي</span>
+              </span>
+            </button>
+            <button class="nav-btn" data-view="kitchen" data-roles="admin,hq">
+              <span class="label">
+                <span class="icon">👨‍🍳</span>
+                <span data-i18n="nav_kitchen">المطبخ المركزي</span>
+              </span>
+            </button>
           </div>
         </div>
 
         <div>
-          <div class="sidebar-section-label">Branch Health Ping</div>
-          <div id="branchHealth" class="branch-health"></div>
+          <div class="sidebar-section-title" data-i18n="section_support">الموارد والدعم</div>
+          <div class="nav-group">
+            <button class="nav-btn" data-view="hr" data-roles="admin,hr,hq">
+              <span class="label">
+                <span class="icon">👥</span>
+                <span data-i18n="nav_hr">الموارد البشرية HR</span>
+              </span>
+            </button>
+            <button class="nav-btn" data-view="training" data-roles="admin,hr,hq">
+              <span class="label">
+                <span class="icon">🎓</span>
+                <span data-i18n="nav_training">التدريب والتطوير</span>
+              </span>
+            </button>
+            <button class="nav-btn" data-view="it" data-roles="admin,it,hq">
+              <span class="label">
+                <span class="icon">💻</span>
+                <span data-i18n="nav_it">تذاكر الـ IT</span>
+              </span>
+            </button>
+            <button class="nav-btn" data-view="maintenance" data-roles="admin,maintenance,hq">
+              <span class="label">
+                <span class="icon">🛠️</span>
+                <span data-i18n="nav_maintenance">الصيانة والأصول</span>
+              </span>
+            </button>
+          </div>
         </div>
 
         <div class="sidebar-footer">
-          Current role: <span id="currentRoleLabel">Unauthenticated</span><br />
-          Permissions via <span style="font-variation-settings:'wght' 600;">applyPermissions(role)</span>.<br />
-          Inter Variable · Monospace for data · No icons.
+          <div data-i18n="footer_phase">المرحلة الحالية: واجهة + ربط Firestore</div>
+          <div data-i18n="footer_next">المرحلة القادمة: توسيع الجداول والصلاحيات</div>
         </div>
       </aside>
 
-      <!-- MAIN -->
-      <main class="main glass">
-        <header class="main-header">
-          <div class="main-title-block">
-            <div class="main-kicker">OpsHub · Liquid Glass OS</div>
-            <div class="main-title">Multi-Branch Operations Console</div>
-            <div class="main-subtitle">
-              Real-time sales, staff, inventory, and automation for 7 branches in a single typography-first surface.
+      <section class="content">
+        <div class="top-cards" id="top-cards">
+          <div class="card">
+            <h2 data-i18n="card_sales_title">مبيعات اليوم (كل الفروع)</h2>
+            <div class="card-sub" data-i18n="card_sales_sub">أرقام تجريبية للعرض فقط</div>
+            <div class="card-metric">245,300 SAR</div>
+            <div class="card-tag">
+              <span class="pill">
+                <span class="pill-dot"></span>
+                <span data-i18n="card_sales_delta">+ 12% عن أمس</span>
+              </span>
             </div>
           </div>
-          <div class="main-meta">
-            <span>Active role: <span class="main-meta-strong" id="activeRoleMeta">None</span></span>
-            <span>View: <span class="main-meta-strong" id="activeViewMeta">Operations</span></span>
-            <div class="branch-selector">
-              <div class="branch-selector-label">Scope</div>
-              <select id="branchSelector" class="branch-selector-select">
-                <option value="global">Global View</option>
-                <option value="01">Al-Rawdah Branch</option>
-                <option value="02">Al-Zahra Branch</option>
-                <option value="03">Al-Nuzhah Branch</option>
-                <option value="04">Al-Safa Branch</option>
-                <option value="05">Al-Shati Branch</option>
-                <option value="06">Al-Hamra Branch</option>
-                <option value="07">Al-Salam Branch</option>
-              </select>
+          <div class="card">
+            <h2 data-i18n="card_stock_title">حالة المخزون المركزي</h2>
+            <div class="card-sub" data-i18n="card_stock_sub">مواد حرجة تحتاج إعادة طلب</div>
+            <div class="card-metric">7 Items</div>
+            <div class="tag-row">
+              <span class="pill-small" data-i18n="card_stock_tag1">لحم طازج</span>
+              <span class="pill-small" data-i18n="card_stock_tag2">خبز برجر</span>
+              <span class="pill-small" data-i18n="card_stock_tag3">علب تغليف</span>
             </div>
           </div>
-        </header>
-
-        <section class="content-area">
-          <div class="view-tabs">
-            <div class="view-tab active" data-view="dashboard">Dashboard</div>
-            <div class="view-tab" data-view="pos">POS</div>
-            <div class="view-tab" data-view="hr">HR</div>
-            <div class="view-tab" data-view="insights">Insights</div>
-          </div>
-
-          <!-- DASHBOARD VIEW -->
-          <div id="view-dashboard" class="view-container active">
-            <div class="widgets-grid">
-              <div class="column">
-                <!-- Branch Status -->
-                <article class="widget" data-widget-id="branchStatus">
-                  <header class="widget-header">
-                    <div class="widget-title-block">
-                      <div class="widget-kicker">Network</div>
-                      <div class="widget-title">Branch Status</div>
-                    </div>
-                    <div class="widget-meta mono">7 branches · Live load</div>
-                  </header>
-                  <div class="widget-body">
-                    <table class="branch-table mono" id="branchStatusTable">
-                      <thead>
-                        <tr>
-                          <th>Branch</th>
-                          <th>Live Load</th>
-                          <th>Staff</th>
-                          <th>Status</th>
-                        </tr>
-                      </thead>
-                      <tbody></tbody>
-                    </table>
-                  </div>
-                </article>
-
-                <!-- Inventory Health -->
-                <article class="widget" data-widget-id="inventory">
-                  <header class="widget-header">
-                    <div class="widget-title-block">
-                      <div class="widget-kicker">Inventory</div>
-                      <div class="widget-title">Inventory Criticals</div>
-                    </div>
-                    <div class="widget-meta">Primary Proteins · Packaging · Fresh Produce</div>
-                  </header>
-                  <div class="widget-body" id="inventoryWidget">
-                    <!-- Filled by JS -->
-                  </div>
-                </article>
-
-                <!-- Live Stream -->
-                <article class="widget" data-widget-id="liveStream">
-                  <header class="widget-header">
-                    <div class="widget-title-block">
-                      <div class="widget-kicker">Events</div>
-                      <div class="widget-title">Live Stream</div>
-                    </div>
-                    <div class="widget-meta mono">Recent actions</div>
-                  </header>
-                  <div class="widget-body mono live-stream" id="liveStreamLog"></div>
-                </article>
-              </div>
-
-              <div class="column">
-                <!-- Sales Analytics -->
-                <article class="widget" data-widget-id="sales">
-                  <header class="widget-header">
-                    <div class="widget-title-block">
-                      <div class="widget-kicker">Operations</div>
-                      <div class="widget-title">Real-time Sales & Orders</div>
-                    </div>
-                    <div class="widget-meta mono" id="salesMeta">Simulated · 5s refresh</div>
-                  </header>
-                  <div class="widget-body">
-                    <div class="sales-row">
-                      <div>
-                        <div class="sales-main mono">
-                          <span id="salesSarValue">0</span>
-                          <span class="sales-currency">SAR</span>
-                        </div>
-                        <div class="sales-sub">Real-time sales across selected scope.</div>
-                      </div>
-                      <div class="sales-sub mono">
-                        Orders: <span id="orderVolumeValue">0</span>
-                      </div>
-                    </div>
-                  </div>
-                </article>
-
-                <!-- Staff Allocation -->
-                <article class="widget" data-widget-id="people">
-                  <header class="widget-header">
-                    <div class="widget-title-block">
-                      <div class="widget-kicker">People</div>
-                      <div class="widget-title">Staff Allocation & Attendance</div>
-                    </div>
-                    <div class="widget-meta mono">Load & status</div>
-                  </header>
-                  <div class="widget-body">
-                    <table class="staff-table mono">
-                      <thead>
-                        <tr>
-                          <th>Position</th>
-                          <th>Current Load</th>
-                          <th>Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>Chef</td>
-                          <td>0.82</td>
-                          <td><span class="pill pill-high">High Demand</span></td>
-                        </tr>
-                        <tr>
-                          <td>Waiter</td>
-                          <td>0.64</td>
-                          <td><span class="pill pill-optimal">Optimal</span></td>
-                        </tr>
-                        <tr>
-                          <td>Manager</td>
-                          <td>0.48</td>
-                          <td><span class="pill pill-under">Understaffed</span></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    <div class="widget-body" id="attendanceWidget" style="margin-top:4px;"></div>
-                  </div>
-                </article>
-
-                <!-- Branch Performance Comparison -->
-                <article class="widget" data-widget-id="performance">
-                  <header class="widget-header">
-                    <div class="widget-title-block">
-                      <div class="widget-kicker">Performance</div>
-                      <div class="widget-title">Branch Comparison</div>
-                    </div>
-                    <div class="widget-meta mono">Prep time · Sentiment</div>
-                  </header>
-                  <div class="widget-body">
-                    <div class="performance-list" id="performanceList"></div>
-                  </div>
-                </article>
-              </div>
-            </div>
-
-            <!-- System Audit -->
-            <section class="widget glass audit-widget" style="margin-top:10px;">
-              <header class="widget-header">
-                <div class="widget-title-block">
-                  <div class="widget-kicker">System Audit</div>
-                  <div class="widget-title">Security & Access Log</div>
-                </div>
-                <div class="widget-meta mono">Auto-scrolling · Text only</div>
-              </header>
-              <div class="widget-body audit-body" id="auditLog"></div>
-            </section>
-          </div>
-
-          <!-- POS VIEW -->
-          <div id="view-pos" class="view-container">
-            <div class="pos-layout">
-              <section class="widget">
-                <header class="widget-header">
-                  <div class="widget-title-block">
-                    <div class="widget-kicker">Frontline</div>
-                    <div class="widget-title">Top Sellers & Menu</div>
-                  </div>
-                  <div class="widget-meta mono">Tap to add to order</div>
-                </header>
-                <div class="widget-body">
-                  <div class="menu-grid" id="menuGrid"></div>
-                </div>
-              </section>
-
-              <aside class="checkout-panel">
-                <div class="checkout-title">Current Order</div>
-                <div class="checkout-list mono" id="checkoutList"></div>
-                <div class="checkout-summary mono">
-                  <div class="checkout-summary-row">
-                    <span>Subtotal</span>
-                    <span id="subtotalValue">0.00</span>
-                  </div>
-                  <div class="checkout-summary-row">
-                    <span>Tax</span>
-                    <span id="taxValue">0.00</span>
-                  </div>
-                  <div class="checkout-summary-row">
-                    <span class="checkout-total">Grand Total</span>
-                    <span class="checkout-total" id="grandTotalValue">0.00</span>
-                  </div>
-                </div>
-                <button id="confirmOrderButton" class="checkout-button">CONFIRM ORDER</button>
-                <div class="checkout-status mono" id="checkoutStatus"></div>
-              </aside>
+          <div class="card">
+            <h2 data-i18n="card_staff_title">الموظفون النشطون اليوم</h2>
+            <div class="card-sub" data-i18n="card_staff_sub">كل الفروع + HQ</div>
+            <div class="card-metric">186</div>
+            <div class="tag-row">
+              <span class="pill-small" data-i18n="card_staff_tag1">10 فروع</span>
+              <span class="pill-small" data-i18n="card_staff_tag2">مطبخ مركزي</span>
+              <span class="pill-small" data-i18n="card_staff_tag3">مستودع</span>
             </div>
           </div>
-
-          <!-- HR VIEW -->
-          <div id="view-hr" class="view-container">
-            <div class="hr-grid">
-              <section class="widget" data-widget-id="roster">
-                <header class="widget-header">
-                  <div class="widget-title-block">
-                    <div class="widget-kicker">Staffing</div>
-                    <div class="widget-title">Shift Roster</div>
-                  </div>
-                  <div class="widget-meta mono">Branch assignments</div>
-                </header>
-                <div class="widget-body">
-                  <table class="roster-table mono">
-                    <thead>
-                      <tr>
-                        <th>Employee</th>
-                        <th>Branch</th>
-                        <th>Shift Window</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Sara</td>
-                        <td>Al-Rawdah</td>
-                        <td>04:00 PM - 12:00 AM</td>
-                      </tr>
-                      <tr>
-                        <td>Omar</td>
-                        <td>Al-Zahra</td>
-                        <td>12:00 PM - 08:00 PM</td>
-                      </tr>
-                      <tr>
-                        <td>Lina</td>
-                        <td>Al-Nuzhah</td>
-                        <td>08:00 AM - 04:00 PM</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <div class="attendance-list" style="margin-top:6px;">
-                    <div class="attendance-row">
-                      <span>Sara</span>
-                      <span style="color:var(--success-soft); text-transform:uppercase; letter-spacing:0.08em; font-size:0.7rem;">Clocked In</span>
-                    </div>
-                    <div class="attendance-row">
-                      <span>Omar</span>
-                      <span style="color:var(--danger-soft); text-transform:uppercase; letter-spacing:0.08em; font-size:0.7rem;">Late</span>
-                    </div>
-                    <div class="attendance-row">
-                      <span>Lina</span>
-                      <span style="color:var(--text-soft); text-transform:uppercase; letter-spacing:0.08em; font-size:0.7rem;">Absent</span>
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              <section class="widget" data-widget-id="payroll">
-                <header class="widget-header">
-                  <div class="widget-title-block">
-                    <div class="widget-kicker">HR & Finance</div>
-                    <div class="widget-title">Payroll Preview</div>
-                  </div>
-                  <div class="widget-meta mono">Sensitive · OWNER only</div>
-                </header>
-                <div class="widget-body">
-                  <table class="payroll-table mono">
-                    <thead>
-                      <tr>
-                        <th>Base Salary</th>
-                        <th>Overtime Hours</th>
-                        <th>Deductions</th>
-                        <th>Net Payable (SAR)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>6,500</td>
-                        <td>12</td>
-                        <td>250</td>
-                        <td>7,150</td>
-                      </tr>
-                      <tr>
-                        <td>4,200</td>
-                        <td>6</td>
-                        <td>0</td>
-                        <td>4,560</td>
-                      </tr>
-                      <tr>
-                        <td>8,000</td>
-                        <td>4</td>
-                        <td>300</td>
-                        <td>8,300</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <div class="signature-area">
-                    <span>Manager Approval</span>
-                    <button class="signature-button">AUTHORIZE PAYROLL</button>
-                  </div>
-                </div>
-              </section>
+          <div class="card">
+            <h2 data-i18n="card_tickets_title">تذاكر IT / صيانة مفتوحة</h2>
+            <div class="card-sub" data-i18n="card_tickets_sub">تحتاج متابعة</div>
+            <div class="card-metric">14</div>
+            <div class="tag-row">
+              <span class="pill-small" data-i18n="card_tickets_tag1">5 IT</span>
+              <span class="pill-small" data-i18n="card_tickets_tag2">9 صيانة</span>
             </div>
-          </div>
-
-          <!-- INSIGHTS VIEW -->
-          <div id="view-insights" class="view-container">
-            <div class="insights-grid">
-              <section class="widget" data-widget-id="insights">
-                <header class="widget-header">
-                  <div class="widget-title-block">
-                    <div class="widget-kicker">Owner View</div>
-                    <div class="widget-title">Top Performing Branches</div>
-                  </div>
-                  <div class="widget-meta mono">Revenue & efficiency</div>
-                </header>
-                <div class="widget-body">
-                  <div class="leaderboard-list" id="leaderboardList"></div>
-                  <div class="filters-row" style="margin-top:6px;">
-                    <div class="filter-link active" data-filter="today">Today</div>
-                    <div class="filter-link" data-filter="7d">Last 7 Days</div>
-                    <div class="filter-link" data-filter="monthly">Monthly</div>
-                  </div>
-                </div>
-              </section>
-
-              <section class="widget">
-                <header class="widget-header">
-                  <div class="widget-title-block">
-                    <div class="widget-kicker">Patterns</div>
-                    <div class="widget-title">Peak Hours & Goal Tracker</div>
-                  </div>
-                  <div class="widget-meta mono">Heatmap · Targets</div>
-                </header>
-                <div class="widget-body">
-                  <div class="heatmap-grid">
-                    <div class="heat-cell">10:00</div>
-                    <div class="heat-cell">12:00</div>
-                    <div class="heat-cell">14:00</div>
-                    <div class="heat-cell heat-strong">18:00</div>
-                    <div class="heat-cell heat-strong">20:00</div>
-                    <div class="heat-cell heat-strong">22:00</div>
-                  </div>
-                  <div style="margin-top:8px;">
-                    <div class="goal-row mono">
-                      <span>Target</span>
-                      <span>50,000 SAR</span>
-                    </div>
-                    <div class="goal-row mono">
-                      <span>Actual</span>
-                      <span id="goalActual">42,000 SAR</span>
-                    </div>
-                    <div class="goal-row mono">
-                      <span>Completion</span>
-                      <span id="goalPercent">84%</span>
-                    </div>
-                  </div>
-                  <div style="margin-top:8px;">
-                    <div class="widget-kicker" style="margin-bottom:4px;">OpsHub AI Insights</div>
-                    <div class="widget-body mono" id="aiInsights">
-                      Branch 04 is overstaffed for current volume.<br />
-                      Inventory for Potatoes is 15% below safety buffer across all sites.
-                    </div>
-                  </div>
-                </div>
-              </section>
-            </div>
-          </div>
-        </section>
-      </main>
-    </div>
-
-    <!-- SESSION WARNING -->
-    <div class="session-warning" id="sessionWarning">
-      SESSION RE-AUTH REQUIRED
-    </div>
-
-    <!-- AUTHENTICATION OVERLAY -->
-    <div class="auth-overlay" id="authOverlay">
-      <div class="auth-panel">
-        <div>
-          <div class="auth-kicker">Access Gate</div>
-          <div class="auth-title">Liquid Glass Security Layer</div>
-          <div class="auth-subtitle">
-            Enter an access key to assume a role. Typography-only, no icons, full audit trail.
           </div>
         </div>
 
-        <form class="auth-form" id="authForm">
-          <div>
-            <div class="auth-label">Access key</div>
-            <input
-              id="accessKeyInput"
-              class="auth-input"
-              type="password"
-              placeholder="OWNER-RAED · MANAGER · CASHIER"
-              autocomplete="off"
-            />
+        <div class="views-wrapper">
+          <div id="view-main" class="view">
+            <div class="view-header">
+              <div>
+                <div class="view-title" id="view-main-title" data-i18n="view_dashboard_title">
+                  لوحة التحكم العامة
+                </div>
+                <div class="view-sub" id="view-main-sub" data-i18n="view_dashboard_sub">
+                  نظرة سريعة على الفروع، المبيعات، المخزون، والموارد البشرية على مستوى الشركة.
+                </div>
+              </div>
+              <div class="view-actions">
+                <button class="btn-ghost" data-i18n="btn_refresh">تحديث الأرقام</button>
+                <button class="btn-primary" data-i18n="btn_export">تصدير تقرير</button>
+              </div>
+            </div>
+
+            <table class="table" id="main-table">
+              <thead>
+                <tr id="main-table-head">
+                  <th data-i18n="tbl_branch">الفرع</th>
+                  <th data-i18n="tbl_sales">مبيعات اليوم</th>
+                  <th data-i18n="tbl_stock_status">حالة المخزون</th>
+                  <th data-i18n="tbl_staff_on_shift">عدد الموظفين في الوردية</th>
+                  <th data-i18n="tbl_notes">ملاحظات</th>
+                </tr>
+              </thead>
+              <tbody id="main-table-body">
+                <tr>
+                  <td>جدة - التحلية</td>
+                  <td>38,500 SAR</td>
+                  <td><span class="status-pill status-ok" data-i18n="status_good">جيد</span></td>
+                  <td>22</td>
+                  <td><span class="pill-small" data-i18n="note_none">لا يوجد تنبيهات</span></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="crud-actions">
+              <button class="btn-sm add" id="btn-add" data-i18n="btn_add">إضافة</button>
+              <button class="btn-sm edit" id="btn-edit" data-i18n="btn_edit">تعديل</button>
+              <button class="btn-sm delete" id="btn-delete" data-i18n="btn_delete">حذف</button>
+            </div>
           </div>
-          <button type="submit" class="auth-button">ENTER COMMAND</button>
-          <div class="auth-error" id="authError"></div>
-          <div class="auth-hint">
-            Example keys (for this prototype): <span class="mono">OWNER-RAED</span>,
-            <span class="mono">MANAGER</span>, <span class="mono">CASHIER</span>.
+
+          <div id="view-side" class="view">
+            <div class="view-header">
+              <div>
+                <div class="view-title" id="view-side-title" data-i18n="side_pos_title">
+                  نظرة على فرع / قسم محدد
+                </div>
+                <div class="view-sub" id="view-side-sub" data-i18n="side_pos_sub">
+                  هذه واجهة شكلية لعرض تفاصيل فرع أو قسم حسب الدور والصلاحيات.
+                </div>
+              </div>
+              <div class="view-actions">
+                <button class="btn-ghost" id="side-context" data-i18n="side_context_branch">
+                  فرع: جدة - التحلية
+                </button>
+              </div>
+            </div>
+
+            <div id="side-content">
+              <div class="chips-row">
+                <span class="chip" data-i18n="chip_role_label">الدور الحالي:</span>
+                <span class="chip" id="chip-role">Admin</span>
+              </div>
+              <div class="chips-row" style="margin-top:6px;">
+                <span class="chip" data-i18n="chip_hint">
+                  هذه البيانات تجريبية، لكن قسم الفروع و HR الآن متصلين فعليًا بـ Firestore.
+                </span>
+              </div>
+
+              <table class="table" style="margin-top:8px;">
+                <thead>
+                  <tr>
+                    <th data-i18n="side_tbl_col1">العنصر</th>
+                    <th data-i18n="side_tbl_col2">القيمة</th>
+                    <th data-i18n="side_tbl_col3">الحالة</th>
+                  </tr>
+                </thead>
+                <tbody id="side-table-body">
+                  <tr>
+                    <td data-i18n="side_item1">تذاكر مفتوحة</td>
+                    <td>4</td>
+                    <td><span class="status-pill status-warn" data-i18n="status_attention">تحتاج متابعة</span></td>
+                  </tr>
+                  <tr>
+                    <td data-i18n="side_item2">تنبيهات مخزون</td>
+                    <td>2</td>
+                    <td><span class="status-pill status-ok" data-i18n="status_under_control">تحت السيطرة</span></td>
+                  </tr>
+                  <tr>
+                    <td data-i18n="side_item3">مهام اليوم</td>
+                    <td>7</td>
+                    <td><span class="status-pill status-ok" data-i18n="status_in_progress">قيد التنفيذ</span></td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="crud-actions">
+                <button class="btn-sm add" data-i18n="btn_add">إضافة</button>
+                <button class="btn-sm edit" data-i18n="btn_edit">تعديل</button>
+                <button class="btn-sm delete" data-i18n="btn_delete">حذف</button>
+              </div>
+            </div>
           </div>
-        </form>
+        </div>
+
+        <div id="section-label" style="font-size:11px; color:var(--muted); margin-top:4px;">
+          <span data-i18n="note_ui_only">
+            * ملاحظة: قسم الفروع (branches) و HR (employees) متصلين بـ Firestore. باقي الأقسام واجهة فقط.
+          </span>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="login-overlay" id="login-overlay">
+    <div class="login-card">
+      <div class="login-card-header">
+        <div class="logo-circle">O</div>
+        <div>
+          <h2 data-i18n="login_title">تسجيل الدخول إلى OpsHub-Dev</h2>
+          <p data-i18n="login_sub">
+            هذا تسجيل دخول تجريبي فقط لتحديد الدور وعرض الأقسام المناسبة لكل إدارة.
+          </p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-label" data-i18n="login_username_label">اسم المستخدم</div>
+        <input class="form-input" id="login-username" placeholder="مثال: admin / hr_manager / it_support" />
+      </div>
+      <div class="form-group">
+        <div class="form-label" data-i18n="login_password_label">كلمة المرور</div>
+        <input class="form-input" id="login-password" type="password" placeholder="••••••••" />
+      </div>
+      <div class="form-group">
+        <div class="form-label" data-i18n="login_role_label">اختر الدور</div>
+        <select class="form-select" id="login-role">
+          <option value="admin" data-i18n="role_admin">إدارة عليا (Admin)</option>
+          <option value="hq" data-i18n="role_hq">إدارة HQ</option>
+          <option value="branch" data-i18n="role_branch">مدير فرع</option>
+          <option value="hr" data-i18n="role_hr">HR</option>
+          <option value="it" data-i18n="role_it">IT</option>
+          <option value="maintenance" data-i18n="role_maintenance">صيانة</option>
+        </select>
+      </div>
+
+      <button class="btn-primary" id="login-btn" style="width:100%;" data-i18n="login_btn">
+        دخول (وضع تجريبي)
+      </button>
+      <div class="error" id="login-error"></div>
+
+      <div style="margin-top:10px; font-size:11px; color:var(--muted);" data-i18n="login_hint">
+        يمكنك إدخال أي اسم مستخدم وكلمة مرور الآن، الأهم هو اختيار الدور لتجربة الصلاحيات.
       </div>
     </div>
   </div>
 
+  <!-- Firebase SDKs (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
   <script>
-    // === Core Data: Branches ===
-    const branches = [
-      { id: "01", name: "Al-Rawdah", location: "Jeddah", status: "online", current_load: 0.72, staffCount: 14, avgPrep: 11, sentiment: 9 },
-      { id: "02", name: "Al-Zahra", location: "Jeddah", status: "online", current_load: 0.81, staffCount: 16, avgPrep: 13, sentiment: 8 },
-      { id: "03", name: "Al-Nuzhah", location: "Jeddah", status: "online", current_load: 0.64, staffCount: 12, avgPrep: 10, sentiment: 8 },
-      { id: "04", name: "Al-Safa", location: "Jeddah", status: "online", current_load: 0.58, staffCount: 13, avgPrep: 12, sentiment: 7 },
-      { id: "05", name: "Al-Shati", location: "Jeddah", status: "online", current_load: 0.89, staffCount: 17, avgPrep: 9, sentiment: 9 },
-      { id: "06", name: "Al-Hamra", location: "Jeddah", status: "online", current_load: 0.67, staffCount: 15, avgPrep: 11, sentiment: 8 },
-      { id: "07", name: "Al-Salam", location: "Jeddah", status: "online", current_load: 0.52, staffCount: 11, avgPrep: 14, sentiment: 7 }
-    ];
-
-    // === Notification & Loading Helpers ===
-    const notifBar = document.getElementById("opsNotificationBar");
-    const loadingOverlay = document.getElementById("opsLoadingOverlay");
-    const loadingStream = document.getElementById("opsLoadingStream");
-
-    function showNotification(message, type = "ok", duration = 2600) {
-      notifBar.textContent = message;
-      notifBar.classList.remove("ok", "error");
-      notifBar.classList.add(type);
-      notifBar.classList.add("visible");
-      setTimeout(() => {
-        notifBar.classList.remove("visible");
-      }, duration);
-    }
-
-    function setLoadingVisible(visible) {
-      if (visible) {
-        loadingOverlay.classList.add("visible");
-      } else {
-        loadingOverlay.classList.remove("visible");
-      }
-    }
-
-    function appendStreamLine(text) {
-      const line = document.createElement("div");
-      line.className = "ops-loading-stream-line";
-      line.textContent = text;
-      loadingStream.appendChild(line);
-      if (loadingStream.childElementCount > 5) {
-        loadingStream.removeChild(loadingStream.firstChild);
-      }
-    }
-
-    // === System Audit ===
-    const auditLogEl = document.getElementById("auditLog");
-    function logAudit(message) {
-      const now = new Date();
-      const stamp = now.toLocaleTimeString("en-GB", { hour12: false, hour: "2-digit", minute: "2-digit" });
-      const line = document.createElement("div");
-      line.className = "audit-line";
-      line.textContent = `[${stamp}] ${message}`;
-      auditLogEl.appendChild(line);
-      auditLogEl.scrollTop = auditLogEl.scrollHeight;
-    }
-
-    // === RBAC ===
-    const ROLE_OWNER = "OWNER";
-    const ROLE_MANAGER = "BRANCH_MANAGER";
-    const ROLE_CASHIER = "CASHIER";
-
-    let currentRole = null;
-    let sessionTimer = null;
-    let sessionWarningTimer = null;
-
-    const authOverlay = document.getElementById("authOverlay");
-    const authForm = document.getElementById("authForm");
-    const accessKeyInput = document.getElementById("accessKeyInput");
-    const authError = document.getElementById("authError");
-    const currentRoleLabel = document.getElementById("currentRoleLabel");
-    const activeRoleMeta = document.getElementById("activeRoleMeta");
-    const appFrame = document.getElementById("appFrame");
-    const sessionWarning = document.getElementById("sessionWarning");
-
-    const navItems = document.querySelectorAll(".nav-item");
-    const widgets = document.querySelectorAll(".widget[data-widget-id]");
-
-    function mapKeyToRole(key) {
-      const normalized = key.trim().toUpperCase();
-      if (normalized === "OWNER-RAED") return ROLE_OWNER;
-      if (normalized === "MANAGER") return ROLE_MANAGER;
-      if (normalized === "CASHIER") return ROLE_CASHIER;
-      return null;
-    }
-
-    function applyPermissions(role) {
-      currentRole = role;
-      const labelMap = {
-        [ROLE_OWNER]: "OWNER (Raed)",
-        [ROLE_MANAGER]: "BRANCH MANAGER",
-        [ROLE_CASHIER]: "CASHIER",
-        null: "Unauthenticated"
-      };
-      currentRoleLabel.textContent = labelMap[role] || "Unauthenticated";
-      activeRoleMeta.textContent = labelMap[role] || "None";
-
-      navItems.forEach(item => item.classList.remove("locked"));
-      widgets.forEach(w => w.classList.remove("locked"));
-
-      if (role === ROLE_MANAGER) {
-        lockWidget("insights");
-        lockWidget("payroll");
-        lockNav("insights");
-        lockNav("payroll");
-      }
-
-      if (role === ROLE_CASHIER) {
-        lockWidget("insights");
-        lockWidget("payroll");
-        lockWidget("roster");
-        lockWidget("inventory");
-        lockNav("insights");
-        lockNav("payroll");
-        lockNav("roster");
-        lockNav("inventory");
-      }
-
-      logAudit(`Permissions applied for role: ${labelMap[role] || "Unknown"}`);
-    }
-
-    function lockWidget(id) {
-      const w = document.querySelector(`.widget[data-widget-id="${id}"]`);
-      if (w) w.classList.add("locked");
-    }
-
-    function lockNav(ref) {
-      const n = document.querySelector(`.nav-item[data-view="${ref}"]`);
-      if (n) n.classList.add("locked");
-    }
-
-    function startSessionTimers() {
-      clearTimeout(sessionTimer);
-      clearTimeout(sessionWarningTimer);
-      appFrame.classList.remove("session-pulse");
-      sessionWarning.style.display = "none";
-
-      sessionWarningTimer = setTimeout(() => {
-        appFrame.classList.add("session-pulse");
-        sessionWarning.style.display = "block";
-        logAudit("Session nearing timeout · re-authentication required soon.");
-      }, 55000);
-
-      sessionTimer = setTimeout(() => {
-        logAudit("Session expired · user logged out.");
-        appFrame.classList.remove("session-pulse");
-        sessionWarning.style.display = "none";
-        currentRole = null;
-        applyPermissions(null);
-        showAuthOverlay();
-      }, 65000);
-    }
-
-    function showAuthOverlay() {
-      authOverlay.style.display = "flex";
-      accessKeyInput.value = "";
-      authError.textContent = "";
-      setTimeout(() => accessKeyInput.focus(), 50);
-    }
-
-    function hideAuthOverlay() {
-      authOverlay.style.display = "none";
-    }
-
-    authForm.addEventListener("submit", e => {
-      e.preventDefault();
-      const key = accessKeyInput.value;
-      const role = mapKeyToRole(key);
-      if (!role) {
-        authError.textContent = "Access key not recognized. Audit log updated.";
-        logAudit("Unauthorized access attempt blocked.");
-        return;
-      }
-      authError.textContent = "";
-      hideAuthOverlay();
-      applyPermissions(role);
-      logAudit(`Authentication successful · role assumed: ${role}`);
-      startSessionTimers();
-    });
-
-    // === Branch Status & Performance ===
-    function renderBranchStatus() {
-      const tbody = document.querySelector("#branchStatusTable tbody");
-      tbody.innerHTML = "";
-      branches.forEach(b => {
-        const tr = document.createElement("tr");
-        const statusPill =
-          b.current_load > 0.8
-            ? '<span class="pill pill-high">High Demand</span>'
-            : b.current_load < 0.55
-            ? '<span class="pill pill-under">Understaffed</span>'
-            : '<span class="pill pill-optimal">Optimal</span>';
-        tr.innerHTML = `
-          <td>${b.name}</td>
-          <td class="mono">${Math.round(b.current_load * 100)}%</td>
-          <td class="mono">${b.staffCount}</td>
-          <td>${statusPill}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function renderPerformanceList() {
-      const container = document.getElementById("performanceList");
-      container.innerHTML = "";
-      branches.forEach(b => {
-        const row = document.createElement("div");
-        row.className = "performance-row mono";
-        row.innerHTML = `
-          <span class="performance-label">${b.name}</span>
-          <span class="performance-metric">${b.avgPrep} min</span>
-          <span class="performance-metric">${b.sentiment}/10</span>
-        `;
-        container.appendChild(row);
-      });
-    }
-
-    function renderLeaderboard() {
-      const list = document.getElementById("leaderboardList");
-      list.innerHTML = "";
-      const sorted = [...branches].sort((a, b) => b.dailySales - a.dailySales);
-      sorted.forEach((b, idx) => {
-        const row = document.createElement("div");
-        row.className = "leaderboard-row mono";
-        const weight = idx === 0 ? 700 : idx === 1 ? 620 : 560;
-        row.style.fontVariationSettings = `"wght" ${weight}`;
-        row.innerHTML = `
-          <span class="leaderboard-rank">${idx + 1}</span>
-          <span class="leaderboard-name">${b.name}</span>
-          <span class="leaderboard-metric">${b.dailySales.toLocaleString("en-US")} SAR</span>
-        `;
-        list.appendChild(row);
-      });
-    }
-
-    // === Inventory Widget ===
-    function renderInventoryWidget() {
-      const items = [
-        { item: "Primary Proteins", level: "low" },
-        { item: "Packaging", level: "stable" },
-        { item: "Fresh Produce", level: "watch" }
-      ];
-      const container = document.getElementById("inventoryWidget");
-      container.innerHTML = "";
-      items.forEach(i => {
-        const line = document.createElement("div");
-        line.className = "inventory-line";
-        let tone = "var(--text-muted)";
-        if (i.level === "low") tone = "var(--danger-soft)";
-        if (i.level === "watch") tone = "var(--warning-soft)";
-        line.innerHTML = `
-          <span>${i.item}</span>
-          <div class="inventory-bar">
-            <div class="inventory-bar-fill"></div>
-          </div>
-          <span style="color:${tone}; text-transform:uppercase; letter-spacing:0.08em; font-size:0.7rem;">
-            ${i.level}
-          </span>
-        `;
-        container.appendChild(line);
-      });
-    }
-
-    // === Live Stream ===
-    const liveStreamLog = document.getElementById("liveStreamLog");
-    function logLive(message) {
-      const now = new Date();
-      const stamp = now.toLocaleTimeString("en-GB", {
-        hour12: false,
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit"
-      });
-      const line = document.createElement("div");
-      line.className = "live-line";
-      line.textContent = `[${stamp}] ${message}`;
-      liveStreamLog.appendChild(line);
-      liveStreamLog.scrollTop = liveStreamLog.scrollHeight;
-    }
-
-    // === Sales Simulation ===
-    const salesValueEl = document.getElementById("salesSarValue");
-    const orderVolumeEl = document.getElementById("orderVolumeValue");
-    const salesMeta = document.getElementById("salesMeta");
-
-    function simulateSales() {
-      const base = 42000 + Math.round(Math.random() * 6000);
-      const orders = 180 + Math.round(Math.random() * 40);
-      salesValueEl.textContent = base.toLocaleString("en-US");
-      orderVolumeEl.textContent = orders.toString();
-      salesMeta.textContent = "Simulated · 5s refresh";
-    }
-
-    setInterval(simulateSales, 5000);
-    simulateSales();
-
-    // === Branch Health Ping ===
-    function updateBranchHealth() {
-      const container = document.getElementById("branchHealth");
-      container.innerHTML = "";
-      branches.forEach((b, index) => {
-        const ping = 40 + Math.round(Math.random() * 80);
-        const line = document.createElement("div");
-        line.textContent = `Branch 0${index + 1} – ${b.name}: ${ping} ms`;
-        line.style.fontWeight = ping > 100 ? 600 : 400;
-        line.style.opacity = ping > 100 ? 0.9 : 0.75;
-        line.style.color = ping > 100 ? "var(--danger-soft)" : "var(--text-muted)";
-        container.appendChild(line);
-      });
-    }
-    updateBranchHealth();
-    setInterval(updateBranchHealth, 8000);
-
-    // === POS Data & Logic ===
-    const menuItems = [
-      { name: "DOUBLE BEEF", price: 42, stock: 12 },
-      { name: "TRUFFLE FRIES", price: 24, stock: 8 },
-      { name: "SPICY CHICKEN", price: 36, stock: 5 },
-      { name: "SIGNATURE SHAKE", price: 18, stock: 20 },
-      { name: "FAMILY PLATTER", price: 120, stock: 3 },
-      { name: "VEGAN BOWL", price: 32, stock: 10 }
-    ];
-
-    const menuGrid = document.getElementById("menuGrid");
-    const checkoutList = document.getElementById("checkoutList");
-    const subtotalValue = document.getElementById("subtotalValue");
-    const taxValue = document.getElementById("taxValue");
-    const grandTotalValue = document.getElementById("grandTotalValue");
-    const checkoutStatus = document.getElementById("checkoutStatus");
-    const confirmOrderButton = document.getElementById("confirmOrderButton");
-
-    let order = [];
-
-    function renderMenu() {
-      menuGrid.innerHTML = "";
-      menuItems.forEach(item => {
-        const div = document.createElement("div");
-        div.className = "menu-item";
-        div.innerHTML = `
-          <div class="menu-name">${item.name}</div>
-          <div class="menu-meta">
-            <span class="mono">${item.price} SAR</span>
-            <span class="menu-stock mono">${item.stock <= 3 ? "LOW STOCK" : item.stock + " in stock"}</span>
-          </div>
-        `;
-        div.addEventListener("click", () => addItemToOrder(item.name, item.price));
-        menuGrid.appendChild(div);
-      });
-    }
-
-    function renderOrder() {
-      checkoutList.innerHTML = "";
-      let subtotal = 0;
-      order.forEach(item => {
-        subtotal += item.price * item.qty;
-        const line = document.createElement("div");
-        line.className = "checkout-line";
-        line.innerHTML = `
-          <span>${item.name} x${item.qty}</span>
-          <span>${(item.price * item.qty).toFixed(2)}</span>
-        `;
-        checkoutList.appendChild(line);
-      });
-      const tax = subtotal * 0.15;
-      const grand = subtotal + tax;
-      subtotalValue.textContent = subtotal.toFixed(2);
-      taxValue.textContent = tax.toFixed(2);
-      grandTotalValue.textContent = grand.toFixed(2);
-    }
-
-    function addItemToOrder(name, price) {
-      const existing = order.find(o => o.name === name);
-      if (existing) {
-        existing.qty += 1;
-      } else {
-        order.push({ name, price, qty: 1 });
-      }
-      renderOrder();
-      logLive(`POS: Added "${name}" to current order.`);
-    }
-
-    function confirmOrder() {
-      if (!order.length) {
-        checkoutStatus.textContent = "No items in order.";
-        return;
-      }
-      const total = order.reduce((sum, i) => sum + i.price * i.qty, 0);
-      const stamp = new Date().toLocaleTimeString("en-GB", {
-        hour12: false,
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit"
-      });
-      checkoutStatus.textContent = `ORDER ENQUEUED · ${total.toFixed(2)} SAR · ${stamp}`;
-      logLive(`ORDER ENQUEUED · ${total.toFixed(2)} SAR`);
-      sendOpsAlert(`New order enqueued: ${total.toFixed(2)} SAR.`);
-      pushOrderToFirebase({
-        branch_id: "BRANCH_GLOBAL_OR_SELECTED",
-        items: order.map(o => ({ name: o.name, qty: o.qty, price: o.price })),
-        total
-      });
-      order = [];
-      renderOrder();
-    }
-
-    confirmOrderButton.addEventListener("click", confirmOrder);
-
-    // === Offline Orders & Service Worker Skeleton ===
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("/service-worker.js").catch(() => {});
-      });
-    }
-
-    const OFFLINE_ORDERS_KEY = "opshub_offline_orders";
-    const offlineStatusEl = null; // could be wired to a banner if desired
-
-    function saveOfflineOrder(orderData) {
-      const existing = JSON.parse(localStorage.getItem(OFFLINE_ORDERS_KEY) || "[]");
-      existing.push({
-        ...orderData,
-        createdAt: new Date().toISOString()
-      });
-      localStorage.setItem(OFFLINE_ORDERS_KEY, JSON.stringify(existing));
-      showNotification("BRANCH OFFLINE – SYNC PENDING", "error");
-    }
-
-    function syncOfflineOrders() {
-      const stored = JSON.parse(localStorage.getItem(OFFLINE_ORDERS_KEY) || "[]");
-      if (!stored.length) return;
-      // In real implementation, send to backend
-      localStorage.removeItem(OFFLINE_ORDERS_KEY);
-      showNotification("Offline orders synced", "ok");
-    }
-
-    function trySendOrderToCloud(orderData) {
-      const firebaseReachable = Math.random() > 0.2; // 80% chance online
-      if (!firebaseReachable) {
-        saveOfflineOrder(orderData);
-        return Promise.resolve({ status: "offline-cached" });
-      }
-      return new Promise(resolve => {
-        setTimeout(() => resolve({ status: "sent" }), 300);
-      });
-    }
-
-    // === Firestore Schema & Sync Shell ===
-    const firestoreSchema = {
-      collections: {
-        branches: {
-          docShape: {
-            id: "string",
-            name: "string",
-            location: "string",
-            status: "string",
-            current_load: "number"
-          }
-        },
-        orders: {
-          docShape: {
-            id: "string",
-            branch_id: "string",
-            items: [{ name: "string", qty: "number", price: "number" }],
-            total: "number",
-            timestamp: "Timestamp",
-            status: "string"
-          }
-        },
-        inventory: {
-          docShape: {
-            item_id: "string",
-            branch_id: "string",
-            stock_level: "number",
-            unit: "string"
-          }
-        },
-        staff: {
-          docShape: {
-            id: "string",
-            name: "string",
-            branch_id: "string",
-            role: "string",
-            hourly_rate: "number",
-            attendance_status: "string"
-          }
-        }
-      }
-    };
-
     const firebaseConfig = {
-      apiKey: "AIzaSyDO0S2QZXmoQ96Dq3o_Gri9mSrkyUW5UCM", 
+      apiKey: "AIzaSyDO0S2QZXmoQ96Dq3o_Gri9mSrkyUW5UCM",
       authDomain: "opshub-erp.firebaseapp.com",
       projectId: "opshub-erp",
-      storageBucket: "opshub-erp.firebasestorage.app", 
+      storageBucket: "opshub-erp.firebasestorage.app",
       messagingSenderId: "379300236732",
-      appId: "1:379300236732:web:0ca625d707b736536b2fb9", 
+      appId: "1:379300236732:web:0ca625d707b736536b2fb9",
+      measurementId: "G-FMKTEY0L5R"
     };
-    // Real app: initializeApp(firebaseConfig) & getFirestore(app)
-
-    async function syncDashboard() {
-      try {
-        setLoadingVisible(true);
-        loadingStream.innerHTML = "";
-        appendStreamLine("[SYNC] Opening Firestore session...");
-        await new Promise(r => setTimeout(r, 600));
-        appendStreamLine("[SYNC] Fetching branches, orders, inventory, staff...");
-        await new Promise(r => setTimeout(r, 600));
-
-        const simulatedSalesTotal = 43750;
-        const simulatedOrderVolume = 192;
-        const simulatedAttendance = [
-          { name: "Sara", status: "clocked_in" },
-          { name: "Omar", status: "clocked_in" },
-          { name: "Lina", status: "late" }
-        ];
-        const simulatedInventoryCriticals = [
-          { item: "Primary Proteins", level: "low" },
-          { item: "Packaging", level: "stable" },
-          { item: "Fresh Produce", level: "watch" }
-        ];
-
-        salesValueEl.textContent = simulatedSalesTotal.toLocaleString("en-US");
-        orderVolumeEl.textContent = simulatedOrderVolume.toString();
-
-        const attendanceWidgetEl = document.getElementById("attendanceWidget");
-        attendanceWidgetEl.innerHTML = "";
-        simulatedAttendance.forEach(a => {
-          const row = document.createElement("div");
-          row.style.fontSize = "0.8rem";
-          row.style.display = "flex";
-          row.style.justifyContent = "space-between";
-          row.style.marginBottom = "4px";
-          const statusColor =
-            a.status === "clocked_in"
-              ? "#4fd1a5"
-              : a.status === "late"
-              ? "#ff5b7a"
-              : "#7b7f9b";
-          row.innerHTML = `
-            <span>${a.name}</span>
-            <span style="color:${statusColor}; text-transform:uppercase; letter-spacing:0.08em; font-size:0.7rem;">
-              ${a.status.replace("_", " ")}
-            </span>
-          `;
-          attendanceWidgetEl.appendChild(row);
-        });
-
-        const inventoryWidgetEl = document.getElementById("inventoryWidget");
-        inventoryWidgetEl.innerHTML = "";
-        simulatedInventoryCriticals.forEach(i => {
-          const line = document.createElement("div");
-          line.className = "inventory-line";
-          let tone = "#a3a7c2";
-          if (i.level === "low") tone = "#ff5b7a";
-          if (i.level === "watch") tone = "#f6ad55";
-          line.innerHTML = `
-            <span>${i.item}</span>
-            <div class="inventory-bar">
-              <div class="inventory-bar-fill"></div>
-            </div>
-            <span style="color:${tone}; text-transform:uppercase; letter-spacing:0.08em; font-size:0.7rem;">
-              ${i.level}
-            </span>
-          `;
-          inventoryWidgetEl.appendChild(line);
-        });
-
-        appendStreamLine("[SYNC] Completed successfully.");
-        showNotification("Sync Successful · Firestore data applied", "ok");
-      } catch (err) {
-        appendStreamLine("[SYNC] Error: " + (err.message || "Unknown"));
-        showNotification("Connection Lost · Unable to reach Firestore", "error");
-      } finally {
-        setTimeout(() => setLoadingVisible(false), 600);
-      }
-    }
-
-    async function pushOrderToFirebase(orderData) {
-      try {
-        setLoadingVisible(true);
-        loadingStream.innerHTML = "";
-        appendStreamLine("[PUSH] Preparing order payload...");
-        await new Promise(r => setTimeout(r, 400));
-        const payload = {
-          ...orderData,
-          timestamp: new Date().toISOString(),
-          status: "queued"
-        };
-        appendStreamLine("[PUSH] Sending order to Firestore...");
-        const result = await trySendOrderToCloud(payload);
-        if (result.status === "offline-cached") {
-          appendStreamLine("[PUSH] Order cached offline.");
-          showNotification("Order cached offline · Sync pending", "error");
-        } else {
-          appendStreamLine("[PUSH] Order enqueued successfully.");
-          showNotification("Order synced to Firestore queue", "ok");
-        }
-      } catch (err) {
-        appendStreamLine("[PUSH] Error: " + (err.message || "Unknown"));
-        showNotification("Order sync failed · Check connection", "error");
-      } finally {
-        setTimeout(() => setLoadingVisible(false), 500);
-      }
-    }
-
-    // === Webhook Dispatcher & Automation ===
-    const N8N_WEBHOOK_URL = "https://example-n8n-instance.com/webhook/opshub-alert"; // replace in production
-    const dispatcherMeta = document.getElementById("salesMeta"); // reuse meta label
-
-    function logIntegration(message) {
-      logAudit(message);
-    }
-
-    async function sendOpsAlert(message) {
-      dispatcherMeta.textContent = "Dispatching alert…";
-      logIntegration(`Webhook dispatch queued: "${message}"`);
-      try {
-        const res = await fetch(N8N_WEBHOOK_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            source: "OpsHub",
-            type: "ops_alert",
-            message,
-            timestamp: new Date().toISOString()
-          })
-        });
-        if (!res.ok) throw new Error("Non-200 response");
-        dispatcherMeta.textContent = "Last action: Alert sent";
-        logIntegration("Webhook delivered successfully.");
-      } catch (err) {
-        dispatcherMeta.textContent = "Last action: Alert failed";
-        logIntegration("Webhook failed (offline or error).");
-      }
-    }
-
-    function buildDailyDigestPayload() {
-      const totalSales = branches.reduce((sum, b) => sum + (b.dailySales || 0), 0);
-      const totalStaff = branches.reduce((sum, b) => sum + (b.staffPresent || 0), 0);
-      const payload = {
-        source: "OpsHub",
-        type: "daily_digest",
-        generatedAt: new Date().toISOString(),
-        totals: {
-          branches: branches.length,
-          dailySales: totalSales,
-          staffPresent: totalStaff
-        },
-        perBranch: branches.map(b => ({
-          id: b.id,
-          name: b.name,
-          dailySales: b.dailySales || 0,
-          staffPresent: b.staffPresent || 0
-        }))
-      };
-      logIntegration(
-        `Daily digest payload compiled: Sales=${payload.totals.dailySales} SAR, Staff=${payload.totals.staffPresent}`
-      );
-      return payload;
-    }
-
-    function simulateMidnightSync() {
-      const payload = buildDailyDigestPayload();
-      logIntegration("Midnight sync started (simulation).");
-      setTimeout(() => {
-        logIntegration("Midnight sync completed (simulation).");
-      }, 800);
-    }
-
-    setInterval(simulateMidnightSync, 45000);
-
-    // === Views & Navigation ===
-    const viewTabs = document.querySelectorAll(".view-tab");
-    const viewContainers = document.querySelectorAll(".view-container");
-    const activeViewMeta = document.getElementById("activeViewMeta");
-
-    function setActiveView(view) {
-      viewTabs.forEach(tab => {
-        tab.classList.toggle("active", tab.getAttribute("data-view") === view);
-      });
-      viewContainers.forEach(vc => {
-        vc.classList.toggle("active", vc.id === `view-${view}`);
-      });
-      activeViewMeta.textContent =
-        view === "dashboard" ? "Operations" : view.toUpperCase();
-    }
-
-    viewTabs.forEach(tab => {
-      tab.addEventListener("click", () => {
-        const view = tab.getAttribute("data-view");
-        setActiveView(view);
-      });
-    });
-
-    navItems.forEach(item => {
-      item.addEventListener("click", () => {
-        const view = item.getAttribute("data-view");
-        if (item.classList.contains("locked")) return;
-        navItems.forEach(i => i.classList.remove("active"));
-        item.classList.add("active");
-        if (view === "pos" || view === "hr" || view === "insights" || view === "dashboard") {
-          setActiveView(view === "logistics" || view === "support" || view === "atmosphere" ? "dashboard" : view);
-        }
-      });
-    });
-
-    // === Detail Overlay ===
-    const detailOverlay = document.getElementById("detailOverlay");
-    const detailTitle = document.getElementById("detailTitle");
-    const detailSubtitle = document.getElementById("detailSubtitle");
-    const detailBody = document.getElementById("detailBody");
-    const detailClose = document.getElementById("detailClose");
-
-    function openDetailOverlay(title, subtitle, bodyText) {
-      detailTitle.textContent = title;
-      detailSubtitle.textContent = subtitle;
-      detailBody.textContent = bodyText;
-      detailOverlay.classList.add("visible");
-    }
-
-    detailClose.addEventListener("click", () => {
-      detailOverlay.classList.remove("visible");
-    });
-
-    document.querySelectorAll(".widget").forEach(w => {
-      w.addEventListener("click", e => {
-        if (e.target.closest("button") || e.target.closest("input") || e.target.closest("select")) return;
-        const id = w.getAttribute("data-widget-id") || "Widget";
-        openDetailOverlay(
-          `Detail · ${id}`,
-          "Heavy blur overlay for deep operational context.",
-          `This is a placeholder detail view for ${id}. In production, this would show granular metrics, logs, and controls for this specific widget.`
-        );
-      });
-    });
-
-    // === Initial Render ===
-    renderBranchStatus();
-    renderPerformanceList();
-    renderLeaderboard();
-    renderInventoryWidget();
-    renderMenu();
-    renderOrder();
-    applyPermissions(null);
-    logAudit("System boot · awaiting authentication.");
-    syncDashboard();
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
   </script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script> <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script> <script> // 1. إعدادات المشروع const firebaseConfig = { apiKey: "AIzaSyDO0S2QZXmoQ96Dq3o_Gri9mSrkyUW5UCM", authDomain: "opshub-erp.firebaseapp.com", databaseURL: "https://opshub-erp-default-rtdb.europe-west1.firebasedatabase.app", projectId: "opshub-erp", storageBucket: "opshub-erp.firebasestorage.app", messagingSenderId: "379300236732", appId: "1:379300236732:web:0ca625d707b736536b2fb9", measurementId: "G-FMKTEY0L5R" }; // 2. تشغيل فايربيس if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); } const db = firebase.firestore(); // 3. دالة الحفظ function saveToOpsHub(collection, data) { db.collection(collection).add(data) .then((docRef) => { console.log("تم الحفظ بنجاح! ID: ", docRef.id); alert("مبروك! تم ربط OpsHub بـ Firebase وحفظ بيانات خالد"); }) .catch((error) => { console.error("خطأ في الحفظ: ", error); alert("فشل الحفظ: تأكد من إعدادات Rules في Firebase"); }); } // 4. تشغيل تلقائي للاختبار بمجرد فتح الصفحة window.onload = function() { console.log("جاري اختبار الاتصال بـ Firebase..."); saveToOpsHub("Staff", { name: "خالد", role: "Manager", date: new Date().toISOString() }); }; </script> 
+
+  <script>
+    const i18n = {
+      ar: {
+        app_name: "OpsHub-Dev",
+        app_sub: "منصة إدارة تشغيلية متعددة الفروع للمطاعم – HQ · فروع · HR · IT · صيانة",
+        mode_label: "واجهة متصلة بقاعدة بيانات Firestore (تجريبية)",
+        user_not_logged: "غير مسجل دخول",
+        section_exec: "المستوى التنفيذي",
+        section_support: "الموارد والدعم",
+        nav_dashboard: "لوحة التحكم العامة",
+        nav_branches: "إدارة الفروع والمبيعات",
+        nav_warehouse: "المستودع المركزي",
+        nav_kitchen: "المطبخ المركزي",
+        nav_hr: "الموارد البشرية HR",
+        nav_training: "التدريب والتطوير",
+        nav_it: "تذاكر الـ IT",
+        nav_maintenance: "الصيانة والأصول",
+        footer_phase: "المرحلة الحالية: واجهة + ربط Firestore",
+        footer_next: "المرحلة القادمة: توسيع الجداول والصلاحيات",
+        card_sales_title: "مبيعات اليوم (كل الفروع)",
+        card_sales_sub: "أرقام تجريبية للعرض فقط",
+        card_sales_delta: "+ 12% عن أمس",
+        card_stock_title: "حالة المخزون المركزي",
+        card_stock_sub: "مواد حرجة تحتاج إعادة طلب",
+        card_stock_tag1: "لحم طازج",
+        card_stock_tag2: "خبز برجر",
+        card_stock_tag3: "علب تغليف",
+        card_staff_title: "الموظفون النشطون اليوم",
+        card_staff_sub: "كل الفروع + HQ",
+        card_staff_tag1: "10 فروع",
+        card_staff_tag2: "مطبخ مركزي",
+        card_staff_tag3: "مستودع",
+        card_tickets_title: "تذاكر IT / صيانة مفتوحة",
+        card_tickets_sub: "تحتاج متابعة",
+        card_tickets_tag1: "5 IT",
+        card_tickets_tag2: "9 صيانة",
+        view_dashboard_title: "لوحة التحكم العامة",
+        view_dashboard_sub: "نظرة سريعة على الفروع، المبيعات، المخزون، والموارد البشرية على مستوى الشركة.",
+        btn_refresh: "تحديث الأرقام",
+        btn_export: "تصدير تقرير",
+        tbl_branch: "الفرع",
+        tbl_sales: "مبيعات اليوم",
+        tbl_stock_status: "حالة المخزون",
+        tbl_staff_on_shift: "عدد الموظفين في الوردية",
+        tbl_notes: "ملاحظات",
+        status_good: "جيد",
+        status_medium: "متوسط",
+        status_attention: "تحتاج متابعة",
+        status_under_control: "تحت السيطرة",
+        status_in_progress: "قيد التنفيذ",
+        note_none: "لا يوجد تنبيهات",
+        note_request: "طلب تحويل من المستودع",
+        note_training: "تدريب موظفين جدد",
+        btn_add: "إضافة",
+        btn_edit: "تعديل",
+        btn_delete: "حذف",
+        side_pos_title: "نظرة على فرع / قسم محدد",
+        side_pos_sub: "هذه واجهة شكلية لعرض تفاصيل فرع أو قسم حسب الدور والصلاحيات.",
+        side_context_branch: "فرع: جدة - التحلية",
+        chip_role_label: "الدور الحالي:",
+        chip_hint: "هذه البيانات تجريبية، لكن قسم الفروع و HR الآن متصلين فعليًا بـ Firestore.",
+        side_tbl_col1: "العنصر",
+        side_tbl_col2: "القيمة",
+        side_tbl_col3: "الحالة",
+        side_item1: "تذاكر مفتوحة",
+        side_item2: "تنبيهات مخزون",
+        side_item3: "مهام اليوم",
+        note_ui_only: "* ملاحظة: قسم الفروع (branches) و HR (employees) متصلين بـ Firestore. باقي الأقسام واجهة فقط.",
+        login_title: "تسجيل الدخول إلى OpsHub-Dev",
+        login_sub: "هذا تسجيل دخول تجريبي فقط لتحديد الدور وعرض الأقسام المناسبة لكل إدارة.",
+        login_username_label: "اسم المستخدم",
+        login_password_label: "كلمة المرور",
+        login_role_label: "اختر الدور",
+        login_btn: "دخول (وضع تجريبي)",
+        login_hint: "يمكنك إدخال أي اسم مستخدم وكلمة مرور الآن، الأهم هو اختيار الدور لتجربة الصلاحيات.",
+        role_admin: "إدارة عليا (Admin)",
+        role_hq: "إدارة HQ",
+        role_branch: "مدير فرع",
+        role_hr: "HR",
+        role_it: "IT",
+        role_maintenance: "صيانة",
+        theme_dark: "دارك",
+      },
+      en: {
+        app_name: "OpsHub-Dev",
+        app_sub: "Multi-branch restaurant operations platform – HQ · Branches · HR · IT · Maintenance",
+        mode_label: "UI connected to Firestore (demo)",
+        user_not_logged: "Not logged in",
+        section_exec: "Executive",
+        section_support: "Support & Resources",
+        nav_dashboard: "Global Dashboard",
+        nav_branches: "Branches & Sales",
+        nav_warehouse: "Central Warehouse",
+        nav_kitchen: "Central Kitchen",
+        nav_hr: "HR Management",
+        nav_training: "Training & Development",
+        nav_it: "IT Tickets",
+        nav_maintenance: "Maintenance & Assets",
+        footer_phase: "Current phase: UI + Firestore",
+        footer_next: "Next: Expand modules & permissions",
+        card_sales_title: "Today’s Sales (All Branches)",
+        card_sales_sub: "Sample numbers for demo only",
+        card_sales_delta: "+ 12% vs yesterday",
+        card_stock_title: "Central Stock Status",
+        card_stock_sub: "Critical items need reordering",
+        card_stock_tag1: "Fresh meat",
+        card_stock_tag2: "Burger buns",
+        card_stock_tag3: "Packaging boxes",
+        card_staff_title: "Active Staff Today",
+        card_staff_sub: "All branches + HQ",
+        card_staff_tag1: "10 branches",
+        card_staff_tag2: "Central kitchen",
+        card_staff_tag3: "Warehouse",
+        card_tickets_title: "Open IT / Maintenance Tickets",
+        card_tickets_sub: "Need attention",
+        card_tickets_tag1: "5 IT",
+        card_tickets_tag2: "9 Maintenance",
+        view_dashboard_title: "Global Dashboard",
+        view_dashboard_sub: "Quick overview of branches, sales, stock, and HR across the company.",
+        btn_refresh: "Refresh",
+        btn_export: "Export report",
+        tbl_branch: "Branch",
+        tbl_sales: "Today’s sales",
+        tbl_stock_status: "Stock status",
+        tbl_staff_on_shift: "Staff on shift",
+        tbl_notes: "Notes",
+        status_good: "Good",
+        status_medium: "Medium",
+        status_attention: "Needs attention",
+        status_under_control: "Under control",
+        status_in_progress: "In progress",
+        note_none: "No alerts",
+        note_request: "Transfer requested from warehouse",
+        note_training: "New staff training",
+        btn_add: "Add",
+        btn_edit: "Edit",
+        btn_delete: "Delete",
+        side_pos_title: "Selected Branch / Department",
+        side_pos_sub: "Demo view for branch or department details based on role.",
+        side_context_branch: "Branch: Jeddah - Tahlia",
+        chip_role_label: "Current role:",
+        chip_hint: "Demo data, but branches & HR sections are now connected to Firestore.",
+        side_tbl_col1: "Item",
+        side_tbl_col2: "Value",
+        side_tbl_col3: "Status",
+        side_item1: "Open tickets",
+        side_item2: "Stock alerts",
+        side_item3: "Today’s tasks",
+        note_ui_only: "* Note: Branches (branches) and HR (employees) sections are connected to Firestore. Others are UI only.",
+        login_title: "Sign in to OpsHub-Dev",
+        login_sub: "Demo login to choose a role and see the relevant sections.",
+        login_username_label: "Username",
+        login_password_label: "Password",
+        login_role_label: "Select role",
+        login_btn: "Sign in (demo)",
+        login_hint: "You can type any username/password now. Role selection controls what you see.",
+        role_admin: "Top Management (Admin)",
+        role_hq: "HQ Management",
+        role_branch: "Branch Manager",
+        role_hr: "HR",
+        role_it: "IT",
+        role_maintenance: "Maintenance",
+        theme_dark: "Dark",
+      },
+    };
+
+    let currentLang = "ar";
+    let currentRole = null;
+    let currentView = "dashboard";
+
+    const langArBtn = document.getElementById("lang-ar");
+    const langEnBtn = document.getElementById("lang-en");
+    const themeToggle = document.getElementById("theme-toggle");
+    const headerUser = document.getElementById("header-user");
+    const chipRole = document.getElementById("chip-role");
+    const loginOverlay = document.getElementById("login-overlay");
+    const loginBtn = document.getElementById("login-btn");
+    const loginError = document.getElementById("login-error");
+    const loginUsername = document.getElementById("login-username");
+    const loginPassword = document.getElementById("login-password");
+    const loginRole = document.getElementById("login-role");
+    const navButtons = document.querySelectorAll(".nav-btn");
+    const viewMainTitle = document.getElementById("view-main-title");
+    const viewMainSub = document.getElementById("view-main-sub");
+    const mainTableHead = document.getElementById("main-table-head");
+    const mainTableBody = document.getElementById("main-table-body");
+    const sideContext = document.getElementById("side-context");
+
+    const btnAdd = document.getElementById("btn-add");
+    const btnEdit = document.getElementById("btn-edit");
+    const btnDelete = document.getElementById("btn-delete");
+
+    let branchesCache = {};
+    let selectedBranchKey = null;
+
+    let employeesCache = {};
+    let selectedEmployeeKey = null;
+
+    function applyLang(lang) {
+      currentLang = lang;
+      document.documentElement.lang = lang;
+      document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+
+      const dict = i18n[lang];
+      document.querySelectorAll("[data-i18n]").forEach((el) => {
+        const key = el.getAttribute("data-i18n");
+        if (dict[key]) el.textContent = dict[key];
+      });
+
+      if (lang === "ar") {
+        langArBtn.classList.add("active");
+        langEnBtn.classList.remove("active");
+      } else {
+        langEnBtn.classList.add("active");
+        langArBtn.classList.remove("active");
+      }
+
+      setViewContent(currentView);
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle("light");
+      const isLight = document.body.classList.contains("light");
+      themeToggle.classList.toggle("active", !isLight);
+      themeToggle.textContent = isLight
+        ? currentLang === "ar"
+          ? "لايت"
+          : "Light"
+        : i18n[currentLang].theme_dark;
+    }
+
+    function setActiveNav(view) {
+      navButtons.forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.view === view);
+      });
+      currentView = view;
+    }
+
+    function filterNavByRole(role) {
+      navButtons.forEach((btn) => {
+        const roles = (btn.dataset.roles || "").split(",");
+        if (!roles.length || roles.includes(role) || roles.includes("admin")) {
+          btn.style.display = "";
+        } else {
+          btn.style.display = "none";
+        }
+      });
+    }
+
+    function renderBranchesTable() {
+      const lang = currentLang;
+
+      mainTableHead.innerHTML = `
+        <th>${lang === "ar" ? "الفرع" : "Branch"}</th>
+        <th>${lang === "ar" ? "المدينة" : "City"}</th>
+        <th>${lang === "ar" ? "الكود" : "Code"}</th>
+        <th>${lang === "ar" ? "الحالة" : "Status"}</th>
+        <th>${lang === "ar" ? "ملاحظات" : "Notes"}</th>
+      `;
+
+      mainTableBody.innerHTML = "";
+      selectedBranchKey = null;
+
+      const keys = Object.keys(branchesCache);
+      if (!keys.length) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 5;
+        td.textContent = lang === "ar" ? "لا توجد فروع مسجلة بعد." : "No branches yet.";
+        tr.appendChild(td);
+        mainTableBody.appendChild(tr);
+        return;
+      }
+
+      keys.forEach((key) => {
+        const b = branchesCache[key];
+        const tr = document.createElement("tr");
+        tr.dataset.key = key;
+        tr.style.cursor = "pointer";
+
+        tr.innerHTML = `
+          <td>${b.name || ""}</td>
+          <td>${b.city || ""}</td>
+          <td>${b.code || ""}</td>
+          <td>
+            <span class="status-pill ${b.is_active ? "status-ok" : "status-bad"}">
+              ${b.is_active
+                ? lang === "ar"
+                  ? "نشط"
+                  : "Active"
+                : lang === "ar"
+                ? "متوقف"
+                : "Inactive"}
+            </span>
+          </td>
+          <td><span class="pill-small">${b.note || ""}</span></td>
+        `;
+
+        tr.addEventListener("click", () => {
+          selectedBranchKey = key;
+          selectedEmployeeKey = null;
+          document.querySelectorAll("#main-table-body tr").forEach((row) => {
+            row.style.backgroundColor = "";
+          });
+          tr.style.backgroundColor = "rgba(34,197,94,0.08)";
+        });
+
+        mainTableBody.appendChild(tr);
+      });
+    }
+
+    function renderEmployeesTable() {
+      const lang = currentLang;
+
+      mainTableHead.innerHTML = `
+        <th>${lang === "ar" ? "اسم الموظف" : "Employee Name"}</th>
+        <th>${lang === "ar" ? "الوظيفة" : "Job Title"}</th>
+        <th>${lang === "ar" ? "القسم" : "Department"}</th>
+        <th>${lang === "ar" ? "الفرع" : "Branch"}</th>
+        <th>${lang === "ar" ? "الرقم الوظيفي" : "Employee No."}</th>
+        <th>${lang === "ar" ? "الحالة" : "Status"}</th>
+      `;
+
+      mainTableBody.innerHTML = "";
+      selectedEmployeeKey = null;
+
+      const keys = Object.keys(employeesCache);
+      if (!keys.length) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 6;
+        td.textContent = lang === "ar" ? "لا يوجد موظفون مسجلون بعد." : "No employees yet.";
+        tr.appendChild(td);
+        mainTableBody.appendChild(tr);
+        return;
+      }
+
+      keys.forEach((key) => {
+        const e = employeesCache[key];
+        const tr = document.createElement("tr");
+        tr.dataset.key = key;
+        tr.style.cursor = "pointer";
+
+        const statusClass =
+          e.status === "active" ? "status-ok" : e.status === "on_leave" ? "status-warn" : "status-bad";
+
+        const statusLabel =
+          e.status === "active"
+            ? lang === "ar"
+              ? "نشط"
+              : "Active"
+            : e.status === "on_leave"
+            ? lang === "ar"
+              ? "إجازة"
+              : "On leave"
+            : lang === "ar"
+            ? "موقوف"
+            : "Suspended";
+
+        tr.innerHTML = `
+          <td>${e.name || ""}</td>
+          <td>${e.job_title || ""}</td>
+          <td>${e.department || ""}</td>
+          <td>${e.branch || ""}</td>
+          <td>${e.employee_no || ""}</td>
+          <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
+        `;
+
+        tr.addEventListener("click", () => {
+          selectedEmployeeKey = key;
+          selectedBranchKey = null;
+          document.querySelectorAll("#main-table-body tr").forEach((row) => {
+            row.style.backgroundColor = "";
+          });
+          tr.style.backgroundColor = "rgba(34,197,94,0.08)";
+        });
+
+        mainTableBody.appendChild(tr);
+      });
+    }
+
+    async function loadBranchesFromFirestore() {
+      const snapshot = await db.collection("branches").get();
+      branchesCache = {};
+      snapshot.forEach((doc) => {
+        branchesCache[doc.id] = doc.data();
+      });
+      renderBranchesTable();
+    }
+
+    async function loadEmployeesFromFirestore() {
+      const snapshot = await db.collection("employees").get();
+      employeesCache = {};
+      snapshot.forEach((doc) => {
+        employeesCache[doc.id] = doc.data();
+      });
+      renderEmployeesTable();
+    }
+
+    async function addBranch() {
+      const lang = currentLang;
+      const name = prompt(lang === "ar" ? "اسم الفرع:" : "Branch name:");
+      if (!name) return;
+
+      const city = prompt(lang === "ar" ? "المدينة:" : "City:");
+      if (!city) return;
+
+      const code = prompt(lang === "ar" ? "كود الفرع (مثال JED-TH):" : "Branch code (e.g. JED-TH):");
+      if (!code) return;
+
+      await db.collection("branches").add({
+        name,
+        city,
+        code,
+        is_active: true,
+        note: "",
+        created_at: new Date()
+      });
+
+      loadBranchesFromFirestore();
+    }
+
+    async function editBranch() {
+      const lang = currentLang;
+      if (!selectedBranchKey) {
+        alert(lang === "ar" ? "اختر فرع من الجدول أولاً." : "Select a branch row first.");
+        return;
+      }
+
+      const b = branchesCache[selectedBranchKey];
+      if (!b) return;
+
+      const name = prompt(lang === "ar" ? "اسم الفرع:" : "Branch name:", b.name || "");
+      if (!name) return;
+
+      const city = prompt(lang === "ar" ? "المدينة:" : "City:", b.city || "");
+      if (!city) return;
+
+      const code = prompt(lang === "ar" ? "كود الفرع:" : "Branch code:", b.code || "");
+      if (!code) return;
+
+      const isActiveStr = prompt(
+        lang === "ar"
+          ? "نشط؟ (اكتب 1 للنشط، 0 لغير نشط):"
+          : "Active? (type 1 for active, 0 for inactive):",
+        b.is_active ? "1" : "0"
+      );
+      const is_active = isActiveStr === "1";
+
+      await db.collection("branches").doc(selectedBranchKey).update({
+        name,
+        city,
+        code,
+        is_active
+      });
+
+      loadBranchesFromFirestore();
+    }
+
+    async function deleteBranch() {
+      const lang = currentLang;
+      if (!selectedBranchKey) {
+        alert(lang === "ar" ? "اختر فرع من الجدول أولاً." : "Select a branch row first.");
+        return;
+      }
+
+      if (
+        !confirm(
+          lang === "ar"
+            ? "هل أنت متأكد من حذف هذا الفرع؟"
+            : "Are you sure you want to delete this branch?"
+        )
+      ) {
+        return;
+      }
+
+      await db.collection("branches").doc(selectedBranchKey).delete();
+      selectedBranchKey = null;
+      loadBranchesFromFirestore();
+    }
+
+    async function addEmployee() {
+      const lang = currentLang;
+
+      const name = prompt(lang === "ar" ? "اسم الموظف:" : "Employee name:");
+      if (!name) return;
+
+      const job_title = prompt(lang === "ar" ? "المسمى الوظيفي:" : "Job title:");
+      if (!job_title) return;
+
+      const department = prompt(
+        lang === "ar" ? "القسم (مثال: HR / IT / Kitchen):" : "Department (e.g. HR / IT / Kitchen):"
+      ) || "";
+
+      const branch = prompt(
+        lang === "ar" ? "الفرع (مثال: جدة - التحلية):" : "Branch (e.g. Jeddah - Tahlia):"
+      ) || "";
+
+      const employee_no = prompt(
+        lang === "ar" ? "الرقم الوظيفي:" : "Employee number:"
+      ) || "";
+
+      const id_no = prompt(
+        lang === "ar" ? "رقم الهوية / الإقامة:" : "National / Residency ID:"
+      ) || "";
+
+      const hire_date = prompt(
+        lang === "ar" ? "تاريخ التعيين (مثال: 2024-01-15):" : "Hire date (e.g. 2024-01-15):"
+      ) || "";
+
+      const statusInput = prompt(
+        lang === "ar"
+          ? "الحالة (active / on_leave / suspended):"
+          : "Status (active / on_leave / suspended):",
+        "active"
+      );
+      const status = statusInput || "active";
+
+      const salaryStr = prompt(
+        lang === "ar" ? "الراتب (اختياري):" : "Salary (optional):"
+      ) || "";
+      const salary = salaryStr ? Number(salaryStr) : null;
+
+      const notes = prompt(
+        lang === "ar" ? "ملاحظات (اختياري):" : "Notes (optional):"
+      ) || "";
+
+      await db.collection("employees").add({
+        name,
+        job_title,
+        department,
+        branch,
+        employee_no,
+        id_no,
+        hire_date,
+        status,
+        salary,
+        notes,
+        photo_url: "",
+        created_at: new Date()
+      });
+
+      loadEmployeesFromFirestore();
+    }
+
+    async function editEmployee() {
+      const lang = currentLang;
+      if (!selectedEmployeeKey) {
+        alert(lang === "ar" ? "اختر موظف من الجدول أولاً." : "Select an employee row first.");
+        return;
+      }
+
+      const e = employeesCache[selectedEmployeeKey];
+      if (!e) return;
+
+      const name = prompt(lang === "ar" ? "اسم الموظف:" : "Employee name:", e.name || "");
+      if (!name) return;
+
+      const job_title = prompt(
+        lang === "ar" ? "المسمى الوظيفي:" : "Job title:",
+        e.job_title || ""
+      ) || "";
+
+      const department = prompt(
+        lang === "ar" ? "القسم:" : "Department:",
+        e.department || ""
+      ) || "";
+
+      const branch = prompt(
+        lang === "ar" ? "الفرع:" : "Branch:",
+        e.branch || ""
+      ) || "";
+
+      const employee_no = prompt(
+        lang === "ar" ? "الرقم الوظيفي:" : "Employee number:",
+        e.employee_no || ""
+      ) || "";
+
+      const id_no = prompt(
+        lang === "ar" ? "رقم الهوية / الإقامة:" : "National / Residency ID:",
+        e.id_no || ""
+      ) || "";
+
+      const hire_date = prompt(
+        lang === "ar" ? "تاريخ التعيين:" : "Hire date:",
+        e.hire_date || ""
+      ) || "";
+
+      const statusInput = prompt(
+        lang === "ar"
+          ? "الحالة (active / on_leave / suspended):"
+          : "Status (active / on_leave / suspended):",
+        e.status || "active"
+      );
+      const status = statusInput || "active";
+
+      const salaryStr = prompt(
+        lang === "ar" ? "الراتب:" : "Salary:",
+        e.salary != null ? String(e.salary) : ""
+      ) || "";
+      const salary = salaryStr ? Number(salaryStr) : null;
+
+      const notes = prompt(
+        lang === "ar" ? "ملاحظات:" : "Notes:",
+        e.notes || ""
+      ) || "";
+
+      await db.collection("employees").doc(selectedEmployeeKey).update({
+        name,
+        job_title,
+        department,
+        branch,
+        employee_no,
+        id_no,
+        hire_date,
+        status,
+        salary,
+        notes
+      });
+
+      loadEmployeesFromFirestore();
+    }
+
+    async function deleteEmployee() {
+      const lang = currentLang;
+      if (!selectedEmployeeKey) {
+        alert(lang === "ar" ? "اختر موظف من الجدول أولاً." : "Select an employee row first.");
+        return;
+      }
+
+      if (
+        !confirm(
+          lang === "ar"
+            ? "هل أنت متأكد من حذف هذا الموظف؟"
+            : "Are you sure you want to delete this employee?"
+        )
+      ) {
+        return;
+      }
+
+      await db.collection("employees").doc(selectedEmployeeKey).delete();
+      selectedEmployeeKey = null;
+      loadEmployeesFromFirestore();
+    }
+
+    function setViewContent(view) {
+      const lang = currentLang;
+      const dict = i18n[lang];
+
+      if (view === "dashboard") {
+        viewMainTitle.textContent = dict.view_dashboard_title;
+        viewMainSub.textContent = dict.view_dashboard_sub;
+        mainTableHead.innerHTML = `
+          <th>${dict.tbl_branch}</th>
+          <th>${dict.tbl_sales}</th>
+          <th>${dict.tbl_stock_status}</th>
+          <th>${dict.tbl_staff_on_shift}</th>
+          <th>${dict.tbl_notes}</th>
+        `;
+        mainTableBody.innerHTML = `
+          <tr>
+            <td>${lang === "ar" ? "جدة - التحلية" : "Jeddah - Tahlia"}</td>
+            <td>38,500 SAR</td>
+            <td><span class="status-pill status-ok">${dict.status_good}</span></td>
+            <td>22</td>
+            <td><span class="pill-small">${dict.note_none}</span></td>
+          </tr>
+        `;
+      } else if (view === "branches") {
+        viewMainTitle.textContent =
+          lang === "ar" ? "إدارة الفروع والمبيعات" : "Branches & Sales";
+        viewMainSub.textContent =
+          lang === "ar"
+            ? "قائمة الفروع من Firestore، مع إمكانية الإضافة والتعديل والحذف."
+            : "Branches list from Firestore with add/edit/delete.";
+        loadBranchesFromFirestore();
+      } else if (view === "warehouse") {
+        viewMainTitle.textContent =
+          lang === "ar" ? "المستودع المركزي" : "Central Warehouse";
+        viewMainSub.textContent =
+          lang === "ar"
+            ? "إدارة المواد الخام، حركات المخزون، التحويل للفروع والمطبخ المركزي، وتنبيهات النقص."
+            : "Raw materials, stock movements, transfers to branches and central kitchen, and low-stock alerts.";
+        mainTableHead.innerHTML = "";
+        mainTableBody.innerHTML = "";
+      } else if (view === "kitchen") {
+        viewMainTitle.textContent =
+          lang === "ar" ? "المطبخ المركزي" : "Central Kitchen";
+        viewMainSub.textContent =
+          lang === "ar"
+            ? "إدارة الوصفات، أوامر الإنتاج، وتحويل المنتجات الجاهزة إلى الفروع."
+            : "Recipes, production orders, and transfers of finished products to branches.";
+        mainTableHead.innerHTML = "";
+        mainTableBody.innerHTML = "";
+      } else if (view === "hr") {
+        viewMainTitle.textContent =
+          lang === "ar" ? "الموارد البشرية HR (متقدم)" : "HR Management (Advanced)";
+        viewMainSub.textContent =
+          lang === "ar"
+            ? "بيانات الموظفين (اسم، وظيفة، قسم، فرع، رقم وظيفي، حالة، راتب، ملاحظات)."
+            : "Employees data (name, job, department, branch, employee no, status, salary, notes).";
+        loadEmployeesFromFirestore();
+      } else if (view === "training") {
+        viewMainTitle.textContent =
+          lang === "ar" ? "التدريب والتطوير" : "Training & Development";
+        viewMainSub.textContent =
+          lang === "ar"
+            ? "برامج تدريب، دورات إلزامية، اختبارات، ونسب إكمال لكل فرع."
+            : "Training programs, mandatory courses, tests, and completion rates per branch.";
+        mainTableHead.innerHTML = "";
+        mainTableBody.innerHTML = "";
+      } else if (view === "it") {
+        viewMainTitle.textContent =
+          lang === "ar" ? "تذاكر الـ IT" : "IT Tickets";
+        viewMainSub.textContent =
+          lang === "ar"
+            ? "تذاكر الدعم الفني من الفروع، حالة كل تذكرة، والأولوية."
+            : "Support tickets from branches, status, and priority.";
+        mainTableHead.innerHTML = "";
+        mainTableBody.innerHTML = "";
+      } else if (view === "maintenance") {
+        viewMainTitle.textContent =
+          lang === "ar" ? "الصيانة والأصول" : "Maintenance & Assets";
+        viewMainSub.textContent =
+          lang === "ar"
+            ? "الأصول (أفران، ثلاجات، مكائن)، جداول الصيانة، وبلاغات الأعطال من الفروع."
+            : "Assets (ovens, fridges, machines), maintenance schedules, and incident reports.";
+        mainTableHead.innerHTML = "";
+        mainTableBody.innerHTML = "";
+      }
+
+      if (currentRole === "branch") {
+        sideContext.textContent =
+          lang === "ar" ? "فرع: جدة - التحلية" : "Branch: Jeddah - Tahlia";
+      } else if (currentRole === "hr") {
+        sideContext.textContent = lang === "ar" ? "قسم: HR" : "Dept: HR";
+      } else if (currentRole === "it") {
+        sideContext.textContent = lang === "ar" ? "قسم: IT" : "Dept: IT";
+      } else if (currentRole === "maintenance") {
+        sideContext.textContent =
+          lang === "ar" ? "قسم: صيانة" : "Dept: Maintenance";
+      } else if (currentRole === "hq") {
+        sideContext.textContent = lang === "ar" ? "HQ" : "HQ";
+      } else if (currentRole === "admin") {
+        sideContext.textContent =
+          lang === "ar" ? "إدارة عليا (Admin)" : "Top Management (Admin)";
+      }
+    }
+
+    langArBtn.addEventListener("click", () => applyLang("ar"));
+    langEnBtn.addEventListener("click", () => applyLang("en"));
+    themeToggle.addEventListener("click", toggleTheme);
+
+    navButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const view = btn.dataset.view;
+        if (!currentRole) {
+          loginError.textContent =
+            currentLang === "ar"
+              ? "سجّل الدخول أولاً لتجربة الصلاحيات."
+              : "Please sign in first to test roles.";
+          loginOverlay.style.display = "flex";
+          return;
+        }
+        setActiveNav(view);
+        setViewContent(view);
+      });
+    });
+
+    loginBtn.addEventListener("click", () => {
+      const username = loginUsername.value.trim();
+      const password = loginPassword.value.trim();
+      const role = loginRole.value;
+
+      if (!username || !password) {
+        loginError.textContent =
+          currentLang === "ar"
+            ? "أدخل اسم المستخدم وكلمة المرور (أي شيء الآن، فقط للعرض)."
+            : "Enter username and password (anything for now, demo only).";
+        return;
+      }
+
+      currentRole = role;
+      loginError.textContent = "";
+      loginOverlay.style.display = "none";
+
+      const roleLabel = {
+        admin: currentLang === "ar" ? "إدارة عليا (Admin)" : "Admin",
+        hq: currentLang === "ar" ? "إدارة HQ" : "HQ",
+        branch: currentLang === "ar" ? "مدير فرع" : "Branch Manager",
+        hr: "HR",
+        it: "IT",
+        maintenance:
+          currentLang === "ar" ? "صيانة" : "Maintenance",
+      }[role];
+
+      headerUser.textContent =
+        (currentLang === "ar" ? "وضع تجريبي: " : "Demo: ") +
+        username +
+        " (" +
+        roleLabel +
+        ")";
+      chipRole.textContent = roleLabel;
+
+      filterNavByRole(role);
+      setActiveNav("dashboard");
+      setViewContent("dashboard");
+    });
+
+    btnAdd.addEventListener("click", () => {
+      if (currentView === "branches") {
+        addBranch();
+      } else if (currentView === "hr") {
+        addEmployee();
+      } else {
+        alert(
+          currentLang === "ar"
+            ? "زر الإضافة مفعّل حاليًا في شاشات الفروع و HR فقط."
+            : "Add button is currently active only in Branches and HR views."
+        );
+      }
+    });
+
+    btnEdit.addEventListener("click", () => {
+      if (currentView === "branches") {
+        editBranch();
+      } else if (currentView === "hr") {
+        editEmployee();
+      } else {
+        alert(
+          currentLang === "ar"
+            ? "زر التعديل مفعّل حاليًا في شاشات الفروع و HR فقط."
+            : "Edit button is currently active only in Branches and HR views."
+        );
+      }
+    });
+
+    btnDelete.addEventListener("click", () => {
+      if (currentView === "branches") {
+        deleteBranch();
+      } else if (currentView === "hr") {
+        deleteEmployee();
+      } else {
+        alert(
+          currentLang === "ar"
+            ? "زر الحذف مفعّل حاليًا في شاشات الفروع و HR فقط."
+            : "Delete button is currently active only in Branches and HR views."
+        );
+      }
+    });
+
+    applyLang("ar");
+    themeToggle.classList.add("active");
+  </script>
 </body>
 </html>
