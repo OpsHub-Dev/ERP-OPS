@@ -490,7 +490,7 @@
             <span class="nav-item-badge">HQ</span>
           </div>
           <div class="nav-item" data-view="branches">
-            <span>إدارة الفروع والمواقع</span>
+            <span>إدارة الفروع والمبيعات</span>
             <span class="nav-item-badge">Branches</span>
           </div>
           <div class="nav-item" data-view="warehouse">
@@ -508,7 +508,7 @@
         <div class="sidebar-section-title">الموارد والدعم</div>
         <div class="nav-group">
           <div class="nav-item" data-view="hr">
-            <span>الموارد البشرية HR (متقدم)</span>
+            <span>الموارد البشرية HR</span>
             <span class="nav-item-badge">HR</span>
           </div>
           <div class="nav-item" data-view="training">
@@ -545,7 +545,7 @@
             لوحة التحكم العامة
           </div>
           <div class="top-subtitle" id="top-subtitle">
-            نظرة سريعة على الفروع، الموظفين، التذاكر، والمخزون.
+            نظرة سريعة على الفروع، الموظفين، التذاكر، المخزون والصيانة.
           </div>
         </div>
         <div class="top-bar-right">
@@ -564,46 +564,46 @@
             <span class="card-title" id="card1-title">تذاكر IT / صيانة مفتوحة</span>
             <span class="pill pill-bad" id="card1-pill">تحتاج متابعة</span>
           </div>
-          <div class="card-value" id="card1-value">14</div>
+          <div class="card-value" id="card1-value">0</div>
           <div class="card-footer" id="card1-footer">
-            <span>HQ: 9 | الفروع: 5</span>
+            <span>IT + Maintenance</span>
             <span class="pill">اليوم</span>
           </div>
         </div>
 
         <div class="card">
           <div class="card-header">
-            <span class="card-title" id="card2-title">الموظفون النشطون اليوم</span>
-            <span class="pill pill-good" id="card2-pill">تشغيل جيد</span>
+            <span class="card-title" id="card2-title">عدد الفروع</span>
+            <span class="pill pill-good" id="card2-pill">نشطة</span>
           </div>
-          <div class="card-value" id="card2-value">186</div>
+          <div class="card-value" id="card2-value">0</div>
           <div class="card-footer" id="card2-footer">
-            <span>HQ: 10 | الفروع: 176</span>
-            <span class="pill">كل الفروع</span>
+            <span>Branches</span>
+            <span class="pill">Firestore</span>
           </div>
         </div>
 
         <div class="card">
           <div class="card-header">
-            <span class="card-title" id="card3-title">حالة المخزون المركزي</span>
-            <span class="pill pill-warn" id="card3-pill">مواد درجة طلب</span>
+            <span class="card-title" id="card3-title">عدد الموظفين</span>
+            <span class="pill pill-good" id="card3-pill">HR</span>
           </div>
-          <div class="card-value" id="card3-value">7</div>
+          <div class="card-value" id="card3-value">0</div>
           <div class="card-footer" id="card3-footer">
-            <span>Items تحتاج إعادة طلب</span>
-            <span class="pill">سطح مركزي</span>
+            <span>Employees</span>
+            <span class="pill">Firestore</span>
           </div>
         </div>
 
         <div class="card">
           <div class="card-header">
-            <span class="card-title" id="card4-title">مبيعات اليوم (كل الفروع)</span>
-            <span class="pill pill-good" id="card4-pill">+12% عن أمس</span>
+            <span class="card-title" id="card4-title">أصناف المستودع</span>
+            <span class="pill pill-warn" id="card4-pill">مواد حرجة</span>
           </div>
-          <div class="card-value" id="card4-value">SAR 245,300</div>
+          <div class="card-value" id="card4-value">0</div>
           <div class="card-footer" id="card4-footer">
-            <span>أرقام تجريبية للعرض فقط</span>
-            <span class="pill">تجريبي</span>
+            <span>Warehouse Items</span>
+            <span class="pill">Firestore</span>
           </div>
         </div>
       </div>
@@ -639,17 +639,7 @@
                 <tr>
                   <td>تحتاج متابعة</td>
                   <td>تذاكر مفتوحة</td>
-                  <td>4</td>
-                </tr>
-                <tr>
-                  <td>تحت السيطرة</td>
-                  <td>تجهيزات مخزون</td>
-                  <td>2</td>
-                </tr>
-                <tr>
-                  <td>قد أُنجزت</td>
-                  <td>مهام اليوم</td>
-                  <td>7</td>
+                  <td>0</td>
                 </tr>
               </tbody>
             </table>
@@ -665,7 +655,7 @@
                 <span>نظرة شاملة HQ</span>
               </div>
               <div class="right-link">
-                إدارة الفروع والمواقع
+                إدارة الفروع والمبيعات
                 <span>Branch Ops</span>
               </div>
               <div class="right-link">
@@ -701,10 +691,8 @@
             <div>
               <div class="right-section-title">ملاحظات</div>
               <div style="font-size:11px;color:var(--muted);line-height:1.6;">
-                الفروع (branches)، الموظفون (employees)، وتذاكر IT (tickets)
-                يتم حفظها في Firestore.
-                <br />
-                المرحلة الحالية: واجهة + ربط Firestore
+                كل وحدة (فروع، موظفين، IT، صيانة، مستودع)
+                لها Collection مستقلة في Firestore.
               </div>
             </div>
           </div>
@@ -717,14 +705,14 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script>
-    // ضع إعدادات Firebase الخاصة بمشروعك هنا
+    // استبدل القيم هنا بقيم مشروعك (اللي عندك أصلاً)
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
+      apiKey: "AIzaSyDO0S2QZXmoQ96Dq3o_Gri9mSrkyUW5UCM",
+      authDomain: "opshub-erp.firebaseapp.com",
+      projectId: "opshub-erp",
+      storageBucket: "opshub-erp.firebasestorage.app",
+      messagingSenderId: "379300236732",
+      appId: "1:379300236732:web:0ca625d707b736536b2fb9",
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
@@ -751,112 +739,185 @@
     let branchesCache = {};
     let employeesCache = {};
     let ticketsCache = {};
+    let maintenanceCache = {};
+    let warehouseCache = {};
+
     let selectedBranchKey = null;
     let selectedEmployeeKey = null;
     let selectedTicketKey = null;
+    let selectedMaintenanceKey = null;
+    let selectedWarehouseKey = null;
+
+    // ====== Helpers ======
+    function clearSelection() {
+      selectedBranchKey = null;
+      selectedEmployeeKey = null;
+      selectedTicketKey = null;
+      selectedMaintenanceKey = null;
+      selectedWarehouseKey = null;
+      document.querySelectorAll("#main-table-body tr").forEach((row) => {
+        row.style.backgroundColor = "";
+      });
+    }
 
     function setViewContent(view) {
       const lang = currentLang;
       currentView = view;
+      clearSelection();
 
       if (view === "dashboard") {
         topTitle.textContent = lang === "ar" ? "لوحة التحكم العامة" : "Executive Dashboard";
         topSubtitle.textContent =
           lang === "ar"
-            ? "نظرة سريعة على الفروع، الموظفين، التذاكر، والمخزون."
-            : "Quick overview of branches, employees, tickets, and inventory.";
+            ? "نظرة سريعة على الفروع، الموظفين، التذاكر، المخزون والصيانة."
+            : "Quick overview of branches, employees, tickets, stock and maintenance.";
         viewMainTitle.textContent =
-          lang === "ar" ? "نظرة على فرع / قسم محدد" : "Branch / Department snapshot";
+          lang === "ar" ? "نظرة عامة" : "Overview";
         viewMainSub.textContent =
           lang === "ar"
-            ? "هذه واجهة شكلية لتفاصيل فرع أو قسم حسب الدور والصلاحيات."
-            : "A mock interface for branch or department details based on role and permissions.";
+            ? "هذه واجهة عرض عامة للأرقام الرئيسية."
+            : "General view of key metrics.";
         mainTableHead.innerHTML = `
-          <th>${lang === "ar" ? "الحالة" : "Status"}</th>
-          <th>${lang === "ar" ? "العنصر" : "Item"}</th>
-          <th>${lang === "ar" ? "القيمة" : "Value"}</th>
-        `;
-        mainTableBody.innerHTML = `
-          <tr>
-            <td>${lang === "ar" ? "تحتاج متابعة" : "Needs attention"}</td>
-            <td>${lang === "ar" ? "تذاكر مفتوحة" : "Open tickets"}</td>
-            <td>4</td>
-          </tr>
-          <tr>
-            <td>${lang === "ar" ? "تحت السيطرة" : "Under control"}</td>
-            <td>${lang === "ar" ? "تجهيزات مخزون" : "Stock preparations"}</td>
-            <td>2</td>
-          </tr>
-          <tr>
-            <td>${lang === "ar" ? "قد أُنجزت" : "Completed"}</td>
-            <td>${lang === "ar" ? "مهام اليوم" : "Today tasks"}</td>
-            <td>7</td>
-          </tr>
-        `;
-      } else if (view === "branches") {
-        topTitle.textContent = lang === "ar" ? "إدارة الفروع والمواقع" : "Branch Management";
-        topSubtitle.textContent =
-          lang === "ar"
-            ? "إضافة وتعديل وحذف الفروع وربطها بالمناطق."
-            : "Add, edit, and remove branches and link them to regions.";
-        viewMainTitle.textContent =
-          lang === "ar" ? "الفروع المسجلة في النظام" : "Registered branches";
-        viewMainSub.textContent =
-          lang === "ar"
-            ? "يتم حفظ بيانات الفروع في Firestore داخل مجموعة branches."
-            : "Branch data is stored in Firestore under the branches collection.";
-        loadBranchesFromFirestore();
-      } else if (view === "hr") {
-        topTitle.textContent = lang === "ar" ? "الموارد البشرية HR (متقدم)" : "HR Management (Advanced)";
-        topSubtitle.textContent =
-          lang === "ar"
-            ? "إدارة الموظفين، الأقسام، والوظائف التشغيلية."
-            : "Manage employees, departments, and operational roles.";
-        viewMainTitle.textContent =
-          lang === "ar" ? "الموظفون المسجلون في النظام" : "Registered employees";
-        viewMainSub.textContent =
-          lang === "ar"
-            ? "يتم حفظ بيانات الموظفين في Firestore داخل مجموعة employees."
-            : "Employee data is stored in Firestore under the employees collection.";
-        loadEmployeesFromFirestore();
-      } else if (view === "it") {
-        topTitle.textContent = lang === "ar" ? "تذاكر الـ IT" : "IT Tickets";
-        topSubtitle.textContent =
-          lang === "ar"
-            ? "تذاكر الدعم الفني من الفروع، مع الأولوية والحالة ونوع المشكلة."
-            : "Support tickets from branches with priority, status, and issue type.";
-        viewMainTitle.textContent =
-          lang === "ar" ? "تذاكر الـ IT (متقدم)" : "IT Tickets (Advanced)";
-        viewMainSub.textContent =
-          lang === "ar"
-            ? "يتم حفظ تذاكر الدعم الفني في Firestore داخل مجموعة tickets."
-            : "IT support tickets are stored in Firestore under the tickets collection.";
-        loadTicketsFromFirestore();
-      } else {
-        topTitle.textContent =
-          lang === "ar" ? "وحدة قيد التطوير" : "Module under development";
-        topSubtitle.textContent =
-          lang === "ar"
-            ? "هذه الوحدة سيتم تفعيلها في المرحلة القادمة."
-            : "This module will be activated in the next phase.";
-        viewMainTitle.textContent =
-          lang === "ar" ? "واجهة تجريبية" : "Experimental interface";
-        viewMainSub.textContent =
-          lang === "ar"
-            ? "البيانات هنا للعرض فقط، بدون ربط فعلي."
-            : "Data here is for display only, without actual binding.";
-        mainTableHead.innerHTML = `
-          <th>${lang === "ar" ? "الحقل" : "Field"}</th>
+          <th>${lang === "ar" ? "المؤشر" : "Metric"}</th>
           <th>${lang === "ar" ? "القيمة" : "Value"}</th>
           <th>${lang === "ar" ? "ملاحظات" : "Notes"}</th>
         `;
         mainTableBody.innerHTML = `
           <tr>
-            <td>${lang === "ar" ? "الوحدة" : "Module"}</td>
-            <td>${view}</td>
-            <td>${lang === "ar" ? "قيد التطوير" : "Under development"}</td>
+            <td>${lang === "ar" ? "عدد الفروع" : "Branches count"}</td>
+            <td id="dash-branches">0</td>
+            <td>${lang === "ar" ? "من Collection الفروع" : "From branches collection"}</td>
+          </tr>
+          <tr>
+            <td>${lang === "ar" ? "عدد الموظفين" : "Employees count"}</td>
+            <td id="dash-employees">0</td>
+            <td>${lang === "ar" ? "من Collection الموظفين" : "From employees collection"}</td>
+          </tr>
+          <tr>
+            <td>${lang === "ar" ? "تذاكر IT + صيانة مفتوحة" : "Open IT + Maintenance tickets"}</td>
+            <td id="dash-tickets">0</td>
+            <td>${lang === "ar" ? "من IT + Maintenance" : "From IT + Maintenance"}</td>
+          </tr>
+          <tr>
+            <td>${lang === "ar" ? "عدد أصناف المستودع" : "Warehouse items"}</td>
+            <td id="dash-warehouse">0</td>
+            <td>${lang === "ar" ? "من Collection المستودع" : "From warehouse collection"}</td>
           </tr>
         `;
+        refreshDashboardCounts();
+      } else if (view === "branches") {
+        topTitle.textContent = lang === "ar" ? "إدارة الفروع والمبيعات" : "Branches & Sales";
+        topSubtitle.textContent =
+          lang === "ar"
+            ? "إضافة وتعديل وحذف الفروع وربطها بالمناطق."
+            : "Manage branches and link them to regions.";
+        viewMainTitle.textContent =
+          lang === "ar" ? "الفروع المسجلة في النظام" : "Registered branches";
+        viewMainSub.textContent =
+          lang === "ar"
+            ? "يتم حفظ بيانات الفروع في Collection مستقلة باسم branches."
+            : "Branches are stored in a separate collection named branches.";
+        loadBranchesFromFirestore();
+      } else if (view === "warehouse") {
+        topTitle.textContent = lang === "ar" ? "المستودع المركزي" : "Central Warehouse";
+        topSubtitle.textContent =
+          lang === "ar"
+            ? "إدارة أصناف المستودع والكميات وحد إعادة الطلب."
+            : "Manage warehouse items, quantities and reorder levels.";
+        viewMainTitle.textContent =
+          lang === "ar" ? "أصناف المستودع" : "Warehouse items";
+        viewMainSub.textContent =
+          lang === "ar"
+            ? "يتم حفظ بيانات المستودع في Collection مستقلة باسم warehouse."
+            : "Warehouse items are stored in a separate collection named warehouse.";
+        loadWarehouseFromFirestore();
+      } else if (view === "kitchen") {
+        topTitle.textContent = lang === "ar" ? "المطبخ المركزي" : "Central Kitchen";
+        topSubtitle.textContent =
+          lang === "ar"
+            ? "واجهة عرض فقط في هذه المرحلة."
+            : "Display-only interface in this phase.";
+        viewMainTitle.textContent =
+          lang === "ar" ? "المطبخ المركزي" : "Central Kitchen";
+        viewMainSub.textContent =
+          lang === "ar"
+            ? "يمكن لاحقًا ربطها بوصفات الإنتاج والـ BOM."
+            : "Can later be linked to recipes and BOM.";
+        mainTableHead.innerHTML = `
+          <th>${lang === "ar" ? "العنصر" : "Item"}</th>
+          <th>${lang === "ar" ? "الوصف" : "Description"}</th>
+          <th>${lang === "ar" ? "ملاحظات" : "Notes"}</th>
+        `;
+        mainTableBody.innerHTML = `
+          <tr>
+            <td>${lang === "ar" ? "تحضير الإنتاج" : "Production prep"}</td>
+            <td>${lang === "ar" ? "قيد التخطيط" : "In planning"}</td>
+            <td>${lang === "ar" ? "وحدة عرض فقط حالياً" : "Display-only for now"}</td>
+          </tr>
+        `;
+      } else if (view === "hr") {
+        topTitle.textContent = lang === "ar" ? "الموارد البشرية HR" : "HR Management";
+        topSubtitle.textContent =
+          lang === "ar"
+            ? "إدارة الموظفين، الأقسام، والوظائف التشغيلية."
+            : "Manage employees, departments, and roles.";
+        viewMainTitle.textContent =
+          lang === "ar" ? "الموظفون المسجلون في النظام" : "Registered employees";
+        viewMainSub.textContent =
+          lang === "ar"
+            ? "يتم حفظ بيانات الموظفين في Collection مستقلة باسم employees."
+            : "Employees are stored in a separate collection named employees.";
+        loadEmployeesFromFirestore();
+      } else if (view === "training") {
+        topTitle.textContent = lang === "ar" ? "التدريب والتطوير" : "Training & Development";
+        topSubtitle.textContent =
+          lang === "ar"
+            ? "واجهة عرض فقط في هذه المرحلة."
+            : "Display-only interface in this phase.";
+        viewMainTitle.textContent =
+          lang === "ar" ? "برامج التدريب" : "Training programs";
+        viewMainSub.textContent =
+          lang === "ar"
+            ? "يمكن لاحقًا ربطها بدورات وتقييمات."
+            : "Can later be linked to courses and evaluations.";
+        mainTableHead.innerHTML = `
+          <th>${lang === "ar" ? "البرنامج" : "Program"}</th>
+          <th>${lang === "ar" ? "الفئة" : "Category"}</th>
+          <th>${lang === "ar" ? "الحالة" : "Status"}</th>
+        `;
+        mainTableBody.innerHTML = `
+          <tr>
+            <td>${lang === "ar" ? "تدريب موظفي الفروع" : "Branch staff training"}</td>
+            <td>${lang === "ar" ? "تشغيلي" : "Operational"}</td>
+            <td>${lang === "ar" ? "قيد الإعداد" : "In preparation"}</td>
+          </tr>
+        `;
+      } else if (view === "it") {
+        topTitle.textContent = lang === "ar" ? "تذاكر الـ IT" : "IT Tickets";
+        topSubtitle.textContent =
+          lang === "ar"
+            ? "تذاكر الدعم الفني من الفروع، مع الأولوية والحالة ونوع المشكلة."
+            : "Support tickets from branches with priority, status and issue type.";
+        viewMainTitle.textContent =
+          lang === "ar" ? "تذاكر الـ IT (متقدم)" : "IT Tickets (Advanced)";
+        viewMainSub.textContent =
+          lang === "ar"
+            ? "يتم حفظ تذاكر IT في Collection مستقلة باسم tickets_it."
+            : "IT tickets are stored in a separate collection named tickets_it.";
+        loadTicketsFromFirestore();
+      } else if (view === "maintenance") {
+        topTitle.textContent = lang === "ar" ? "الصيانة والأصول" : "Maintenance & Assets";
+        topSubtitle.textContent =
+          lang === "ar"
+            ? "طلبات صيانة المعدات والأصول من الفروع."
+            : "Maintenance requests for equipment and assets.";
+        viewMainTitle.textContent =
+          lang === "ar" ? "طلبات الصيانة" : "Maintenance requests";
+        viewMainSub.textContent =
+          lang === "ar"
+            ? "يتم حفظ طلبات الصيانة في Collection مستقلة باسم maintenance."
+            : "Maintenance requests are stored in a separate collection named maintenance.";
+        loadMaintenanceFromFirestore();
       }
     }
 
@@ -884,7 +945,39 @@
       });
     });
 
-    // ========== Firestore: Branches ==========
+    // ====== Dashboard counts ======
+    async function refreshDashboardCounts() {
+      try {
+        const branchesSnap = await db.collection("branches").get();
+        const employeesSnap = await db.collection("employees").get();
+        const itSnap = await db.collection("tickets_it").where("status", "in", ["open", "in_progress"]).get();
+        const mntSnap = await db.collection("maintenance").where("status", "in", ["open", "in_progress"]).get();
+        const whSnap = await db.collection("warehouse").get();
+
+        const branchesCount = branchesSnap.size;
+        const employeesCount = employeesSnap.size;
+        const ticketsCount = itSnap.size + mntSnap.size;
+        const warehouseCount = whSnap.size;
+
+        document.getElementById("card2-value").textContent = branchesCount;
+        document.getElementById("card3-value").textContent = employeesCount;
+        document.getElementById("card1-value").textContent = ticketsCount;
+        document.getElementById("card4-value").textContent = warehouseCount;
+
+        const dbBranches = document.getElementById("dash-branches");
+        const dbEmployees = document.getElementById("dash-employees");
+        const dbTickets = document.getElementById("dash-tickets");
+        const dbWarehouse = document.getElementById("dash-warehouse");
+        if (dbBranches) dbBranches.textContent = branchesCount;
+        if (dbEmployees) dbEmployees.textContent = employeesCount;
+        if (dbTickets) dbTickets.textContent = ticketsCount;
+        if (dbWarehouse) dbWarehouse.textContent = warehouseCount;
+      } catch (e) {
+        console.error("Dashboard counts error:", e);
+      }
+    }
+
+    // ====== Branches CRUD ======
     async function loadBranchesFromFirestore() {
       const lang = currentLang;
       mainTableHead.innerHTML = `
@@ -938,12 +1031,8 @@
         `;
 
         tr.addEventListener("click", () => {
+          clearSelection();
           selectedBranchKey = key;
-          selectedEmployeeKey = null;
-          selectedTicketKey = null;
-          document.querySelectorAll("#main-table-body tr").forEach((row) => {
-            row.style.backgroundColor = "";
-          });
           tr.style.backgroundColor = "rgba(34,197,94,0.08)";
         });
 
@@ -964,12 +1053,9 @@
       );
       const status = statusInput || "open";
 
-      await db.collection("branches").add({
-        name,
-        city,
-        status
-      });
-      loadBranchesFromFirestore();
+      await db.collection("branches").add({ name, city, status });
+      await loadBranchesFromFirestore();
+      await refreshDashboardCounts();
     }
 
     async function editBranch() {
@@ -991,12 +1077,9 @@
       );
       const status = statusInput || "open";
 
-      await db.collection("branches").doc(selectedBranchKey).update({
-        name,
-        city,
-        status
-      });
-      loadBranchesFromFirestore();
+      await db.collection("branches").doc(selectedBranchKey).update({ name, city, status });
+      await loadBranchesFromFirestore();
+      await refreshDashboardCounts();
     }
 
     async function deleteBranch() {
@@ -1016,10 +1099,11 @@
       }
       await db.collection("branches").doc(selectedBranchKey).delete();
       selectedBranchKey = null;
-      loadBranchesFromFirestore();
+      await loadBranchesFromFirestore();
+      await refreshDashboardCounts();
     }
 
-    // ========== Firestore: Employees (HR) ==========
+    // ====== Employees CRUD ======
     async function loadEmployeesFromFirestore() {
       const lang = currentLang;
       mainTableHead.innerHTML = `
@@ -1075,12 +1159,8 @@
         `;
 
         tr.addEventListener("click", () => {
+          clearSelection();
           selectedEmployeeKey = key;
-          selectedBranchKey = null;
-          selectedTicketKey = null;
-          document.querySelectorAll("#main-table-body tr").forEach((row) => {
-            row.style.backgroundColor = "";
-          });
           tr.style.backgroundColor = "rgba(34,197,94,0.08)";
         });
 
@@ -1106,13 +1186,9 @@
       );
       const status = statusInput || "active";
 
-      await db.collection("employees").add({
-        name,
-        department,
-        branch,
-        status
-      });
-      loadEmployeesFromFirestore();
+      await db.collection("employees").add({ name, department, branch, status });
+      await loadEmployeesFromFirestore();
+      await refreshDashboardCounts();
     }
 
     async function editEmployee() {
@@ -1147,7 +1223,8 @@
         branch,
         status
       });
-      loadEmployeesFromFirestore();
+      await loadEmployeesFromFirestore();
+      await refreshDashboardCounts();
     }
 
     async function deleteEmployee() {
@@ -1167,10 +1244,11 @@
       }
       await db.collection("employees").doc(selectedEmployeeKey).delete();
       selectedEmployeeKey = null;
-      loadEmployeesFromFirestore();
+      await loadEmployeesFromFirestore();
+      await refreshDashboardCounts();
     }
 
-    // ========== Firestore: IT Tickets (Advanced) ==========
+    // ====== IT Tickets CRUD ======
     function renderTicketsTable() {
       const lang = currentLang;
 
@@ -1236,12 +1314,8 @@
         `;
 
         tr.addEventListener("click", () => {
+          clearSelection();
           selectedTicketKey = key;
-          selectedBranchKey = null;
-          selectedEmployeeKey = null;
-          document.querySelectorAll("#main-table-body tr").forEach((row) => {
-            row.style.backgroundColor = "";
-          });
           tr.style.backgroundColor = "rgba(34,197,94,0.08)";
         });
 
@@ -1250,12 +1324,13 @@
     }
 
     async function loadTicketsFromFirestore() {
-      const snapshot = await db.collection("tickets").orderBy("created_at", "desc").get();
+      const snapshot = await db.collection("tickets_it").orderBy("created_at", "desc").get();
       ticketsCache = {};
       snapshot.forEach((doc) => {
         ticketsCache[doc.id] = doc.data();
       });
       renderTicketsTable();
+      await refreshDashboardCounts();
     }
 
     async function addTicket() {
@@ -1293,7 +1368,7 @@
       const status = "open";
       const ticket_no = "IT-" + Date.now().toString().slice(-6);
 
-      await db.collection("tickets").add({
+      await db.collection("tickets_it").add({
         ticket_no,
         title,
         branch,
@@ -1306,7 +1381,7 @@
         closed_at: null
       });
 
-      loadTicketsFromFirestore();
+      await loadTicketsFromFirestore();
     }
 
     async function editTicket() {
@@ -1365,7 +1440,7 @@
           ? (t.closed_at || new Date())
           : null;
 
-      await db.collection("tickets").doc(selectedTicketKey).update({
+      await db.collection("tickets_it").doc(selectedTicketKey).update({
         title,
         branch,
         issue_type,
@@ -1376,7 +1451,7 @@
         closed_at
       });
 
-      loadTicketsFromFirestore();
+      await loadTicketsFromFirestore();
     }
 
     async function deleteTicket() {
@@ -1396,65 +1471,478 @@
         return;
       }
 
-      await db.collection("tickets").doc(selectedTicketKey).delete();
+      await db.collection("tickets_it").doc(selectedTicketKey).delete();
       selectedTicketKey = null;
-      loadTicketsFromFirestore();
+      await loadTicketsFromFirestore();
     }
 
-    // ========== Buttons wiring ==========
+    // ====== Maintenance CRUD ======
+    function renderMaintenanceTable() {
+      const lang = currentLang;
+
+      mainTableHead.innerHTML = `
+        <th>${lang === "ar" ? "رقم الطلب" : "Request No."}</th>
+        <th>${lang === "ar" ? "العنوان" : "Title"}</th>
+        <th>${lang === "ar" ? "الفرع" : "Branch"}</th>
+        <th>${lang === "ar" ? "نوع العطل" : "Issue Type"}</th>
+        <th>${lang === "ar" ? "الأولوية" : "Priority"}</th>
+        <th>${lang === "ar" ? "الحالة" : "Status"}</th>
+      `;
+
+      mainTableBody.innerHTML = "";
+      selectedMaintenanceKey = null;
+
+      const keys = Object.keys(maintenanceCache);
+      if (!keys.length) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 6;
+        td.textContent = lang === "ar" ? "لا توجد طلبات صيانة حتى الآن." : "No maintenance requests yet.";
+        tr.appendChild(td);
+        mainTableBody.appendChild(tr);
+        return;
+      }
+
+      keys.forEach((key) => {
+        const m = maintenanceCache[key];
+        const tr = document.createElement("tr");
+        tr.dataset.key = key;
+        tr.style.cursor = "pointer";
+
+        const statusClass =
+          m.status === "open"
+            ? "status-bad"
+            : m.status === "in_progress"
+            ? "status-warn"
+            : "status-ok";
+
+        const statusLabel =
+          m.status === "open"
+            ? (lang === "ar" ? "مفتوح" : "Open")
+            : m.status === "in_progress"
+            ? (lang === "ar" ? "تحت المعالجة" : "In progress")
+            : (lang === "ar" ? "مغلق" : "Closed");
+
+        const priorityLabel =
+          m.priority === "low"
+            ? (lang === "ar" ? "منخفضة" : "Low")
+            : m.priority === "medium"
+            ? (lang === "ar" ? "متوسطة" : "Medium")
+            : m.priority === "high"
+            ? (lang === "ar" ? "عالية" : "High")
+            : (lang === "ar" ? "عاجلة" : "Critical");
+
+        tr.innerHTML = `
+          <td>${m.request_no || ""}</td>
+          <td>${m.title || ""}</td>
+          <td>${m.branch || ""}</td>
+          <td>${m.issue_type || ""}</td>
+          <td>${priorityLabel}</td>
+          <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
+        `;
+
+        tr.addEventListener("click", () => {
+          clearSelection();
+          selectedMaintenanceKey = key;
+          tr.style.backgroundColor = "rgba(34,197,94,0.08)";
+        });
+
+        mainTableBody.appendChild(tr);
+      });
+    }
+
+    async function loadMaintenanceFromFirestore() {
+      const snapshot = await db.collection("maintenance").orderBy("created_at", "desc").get();
+      maintenanceCache = {};
+      snapshot.forEach((doc) => {
+        maintenanceCache[doc.id] = doc.data();
+      });
+      renderMaintenanceTable();
+      await refreshDashboardCounts();
+    }
+
+    async function addMaintenance() {
+      const lang = currentLang;
+
+      const title = prompt(lang === "ar" ? "عنوان طلب الصيانة:" : "Maintenance title:");
+      if (!title) return;
+
+      const branch = prompt(
+        lang === "ar" ? "الفرع (مثال: جدة - التحلية):" : "Branch (e.g. Jeddah - Tahlia):"
+      ) || "";
+
+      const issue_type = prompt(
+        lang === "ar"
+          ? "نوع العطل (كهرباء / تكييف / معدات / أخرى):"
+          : "Issue type (Electric / AC / Equipment / Other):"
+      ) || "";
+
+      const priorityInput = prompt(
+        lang === "ar"
+          ? "الأولوية (low / medium / high / critical):"
+          : "Priority (low / medium / high / critical):",
+        "medium"
+      );
+      const priority = priorityInput || "medium";
+
+      const reporter = prompt(
+        lang === "ar" ? "اسم المبلّغ عن العطل:" : "Reporter name:"
+      ) || "";
+
+      const description = prompt(
+        lang === "ar" ? "وصف العطل (اختياري):" : "Issue description (optional):"
+      ) || "";
+
+      const status = "open";
+      const request_no = "MNT-" + Date.now().toString().slice(-6);
+
+      await db.collection("maintenance").add({
+        request_no,
+        title,
+        branch,
+        issue_type,
+        priority,
+        reporter,
+        description,
+        status,
+        created_at: new Date(),
+        closed_at: null
+      });
+
+      await loadMaintenanceFromFirestore();
+    }
+
+    async function editMaintenance() {
+      const lang = currentLang;
+      if (!selectedMaintenanceKey) {
+        alert(lang === "ar" ? "اختر طلب صيانة من الجدول أولاً." : "Select a maintenance row first.");
+        return;
+      }
+
+      const m = maintenanceCache[selectedMaintenanceKey];
+      if (!m) return;
+
+      const title = prompt(
+        lang === "ar" ? "عنوان طلب الصيانة:" : "Maintenance title:",
+        m.title || ""
+      ) || "";
+
+      const branch = prompt(
+        lang === "ar" ? "الفرع:" : "Branch:",
+        m.branch || ""
+      ) || "";
+
+      const issue_type = prompt(
+        lang === "ar" ? "نوع العطل:" : "Issue type:",
+        m.issue_type || ""
+      ) || "";
+
+      const priorityInput = prompt(
+        lang === "ar"
+          ? "الأولوية (low / medium / high / critical):"
+          : "Priority (low / medium / high / critical):",
+        m.priority || "medium"
+      );
+      const priority = priorityInput || "medium";
+
+      const reporter = prompt(
+        lang === "ar" ? "اسم المبلّغ:" : "Reporter:",
+        m.reporter || ""
+      ) || "";
+
+      const description = prompt(
+        lang === "ar" ? "وصف العطل:" : "Description:",
+        m.description || ""
+      ) || "";
+
+      const statusInput = prompt(
+        lang === "ar"
+          ? "الحالة (open / in_progress / closed):"
+          : "Status (open / in_progress / closed):",
+        m.status || "open"
+      );
+      const status = statusInput || "open";
+
+      const closed_at =
+        status === "closed"
+          ? (m.closed_at || new Date())
+          : null;
+
+      await db.collection("maintenance").doc(selectedMaintenanceKey).update({
+        title,
+        branch,
+        issue_type,
+        priority,
+        reporter,
+        description,
+        status,
+        closed_at
+      });
+
+      await loadMaintenanceFromFirestore();
+    }
+
+    async function deleteMaintenance() {
+      const lang = currentLang;
+      if (!selectedMaintenanceKey) {
+        alert(lang === "ar" ? "اختر طلب صيانة من الجدول أولاً." : "Select a maintenance row first.");
+        return;
+      }
+
+      if (
+        !confirm(
+          lang === "ar"
+            ? "هل أنت متأكد من حذف طلب الصيانة هذا؟"
+            : "Are you sure you want to delete this maintenance request?"
+        )
+      ) {
+        return;
+      }
+
+      await db.collection("maintenance").doc(selectedMaintenanceKey).delete();
+      selectedMaintenanceKey = null;
+      await loadMaintenanceFromFirestore();
+    }
+
+    // ====== Warehouse CRUD ======
+    function renderWarehouseTable() {
+      const lang = currentLang;
+
+      mainTableHead.innerHTML = `
+        <th>${lang === "ar" ? "اسم الصنف" : "Item name"}</th>
+        <th>${lang === "ar" ? "الوحدة" : "Unit"}</th>
+        <th>${lang === "ar" ? "الكمية" : "Quantity"}</th>
+        <th>${lang === "ar" ? "حد إعادة الطلب" : "Reorder level"}</th>
+        <th>${lang === "ar" ? "الحالة" : "Status"}</th>
+      `;
+
+      mainTableBody.innerHTML = "";
+      selectedWarehouseKey = null;
+
+      const keys = Object.keys(warehouseCache);
+      if (!keys.length) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 5;
+        td.textContent = lang === "ar" ? "لا توجد أصناف مستودع حتى الآن." : "No warehouse items yet.";
+        tr.appendChild(td);
+        mainTableBody.appendChild(tr);
+        return;
+      }
+
+      keys.forEach((key) => {
+        const w = warehouseCache[key];
+        const tr = document.createElement("tr");
+        tr.dataset.key = key;
+        tr.style.cursor = "pointer";
+
+        const qty = Number(w.quantity || 0);
+        const reorder = Number(w.reorder_level || 0);
+
+        let statusClass = "status-ok";
+        let statusLabel = lang === "ar" ? "مستقر" : "OK";
+
+        if (qty <= reorder && qty > 0) {
+          statusClass = "status-warn";
+          statusLabel = lang === "ar" ? "قرب حد الطلب" : "Near reorder";
+        } else if (qty <= 0) {
+          statusClass = "status-bad";
+          statusLabel = lang === "ar" ? "نفاذ" : "Out of stock";
+        }
+
+        tr.innerHTML = `
+          <td>${w.name || ""}</td>
+          <td>${w.unit || ""}</td>
+          <td>${qty}</td>
+          <td>${reorder}</td>
+          <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
+        `;
+
+        tr.addEventListener("click", () => {
+          clearSelection();
+          selectedWarehouseKey = key;
+          tr.style.backgroundColor = "rgba(34,197,94,0.08)";
+        });
+
+        mainTableBody.appendChild(tr);
+      });
+    }
+
+    async function loadWarehouseFromFirestore() {
+      const snapshot = await db.collection("warehouse").orderBy("name", "asc").get();
+      warehouseCache = {};
+      snapshot.forEach((doc) => {
+        warehouseCache[doc.id] = doc.data();
+      });
+      renderWarehouseTable();
+      await refreshDashboardCounts();
+    }
+
+    async function addWarehouseItem() {
+      const lang = currentLang;
+
+      const name = prompt(lang === "ar" ? "اسم الصنف:" : "Item name:");
+      if (!name) return;
+
+      const unit = prompt(
+        lang === "ar" ? "الوحدة (كرتون / كجم / حبة):" : "Unit (carton / kg / piece):"
+      ) || "";
+
+      const quantityInput = prompt(
+        lang === "ar" ? "الكمية الحالية:" : "Current quantity:",
+        "0"
+      );
+      const quantity = Number(quantityInput || 0);
+
+      const reorderInput = prompt(
+        lang === "ar" ? "حد إعادة الطلب:" : "Reorder level:",
+        "0"
+      );
+      const reorder_level = Number(reorderInput || 0);
+
+      await db.collection("warehouse").add({
+        name,
+        unit,
+        quantity,
+        reorder_level
+      });
+
+      await loadWarehouseFromFirestore();
+    }
+
+    async function editWarehouseItem() {
+      const lang = currentLang;
+      if (!selectedWarehouseKey) {
+        alert(lang === "ar" ? "اختر صنف من الجدول أولاً." : "Select an item row first.");
+        return;
+      }
+
+      const w = warehouseCache[selectedWarehouseKey];
+      if (!w) return;
+
+      const name = prompt(
+        lang === "ar" ? "اسم الصنف:" : "Item name:",
+        w.name || ""
+      ) || "";
+
+      const unit = prompt(
+        lang === "ar" ? "الوحدة:" : "Unit:",
+        w.unit || ""
+      ) || "";
+
+      const quantityInput = prompt(
+        lang === "ar" ? "الكمية الحالية:" : "Current quantity:",
+        w.quantity || "0"
+      );
+      const quantity = Number(quantityInput || 0);
+
+      const reorderInput = prompt(
+        lang === "ar" ? "حد إعادة الطلب:" : "Reorder level:",
+        w.reorder_level || "0"
+      );
+      const reorder_level = Number(reorderInput || 0);
+
+      await db.collection("warehouse").doc(selectedWarehouseKey).update({
+        name,
+        unit,
+        quantity,
+        reorder_level
+      });
+
+      await loadWarehouseFromFirestore();
+    }
+
+    async function deleteWarehouseItem() {
+      const lang = currentLang;
+      if (!selectedWarehouseKey) {
+        alert(lang === "ar" ? "اختر صنف من الجدول أولاً." : "Select an item row first.");
+        return;
+      }
+
+      if (
+        !confirm(
+          lang === "ar"
+            ? "هل أنت متأكد من حذف هذا الصنف؟"
+            : "Are you sure you want to delete this item?"
+        )
+      ) {
+        return;
+      }
+
+      await db.collection("warehouse").doc(selectedWarehouseKey).delete();
+      selectedWarehouseKey = null;
+      await loadWarehouseFromFirestore();
+    }
+
+    // ====== Buttons wiring ======
     btnAdd.addEventListener("click", () => {
+      const lang = currentLang;
       if (currentView === "branches") {
         addBranch();
       } else if (currentView === "hr") {
         addEmployee();
       } else if (currentView === "it") {
         addTicket();
+      } else if (currentView === "maintenance") {
+        addMaintenance();
+      } else if (currentView === "warehouse") {
+        addWarehouseItem();
       } else {
-        const lang = currentLang;
         alert(
           lang === "ar"
-            ? "زر الإضافة مفعّل حاليًا في شاشات الفروع و HR و IT فقط."
-            : "Add button is currently active only in Branches, HR, and IT views."
+            ? "زر الإضافة مفعّل حاليًا في شاشات الفروع، HR، IT، الصيانة، والمستودع فقط."
+            : "Add button is active only in Branches, HR, IT, Maintenance, and Warehouse views."
         );
       }
     });
 
     btnEdit.addEventListener("click", () => {
+      const lang = currentLang;
       if (currentView === "branches") {
         editBranch();
       } else if (currentView === "hr") {
         editEmployee();
       } else if (currentView === "it") {
         editTicket();
+      } else if (currentView === "maintenance") {
+        editMaintenance();
+      } else if (currentView === "warehouse") {
+        editWarehouseItem();
       } else {
-        const lang = currentLang;
         alert(
           lang === "ar"
-            ? "زر التعديل مفعّل حاليًا في شاشات الفروع و HR و IT فقط."
-            : "Edit button is currently active only in Branches, HR, and IT views."
+            ? "زر التعديل مفعّل حاليًا في شاشات الفروع، HR، IT، الصيانة، والمستودع فقط."
+            : "Edit button is active only in Branches, HR, IT, Maintenance, and Warehouse views."
         );
       }
     });
 
     btnDelete.addEventListener("click", () => {
+      const lang = currentLang;
       if (currentView === "branches") {
         deleteBranch();
       } else if (currentView === "hr") {
         deleteEmployee();
       } else if (currentView === "it") {
         deleteTicket();
+      } else if (currentView === "maintenance") {
+        deleteMaintenance();
+      } else if (currentView === "warehouse") {
+        deleteWarehouseItem();
       } else {
-        const lang = currentLang;
         alert(
           lang === "ar"
-            ? "زر الحذف مفعّل حاليًا في شاشات الفروع و HR و IT فقط."
-            : "Delete button is currently active only in Branches, HR, and IT views."
+            ? "زر الحذف مفعّل حاليًا في شاشات الفروع، HR، IT، الصيانة، والمستودع فقط."
+            : "Delete button is active only in Branches, HR, IT, Maintenance, and Warehouse views."
         );
       }
     });
 
-    // ========== Init ==========
-    setViewContent("dashboard");
+    // ====== Init ======
+    (async function init() {
+      setViewContent("dashboard");
+      await refreshDashboardCounts();
+    })();
   </script>
 </body>
 </html>
