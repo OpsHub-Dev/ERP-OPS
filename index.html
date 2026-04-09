@@ -2,29 +2,23 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <title>OpsHub-Dev</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OpsHub-Dev - ERP OPS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     :root {
-      --bg: #020617;
-      --bg-alt: #020617;
-      --card: #020617;
+      --bg: #050816;
+      --bg-alt: #0b1020;
+      --card: #111827;
       --accent: #22c55e;
       --accent-soft: rgba(34, 197, 94, 0.12);
-      --accent-strong: #16a34a;
+      --danger: #ef4444;
+      --warn: #f59e0b;
       --text: #e5e7eb;
       --muted: #9ca3af;
       --border: #1f2937;
-      --danger: #f97373;
-      --sidebar-width: 260px;
-    }
-    body.light {
-      --bg: #f3f4f6;
-      --bg-alt: #f9fafb;
-      --card: #ffffff;
-      --text: #111827;
-      --muted: #6b7280;
-      --border: #e5e7eb;
+      --primary: #3b82f6;
+      --primary-soft: rgba(59, 130, 246, 0.12);
+      --radius: 10px;
     }
     * {
       box-sizing: border-box;
@@ -32,1143 +26,1221 @@
     }
     body {
       margin: 0;
-      background: radial-gradient(circle at top, #0b1120, #020617);
+      background: radial-gradient(circle at top, #1f2937 0, #020617 45%, #000 100%);
       color: var(--text);
-      transition: background 0.25s, color 0.25s;
+      direction: rtl;
     }
-    body.light {
-      background: #e5e7eb;
-    }
-    .app {
+    .app-shell {
+      display: grid;
+      grid-template-columns: 260px 1fr;
       min-height: 100vh;
+    }
+    .sidebar {
+      background: linear-gradient(180deg, #020617 0%, #020617 40%, #020617 100%);
+      border-left: 1px solid #111827;
+      padding: 18px 16px;
       display: flex;
       flex-direction: column;
+      gap: 18px;
     }
-    .app-header {
-      padding: 14px 22px;
-      background: linear-gradient(90deg, #020617, #020617);
+    .sidebar-header {
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      gap: 8px;
+      margin-bottom: 4px;
     }
-    body.light .app-header {
-      background: linear-gradient(90deg, #ffffff, #f9fafb);
-    }
-    .app-header-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .logo-circle {
+    .logo-mark {
       width: 34px;
       height: 34px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 20%, #22c55e, #16a34a 40%, #0f172a 80%);
+      border-radius: 12px;
+      background: radial-gradient(circle at 30% 20%, #22c55e, #16a34a 40%, #0f172a 100%);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
-      font-size: 16px;
-      color: #022c22;
-      box-shadow: 0 0 18px rgba(34, 197, 94, 0.5);
-    }
-    .app-header h1 {
-      margin: 0;
+      font-weight: 800;
       font-size: 18px;
-      letter-spacing: 0.5px;
+      color: #ecfdf5;
+      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.4), 0 10px 30px rgba(34, 197, 94, 0.35);
     }
-    .app-header-sub {
-      font-size: 11px;
-      color: var(--muted);
-    }
-    .app-header-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .badge-pill {
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(15, 23, 42, 0.9);
-      color: var(--muted);
-      font-size: 11px;
-    }
-    body.light .badge-pill {
-      background: #f9fafb;
-    }
-    .toggle-group {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .toggle-btn {
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(15, 23, 42, 0.9);
-      color: var(--muted);
-      font-size: 11px;
-      cursor: pointer;
-    }
-    body.light .toggle-btn {
-      background: #f9fafb;
-    }
-    .toggle-btn.active {
-      border-color: var(--accent);
-      color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.25);
-    }
-    .app-main {
-      display: flex;
-      flex: 1;
-      min-height: 0;
-    }
-    .sidebar {
-      width: var(--sidebar-width);
-      background: rgba(15, 23, 42, 0.98);
-      border-inline-start: 1px solid #020617;
-      border-inline-end: 1px solid var(--border);
-      padding: 16px 14px;
+    .sidebar-title {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 2px;
     }
-    body.light .sidebar {
-      background: #f9fafb;
-      border-inline-start: 1px solid #e5e7eb;
-      border-inline-end: 1px solid #e5e7eb;
+    .sidebar-title-main {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+    .sidebar-title-sub {
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .plan-pill {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.1);
+      color: #bbf7d0;
+      border: 1px solid rgba(34, 197, 94, 0.4);
     }
     .sidebar-section-title {
       font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.12em;
       color: var(--muted);
-      margin: 4px 4px 2px;
+      margin: 10px 0 4px;
     }
     .nav-group {
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      margin-bottom: 6px;
+      gap: 4px;
     }
-    .nav-btn {
-      background: transparent;
-      border: 1px solid transparent;
-      color: var(--text);
-      padding: 8px 10px;
-      border-radius: 9px;
-      text-align: right;
-      cursor: pointer;
-      transition: 0.18s;
-      font-size: 13px;
+    .nav-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
+      padding: 7px 9px;
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--muted);
+      cursor: pointer;
+      border: 1px solid transparent;
     }
-    .nav-btn span.label {
+    .nav-item span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-item:hover {
+      background: rgba(15, 23, 42, 0.9);
+      border-color: #111827;
+      color: #e5e7eb;
+    }
+    .nav-item.active {
+      background: radial-gradient(circle at 0 0, rgba(34, 197, 94, 0.25), rgba(15, 23, 42, 0.95));
+      border-color: rgba(34, 197, 94, 0.7);
+      color: #ecfdf5;
+      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.35), 0 10px 30px rgba(34, 197, 94, 0.25);
+    }
+    .nav-item-badge {
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid #1f2937;
+      color: var(--muted);
+    }
+    .nav-item.active .nav-item-badge {
+      background: rgba(22, 163, 74, 0.18);
+      border-color: rgba(34, 197, 94, 0.7);
+      color: #bbf7d0;
+    }
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 10px;
+      border-top: 1px solid #111827;
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .sidebar-footer span {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .upgrade-btn {
+      margin-top: 4px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(59, 130, 246, 0.7);
+      background: rgba(15, 23, 42, 0.9);
+      color: #bfdbfe;
+      font-size: 11px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .upgrade-btn:hover {
+      background: rgba(37, 99, 235, 0.18);
+    }
+    .main {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .top-bar-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .top-title {
+      font-size: 15px;
+      font-weight: 600;
       display: flex;
       align-items: center;
       gap: 8px;
     }
-    .nav-btn span.icon {
-      font-size: 15px;
-      opacity: 0.9;
+    .top-subtitle {
+      font-size: 12px;
+      color: var(--muted);
     }
-    .nav-btn:hover {
-      background: rgba(15, 23, 42, 0.9);
-      border-color: var(--border);
+    .top-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    body.light .nav-btn:hover {
-      background: #e5e7eb;
-    }
-    .nav-btn.active {
-      background: var(--accent-soft);
-      border-color: var(--accent);
-      color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.25);
-    }
-    .nav-badge {
-      font-size: 10px;
-      padding: 2px 6px;
+    .role-pill {
+      font-size: 11px;
+      padding: 4px 9px;
       border-radius: 999px;
       background: rgba(15, 23, 42, 0.9);
+      border: 1px solid #1f2937;
       color: var(--muted);
-      border: 1px solid var(--border);
+      cursor: pointer;
     }
-    body.light .nav-badge {
-      background: #f3f4f6;
+    .role-pill.active {
+      background: rgba(34, 197, 94, 0.16);
+      border-color: rgba(34, 197, 94, 0.7);
+      color: #bbf7d0;
     }
-    .sidebar-footer {
-      margin-top: auto;
+    .lang-pill {
       font-size: 11px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid #1f2937;
       color: var(--muted);
-      border-top: 1px solid var(--border);
-      padding-top: 10px;
+      cursor: pointer;
     }
-    .sidebar-footer div {
-      margin-bottom: 4px;
-    }
-    .content {
-      flex: 1;
-      padding: 20px 22px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .top-cards {
+    .cards-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
     }
     .card {
-      background: rgba(15, 23, 42, 0.96);
-      border-radius: 14px;
-      padding: 14px 14px 12px;
-      border: 1px solid rgba(31, 41, 55, 0.9);
-      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.55);
+      background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.9), #020617);
+      border-radius: var(--radius);
+      border: 1px solid #111827;
+      padding: 10px 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
       position: relative;
       overflow: hidden;
-    }
-    body.light .card {
-      background: #ffffff;
-      border-color: #e5e7eb;
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
     }
     .card::before {
       content: "";
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at top left, rgba(34, 197, 94, 0.12), transparent 55%);
+      background: radial-gradient(circle at top right, rgba(34, 197, 94, 0.12), transparent 55%);
       opacity: 0.9;
       pointer-events: none;
     }
-    .card h2 {
-      margin: 0 0 4px;
-      font-size: 14px;
-    }
-    .card-sub {
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       font-size: 11px;
       color: var(--muted);
-      margin-bottom: 8px;
     }
-    .card-metric {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 4px;
+    .card-title {
+      font-size: 12px;
+      font-weight: 500;
+      color: #e5e7eb;
     }
-    .card-tag {
+    .card-value {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+    .card-footer {
       font-size: 11px;
       color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
     .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 2px 8px;
+      padding: 2px 7px;
       border-radius: 999px;
+      font-size: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: #9ca3af;
       background: rgba(15, 23, 42, 0.9);
-      border: 1px solid var(--border);
-      font-size: 11px;
-      color: var(--muted);
     }
-    body.light .pill {
-      background: #f9fafb;
+    .pill-good {
+      border-color: rgba(34, 197, 94, 0.7);
+      color: #bbf7d0;
+      background: rgba(22, 163, 74, 0.16);
     }
-    .pill-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: var(--accent);
+    .pill-warn {
+      border-color: rgba(245, 158, 11, 0.7);
+      color: #fed7aa;
+      background: rgba(245, 158, 11, 0.16);
     }
-    .views-wrapper {
+    .pill-bad {
+      border-color: rgba(239, 68, 68, 0.7);
+      color: #fecaca;
+      background: rgba(239, 68, 68, 0.16);
+    }
+    .main-panel {
       display: grid;
-      grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.4fr);
-      gap: 16px;
+      grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.2fr);
+      gap: 10px;
       align-items: flex-start;
     }
-    .view {
+    .panel {
       background: rgba(15, 23, 42, 0.96);
-      border-radius: 14px;
-      border: 1px solid rgba(31, 41, 55, 0.9);
-      padding: 14px 14px 10px;
-      min-height: 220px;
-      position: relative;
-      overflow: hidden;
-    }
-    body.light .view {
-      background: #ffffff;
-      border-color: #e5e7eb;
-    }
-    .view-header {
+      border-radius: var(--radius);
+      border: 1px solid #111827;
+      padding: 10px 11px;
       display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .panel-header {
+      display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
+      gap: 8px;
     }
-    .view-title {
-      font-size: 14px;
-      font-weight: 500;
-    }
-    .view-sub {
-      font-size: 11px;
-      color: var(--muted);
-    }
-    .view-actions {
+    .panel-title {
+      font-size: 13px;
+      font-weight: 600;
       display: flex;
-      gap: 6px;
       align-items: center;
+      gap: 6px;
     }
-    .btn-ghost {
-      background: rgba(15, 23, 42, 0.9);
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      color: var(--muted);
+    .panel-subtitle {
       font-size: 11px;
-      padding: 4px 8px;
+      color: var(--muted);
+    }
+    .panel-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn {
+      font-size: 11px;
+      padding: 5px 9px;
+      border-radius: 7px;
+      border: 1px solid #1f2937;
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--muted);
       cursor: pointer;
-    }
-    body.light .btn-ghost {
-      background: #f9fafb;
-    }
-    .btn-ghost:hover {
-      border-color: var(--accent);
-      color: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
     }
     .btn-primary {
-      background: var(--accent);
-      border-radius: 999px;
-      border: none;
-      color: #022c22;
-      font-size: 11px;
-      padding: 5px 10px;
-      cursor: pointer;
-      font-weight: 600;
-      box-shadow: 0 0 18px rgba(34, 197, 94, 0.45);
+      border-color: rgba(34, 197, 94, 0.7);
+      background: rgba(22, 163, 74, 0.16);
+      color: #bbf7d0;
     }
-    .btn-primary:hover {
-      background: var(--accent-strong);
+    .btn-danger {
+      border-color: rgba(239, 68, 68, 0.7);
+      background: rgba(239, 68, 68, 0.12);
+      color: #fecaca;
     }
-    .login-overlay {
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), #020617);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 50;
-    }
-    body.light .login-overlay {
-      background: radial-gradient(circle at top, #e5e7eb, #f3f4f6);
-    }
-    .login-card {
-      width: 100%;
-      max-width: 360px;
+    .btn:hover {
       background: rgba(15, 23, 42, 0.98);
-      border-radius: 16px;
-      padding: 20px 18px 16px;
-      border: 1px solid rgba(31, 41, 55, 0.9);
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
-      text-align: right;
     }
-    body.light .login-card {
-      background: #ffffff;
-      border-color: #e5e7eb;
-      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+    .table-wrapper {
+      border-radius: 8px;
+      border: 1px solid #111827;
+      overflow: hidden;
+      background: rgba(15, 23, 42, 0.9);
     }
-    .login-card-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    .login-card h2 {
-      margin: 0;
-      font-size: 18px;
-    }
-    .login-card p {
-      font-size: 12px;
-      color: var(--muted);
-      margin-bottom: 12px;
-    }
-    .form-group {
-      margin-bottom: 10px;
-    }
-    .form-label {
-      font-size: 11px;
-      color: var(--muted);
-      margin-bottom: 4px;
-    }
-    .form-input,
-    .form-select {
-      width: 100%;
-      padding: 8px 9px;
-      border-radius: 9px;
-      border: 1px solid var(--border);
-      background: #020617;
-      color: var(--text);
-      font-size: 13px;
-    }
-    body.light .form-input,
-    body.light .form-select {
-      background: #f9fafb;
-    }
-    .form-input:focus,
-    .form-select:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.25);
-    }
-    .error {
-      color: var(--danger);
-      font-size: 11px;
-      margin-top: 4px;
-    }
-    .table {
+    table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 11px;
-      margin-top: 6px;
+      font-size: 12px;
     }
-    .table th,
-    .table td {
-      padding: 6px 4px;
-      border-bottom: 1px solid rgba(31, 41, 55, 0.8);
+    thead {
+      background: rgba(15, 23, 42, 0.98);
+    }
+    th, td {
+      padding: 7px 8px;
+      border-bottom: 1px solid #111827;
       text-align: right;
     }
-    body.light .table th,
-    body.light .table td {
-      border-bottom-color: #e5e7eb;
-    }
-    .table th {
-      color: var(--muted);
+    th {
+      font-size: 11px;
+      color: #9ca3af;
       font-weight: 500;
+    }
+    tbody tr:hover {
+      background: rgba(15, 23, 42, 0.96);
     }
     .status-pill {
       padding: 2px 7px;
       border-radius: 999px;
       font-size: 10px;
-      border: 1px solid var(--border);
+      border: 1px solid transparent;
     }
     .status-ok {
-      color: #22c55e;
-      background: rgba(22, 163, 74, 0.12);
-      border-color: rgba(22, 163, 74, 0.6);
+      border-color: rgba(34, 197, 94, 0.7);
+      background: rgba(22, 163, 74, 0.16);
+      color: #bbf7d0;
     }
     .status-warn {
-      color: #facc15;
-      background: rgba(250, 204, 21, 0.12);
-      border-color: rgba(250, 204, 21, 0.6);
+      border-color: rgba(245, 158, 11, 0.7);
+      background: rgba(245, 158, 11, 0.16);
+      color: #fed7aa;
     }
     .status-bad {
-      color: #fb7185;
-      background: rgba(248, 113, 113, 0.12);
-      border-color: rgba(248, 113, 113, 0.6);
+      border-color: rgba(239, 68, 68, 0.7);
+      background: rgba(239, 68, 68, 0.16);
+      color: #fecaca;
     }
-    .pill-small {
-      font-size: 10px;
-      padding: 2px 6px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid var(--border);
-      color: var(--muted);
-    }
-    body.light .pill-small {
-      background: #f9fafb;
-    }
-    .crud-actions {
+    .right-panel-list {
       display: flex;
-      gap: 4px;
-      justify-content: flex-start;
-      margin-top: 6px;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 12px;
     }
-    .btn-sm {
-      font-size: 10px;
-      padding: 3px 7px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(15, 23, 42, 0.9);
+    .right-section-title {
+      font-size: 11px;
       color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+    .right-link {
+      padding: 6px 7px;
+      border-radius: 7px;
+      border: 1px solid transparent;
       cursor: pointer;
-    }
-    body.light .btn-sm {
-      background: #f9fafb;
-    }
-    .btn-sm.add {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-    .btn-sm.edit {
-      border-color: #38bdf8;
-      color: #38bdf8;
-    }
-    .btn-sm.delete {
-      border-color: #fb7185;
-      color: #fb7185;
-    }
-    .chips-row {
+      color: #e5e7eb;
       display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-      margin-top: 4px;
-    }
-    .chip {
-      font-size: 10px;
-      padding: 2px 6px;
-      border-radius: 999px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
       background: rgba(15, 23, 42, 0.9);
-      border: 1px solid var(--border);
+    }
+    .right-link span {
+      font-size: 11px;
       color: var(--muted);
     }
-    body.light .chip {
-      background: #f9fafb;
+    .right-link:hover {
+      border-color: #1f2937;
+      background: rgba(15, 23, 42, 0.98);
+    }
+    .right-link.primary {
+      border-color: rgba(34, 197, 94, 0.7);
+      background: rgba(22, 163, 74, 0.16);
+      color: #bbf7d0;
+    }
+    .right-link.primary span {
+      color: #bbf7d0;
     }
     @media (max-width: 960px) {
-      .app-main {
-        flex-direction: column;
+      .app-shell {
+        grid-template-columns: 1fr;
       }
       .sidebar {
-        width: 100%;
-        flex-direction: row;
-        overflow-x: auto;
-        padding-bottom: 10px;
-      }
-      .sidebar-section-title,
-      .sidebar-footer {
         display: none;
       }
-      .content {
-        padding: 14px;
+    }
+    @media (max-width: 800px) {
+      .cards-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
-      .views-wrapper {
-        grid-template-columns: minmax(0, 1fr);
+      .main-panel {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 520px) {
+      .cards-row {
+        grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
-<body class="dark">
-  <div class="app">
-    <header class="app-header">
-      <div class="app-header-left">
-        <div class="logo-circle">O</div>
-        <div>
-          <h1 data-i18n="app_name">OpsHub-Dev</h1>
-          <div class="app-header-sub" data-i18n="app_sub">
-            منصة إدارة تشغيلية متعددة الفروع للمطاعم – HQ · فروع · HR · IT · صيانة
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="logo-mark">OP</div>
+          <div class="sidebar-title">
+            <div class="sidebar-title-main">OpsHub-Dev</div>
+            <div class="sidebar-title-sub">منصة لإدارة العمليات للمطاعم</div>
+          </div>
+        </div>
+        <div class="plan-pill">Spark • Dev</div>
+      </div>
+
+      <div>
+        <div class="sidebar-section-title">المستوى التنفيذي</div>
+        <div class="nav-group">
+          <div class="nav-item active" data-view="dashboard">
+            <span>لوحة التحكم العامة</span>
+            <span class="nav-item-badge">HQ</span>
+          </div>
+          <div class="nav-item" data-view="branches">
+            <span>إدارة الفروع والمواقع</span>
+            <span class="nav-item-badge">Branches</span>
+          </div>
+          <div class="nav-item" data-view="warehouse">
+            <span>المستودع المركزي</span>
+            <span class="nav-item-badge">Stock</span>
+          </div>
+          <div class="nav-item" data-view="kitchen">
+            <span>المطبخ المركزي</span>
+            <span class="nav-item-badge">Kitchen</span>
           </div>
         </div>
       </div>
-      <div class="app-header-right">
-        <div class="badge-pill" data-i18n="mode_label">واجهة متصلة بقاعدة بيانات Firestore (تجريبية)</div>
-        <div class="toggle-group">
-          <button class="toggle-btn active" id="theme-toggle" data-i18n="theme_dark">دارك</button>
-          <button class="toggle-btn" id="lang-ar">عربي</button>
-          <button class="toggle-btn" id="lang-en">EN</button>
+
+      <div>
+        <div class="sidebar-section-title">الموارد والدعم</div>
+        <div class="nav-group">
+          <div class="nav-item" data-view="hr">
+            <span>الموارد البشرية HR (متقدم)</span>
+            <span class="nav-item-badge">HR</span>
+          </div>
+          <div class="nav-item" data-view="training">
+            <span>التدريب والتطوير</span>
+            <span class="nav-item-badge">L&D</span>
+          </div>
+          <div class="nav-item" data-view="it">
+            <span>تذاكر الـ IT</span>
+            <span class="nav-item-badge">IT</span>
+          </div>
+          <div class="nav-item" data-view="maintenance">
+            <span>الصيانة والأصول</span>
+            <span class="nav-item-badge">MNT</span>
+          </div>
         </div>
-        <div id="header-user" data-i18n="user_not_logged">غير مسجل دخول</div>
       </div>
-    </header>
 
-    <main class="app-main">
-      <aside class="sidebar">
-        <div>
-          <div class="sidebar-section-title" data-i18n="section_exec">المستوى التنفيذي</div>
-          <div class="nav-group">
-            <button class="nav-btn active" data-view="dashboard" data-roles="admin,hq,branch,hr,it,maintenance">
-              <span class="label">
-                <span class="icon">📊</span>
-                <span data-i18n="nav_dashboard">لوحة التحكم العامة</span>
-              </span>
-              <span class="nav-badge">HQ</span>
-            </button>
-            <button class="nav-btn" data-view="branches" data-roles="admin,hq,branch">
-              <span class="label">
-                <span class="icon">🏬</span>
-                <span data-i18n="nav_branches">إدارة الفروع والمبيعات</span>
-              </span>
-              <span class="nav-badge">10</span>
-            </button>
-            <button class="nav-btn" data-view="warehouse" data-roles="admin,hq">
-              <span class="label">
-                <span class="icon">📦</span>
-                <span data-i18n="nav_warehouse">المستودع المركزي</span>
-              </span>
-            </button>
-            <button class="nav-btn" data-view="kitchen" data-roles="admin,hq">
-              <span class="label">
-                <span class="icon">👨‍🍳</span>
-                <span data-i18n="nav_kitchen">المطبخ المركزي</span>
-              </span>
-            </button>
+      <div class="sidebar-footer">
+        <span>
+          <span>خطة: Spark (تجريبية)</span>
+          <span>0 ر.س / شهر</span>
+        </span>
+        <button class="upgrade-btn">
+          ترقية لاحقًا
+        </button>
+        <span>Firestore متصل • وضع تطوير</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="top-bar">
+        <div class="top-bar-left">
+          <div class="top-title" id="top-title">
+            لوحة التحكم العامة
+          </div>
+          <div class="top-subtitle" id="top-subtitle">
+            نظرة سريعة على الفروع، الموظفين، التذاكر، والمخزون.
+          </div>
+        </div>
+        <div class="top-bar-right">
+          <button class="lang-pill" id="btn-lang">العربية</button>
+          <button class="role-pill active" data-role="admin" id="role-admin">Admin</button>
+          <button class="role-pill" data-role="hq" id="role-hq">HQ</button>
+          <button class="role-pill" data-role="branch" id="role-branch">Branch</button>
+          <button class="role-pill" data-role="hr" id="role-hr">HR</button>
+          <button class="role-pill" data-role="it" id="role-it">IT</button>
+        </div>
+      </div>
+
+      <div class="cards-row">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title" id="card1-title">تذاكر IT / صيانة مفتوحة</span>
+            <span class="pill pill-bad" id="card1-pill">تحتاج متابعة</span>
+          </div>
+          <div class="card-value" id="card1-value">14</div>
+          <div class="card-footer" id="card1-footer">
+            <span>HQ: 9 | الفروع: 5</span>
+            <span class="pill">اليوم</span>
           </div>
         </div>
 
-        <div>
-          <div class="sidebar-section-title" data-i18n="section_support">الموارد والدعم</div>
-          <div class="nav-group">
-            <button class="nav-btn" data-view="hr" data-roles="admin,hr,hq">
-              <span class="label">
-                <span class="icon">👥</span>
-                <span data-i18n="nav_hr">الموارد البشرية HR</span>
-              </span>
-            </button>
-            <button class="nav-btn" data-view="training" data-roles="admin,hr,hq">
-              <span class="label">
-                <span class="icon">🎓</span>
-                <span data-i18n="nav_training">التدريب والتطوير</span>
-              </span>
-            </button>
-            <button class="nav-btn" data-view="it" data-roles="admin,it,hq">
-              <span class="label">
-                <span class="icon">💻</span>
-                <span data-i18n="nav_it">تذاكر الـ IT</span>
-              </span>
-            </button>
-            <button class="nav-btn" data-view="maintenance" data-roles="admin,maintenance,hq">
-              <span class="label">
-                <span class="icon">🛠️</span>
-                <span data-i18n="nav_maintenance">الصيانة والأصول</span>
-              </span>
-            </button>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title" id="card2-title">الموظفون النشطون اليوم</span>
+            <span class="pill pill-good" id="card2-pill">تشغيل جيد</span>
+          </div>
+          <div class="card-value" id="card2-value">186</div>
+          <div class="card-footer" id="card2-footer">
+            <span>HQ: 10 | الفروع: 176</span>
+            <span class="pill">كل الفروع</span>
           </div>
         </div>
 
-        <div class="sidebar-footer">
-          <div data-i18n="footer_phase">المرحلة الحالية: واجهة + ربط Firestore</div>
-          <div data-i18n="footer_next">المرحلة القادمة: توسيع الجداول والصلاحيات</div>
-        </div>
-      </aside>
-
-      <section class="content">
-        <div class="top-cards" id="top-cards">
-          <div class="card">
-            <h2 data-i18n="card_sales_title">مبيعات اليوم (كل الفروع)</h2>
-            <div class="card-sub" data-i18n="card_sales_sub">أرقام تجريبية للعرض فقط</div>
-            <div class="card-metric">245,300 SAR</div>
-            <div class="card-tag">
-              <span class="pill">
-                <span class="pill-dot"></span>
-                <span data-i18n="card_sales_delta">+ 12% عن أمس</span>
-              </span>
-            </div>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title" id="card3-title">حالة المخزون المركزي</span>
+            <span class="pill pill-warn" id="card3-pill">مواد درجة طلب</span>
           </div>
-          <div class="card">
-            <h2 data-i18n="card_stock_title">حالة المخزون المركزي</h2>
-            <div class="card-sub" data-i18n="card_stock_sub">مواد حرجة تحتاج إعادة طلب</div>
-            <div class="card-metric">7 Items</div>
-            <div class="tag-row">
-              <span class="pill-small" data-i18n="card_stock_tag1">لحم طازج</span>
-              <span class="pill-small" data-i18n="card_stock_tag2">خبز برجر</span>
-              <span class="pill-small" data-i18n="card_stock_tag3">علب تغليف</span>
-            </div>
-          </div>
-          <div class="card">
-            <h2 data-i18n="card_staff_title">الموظفون النشطون اليوم</h2>
-            <div class="card-sub" data-i18n="card_staff_sub">كل الفروع + HQ</div>
-            <div class="card-metric">186</div>
-            <div class="tag-row">
-              <span class="pill-small" data-i18n="card_staff_tag1">10 فروع</span>
-              <span class="pill-small" data-i18n="card_staff_tag2">مطبخ مركزي</span>
-              <span class="pill-small" data-i18n="card_staff_tag3">مستودع</span>
-            </div>
-          </div>
-          <div class="card">
-            <h2 data-i18n="card_tickets_title">تذاكر IT / صيانة مفتوحة</h2>
-            <div class="card-sub" data-i18n="card_tickets_sub">تحتاج متابعة</div>
-            <div class="card-metric">14</div>
-            <div class="tag-row">
-              <span class="pill-small" data-i18n="card_tickets_tag1">5 IT</span>
-              <span class="pill-small" data-i18n="card_tickets_tag2">9 صيانة</span>
-            </div>
+          <div class="card-value" id="card3-value">7</div>
+          <div class="card-footer" id="card3-footer">
+            <span>Items تحتاج إعادة طلب</span>
+            <span class="pill">سطح مركزي</span>
           </div>
         </div>
 
-        <div class="views-wrapper">
-          <div id="view-main" class="view">
-            <div class="view-header">
-              <div>
-                <div class="view-title" id="view-main-title" data-i18n="view_dashboard_title">
-                  لوحة التحكم العامة
-                </div>
-                <div class="view-sub" id="view-main-sub" data-i18n="view_dashboard_sub">
-                  نظرة سريعة على الفروع، المبيعات، المخزون، والموارد البشرية على مستوى الشركة.
-                </div>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title" id="card4-title">مبيعات اليوم (كل الفروع)</span>
+            <span class="pill pill-good" id="card4-pill">+12% عن أمس</span>
+          </div>
+          <div class="card-value" id="card4-value">SAR 245,300</div>
+          <div class="card-footer" id="card4-footer">
+            <span>أرقام تجريبية للعرض فقط</span>
+            <span class="pill">تجريبي</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-panel">
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title" id="view-main-title">
+                نظرة على فرع / قسم محدد
               </div>
-              <div class="view-actions">
-                <button class="btn-ghost" data-i18n="btn_refresh">تحديث الأرقام</button>
-                <button class="btn-primary" data-i18n="btn_export">تصدير تقرير</button>
+              <div class="panel-subtitle" id="view-main-sub">
+                هذه واجهة شكلية لتفاصيل فرع أو قسم حسب الدور والصلاحيات.
               </div>
             </div>
+            <div class="panel-actions">
+              <button class="btn btn-primary" id="btn-add">إضافة</button>
+              <button class="btn" id="btn-edit">تعديل</button>
+              <button class="btn btn-danger" id="btn-delete">حذف</button>
+            </div>
+          </div>
 
-            <table class="table" id="main-table">
+          <div class="table-wrapper">
+            <table>
               <thead>
                 <tr id="main-table-head">
-                  <th data-i18n="tbl_branch">الفرع</th>
-                  <th data-i18n="tbl_sales">مبيعات اليوم</th>
-                  <th data-i18n="tbl_stock_status">حالة المخزون</th>
-                  <th data-i18n="tbl_staff_on_shift">عدد الموظفين في الوردية</th>
-                  <th data-i18n="tbl_notes">ملاحظات</th>
+                  <th>الحالة</th>
+                  <th>العنصر</th>
+                  <th>القيمة</th>
                 </tr>
               </thead>
               <tbody id="main-table-body">
                 <tr>
-                  <td>جدة - التحلية</td>
-                  <td>38,500 SAR</td>
-                  <td><span class="status-pill status-ok" data-i18n="status_good">جيد</span></td>
-                  <td>22</td>
-                  <td><span class="pill-small" data-i18n="note_none">لا يوجد تنبيهات</span></td>
+                  <td>تحتاج متابعة</td>
+                  <td>تذاكر مفتوحة</td>
+                  <td>4</td>
+                </tr>
+                <tr>
+                  <td>تحت السيطرة</td>
+                  <td>تجهيزات مخزون</td>
+                  <td>2</td>
+                </tr>
+                <tr>
+                  <td>قد أُنجزت</td>
+                  <td>مهام اليوم</td>
+                  <td>7</td>
                 </tr>
               </tbody>
             </table>
-
-            <div class="crud-actions">
-              <button class="btn-sm add" id="btn-add" data-i18n="btn_add">إضافة</button>
-              <button class="btn-sm edit" id="btn-edit" data-i18n="btn_edit">تعديل</button>
-              <button class="btn-sm delete" id="btn-delete" data-i18n="btn_delete">حذف</button>
-            </div>
           </div>
+        </section>
 
-          <div id="view-side" class="view">
-            <div class="view-header">
-              <div>
-                <div class="view-title" id="view-side-title" data-i18n="side_pos_title">
-                  نظرة على فرع / قسم محدد
-                </div>
-                <div class="view-sub" id="view-side-sub" data-i18n="side_pos_sub">
-                  هذه واجهة شكلية لعرض تفاصيل فرع أو قسم حسب الدور والصلاحيات.
-                </div>
+        <aside class="panel">
+          <div class="right-panel-list">
+            <div>
+              <div class="right-section-title">المستوى التنفيذي</div>
+              <div class="right-link primary">
+                لوحة التحكم العامة
+                <span>نظرة شاملة HQ</span>
               </div>
-              <div class="view-actions">
-                <button class="btn-ghost" id="side-context" data-i18n="side_context_branch">
-                  فرع: جدة - التحلية
-                </button>
+              <div class="right-link">
+                إدارة الفروع والمواقع
+                <span>Branch Ops</span>
+              </div>
+              <div class="right-link">
+                المستودع المركزي
+                <span>Stock & Supply</span>
+              </div>
+              <div class="right-link">
+                المطبخ المركزي
+                <span>Central Kitchen</span>
               </div>
             </div>
 
-            <div id="side-content">
-              <div class="chips-row">
-                <span class="chip" data-i18n="chip_role_label">الدور الحالي:</span>
-                <span class="chip" id="chip-role">Admin</span>
+            <div>
+              <div class="right-section-title">الموارد والدعم</div>
+              <div class="right-link">
+                الموارد البشرية HR
+                <span>Employees & Shifts</span>
               </div>
-              <div class="chips-row" style="margin-top:6px;">
-                <span class="chip" data-i18n="chip_hint">
-                  هذه البيانات تجريبية، لكن قسم الفروع و HR الآن متصلين فعليًا بـ Firestore.
-                </span>
+              <div class="right-link">
+                التدريب والتطوير
+                <span>Learning</span>
               </div>
+              <div class="right-link">
+                تذاكر الـ IT
+                <span>Support Tickets</span>
+              </div>
+              <div class="right-link">
+                الصيانة والأصول
+                <span>Maintenance</span>
+              </div>
+            </div>
 
-              <table class="table" style="margin-top:8px;">
-                <thead>
-                  <tr>
-                    <th data-i18n="side_tbl_col1">العنصر</th>
-                    <th data-i18n="side_tbl_col2">القيمة</th>
-                    <th data-i18n="side_tbl_col3">الحالة</th>
-                  </tr>
-                </thead>
-                <tbody id="side-table-body">
-                  <tr>
-                    <td data-i18n="side_item1">تذاكر مفتوحة</td>
-                    <td>4</td>
-                    <td><span class="status-pill status-warn" data-i18n="status_attention">تحتاج متابعة</span></td>
-                  </tr>
-                  <tr>
-                    <td data-i18n="side_item2">تنبيهات مخزون</td>
-                    <td>2</td>
-                    <td><span class="status-pill status-ok" data-i18n="status_under_control">تحت السيطرة</span></td>
-                  </tr>
-                  <tr>
-                    <td data-i18n="side_item3">مهام اليوم</td>
-                    <td>7</td>
-                    <td><span class="status-pill status-ok" data-i18n="status_in_progress">قيد التنفيذ</span></td>
-                  </tr>
-                </tbody>
-              </table>
-
-              <div class="crud-actions">
-                <button class="btn-sm add" data-i18n="btn_add">إضافة</button>
-                <button class="btn-sm edit" data-i18n="btn_edit">تعديل</button>
-                <button class="btn-sm delete" data-i18n="btn_delete">حذف</button>
+            <div>
+              <div class="right-section-title">ملاحظات</div>
+              <div style="font-size:11px;color:var(--muted);line-height:1.6;">
+                سلامة الفروع (branches) و الموظفين HR (employees) و تذاكر IT (tickets)
+                تم تسجيلها في Firestore، بناءً على واجهة فقط.
+                <br />
+                المرحلة الحالية: واجهة + ربط Firestore
+                <br />
+                المرحلة القادمة: جميع الصلاحيات والتحديثات.
               </div>
             </div>
           </div>
-        </div>
-
-        <div id="section-label" style="font-size:11px; color:var(--muted); margin-top:4px;">
-          <span data-i18n="note_ui_only">
-            * ملاحظة: قسم الفروع (branches) و HR (employees) متصلين بـ Firestore. باقي الأقسام واجهة فقط.
-          </span>
-        </div>
-      </section>
+        </aside>
+      </div>
     </main>
   </div>
 
-  <div class="login-overlay" id="login-overlay">
-    <div class="login-card">
-      <div class="login-card-header">
-        <div class="logo-circle">O</div>
-        <div>
-          <h2 data-i18n="login_title">تسجيل الدخول إلى OpsHub-Dev</h2>
-          <p data-i18n="login_sub">
-            هذا تسجيل دخول تجريبي فقط لتحديد الدور وعرض الأقسام المناسبة لكل إدارة.
-          </p>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <div class="form-label" data-i18n="login_username_label">اسم المستخدم</div>
-        <input class="form-input" id="login-username" placeholder="مثال: admin / hr_manager / it_support" />
-      </div>
-      <div class="form-group">
-        <div class="form-label" data-i18n="login_password_label">كلمة المرور</div>
-        <input class="form-input" id="login-password" type="password" placeholder="••••••••" />
-      </div>
-      <div class="form-group">
-        <div class="form-label" data-i18n="login_role_label">اختر الدور</div>
-        <select class="form-select" id="login-role">
-          <option value="admin" data-i18n="role_admin">إدارة عليا (Admin)</option>
-          <option value="hq" data-i18n="role_hq">إدارة HQ</option>
-          <option value="branch" data-i18n="role_branch">مدير فرع</option>
-          <option value="hr" data-i18n="role_hr">HR</option>
-          <option value="it" data-i18n="role_it">IT</option>
-          <option value="maintenance" data-i18n="role_maintenance">صيانة</option>
-        </select>
-      </div>
-
-      <button class="btn-primary" id="login-btn" style="width:100%;" data-i18n="login_btn">
-        دخول (وضع تجريبي)
-      </button>
-      <div class="error" id="login-error"></div>
-
-      <div style="margin-top:10px; font-size:11px; color:var(--muted);" data-i18n="login_hint">
-        يمكنك إدخال أي اسم مستخدم وكلمة مرور الآن، الأهم هو اختيار الدور لتجربة الصلاحيات.
-      </div>
-    </div>
-  </div>
-
-  <!-- Firebase SDKs (Compat) -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script>
+    // ========= ضع إعدادات Firebase الخاصة بمشروعك هنا =========
+    // انسخ config من Firebase Console > Project settings > Web app
     const firebaseConfig = {
-      apiKey: "AIzaSyDO0S2QZXmoQ96Dq3o_Gri9mSrkyUW5UCM",
-      authDomain: "opshub-erp.firebaseapp.com",
-      projectId: "opshub-erp",
-      storageBucket: "opshub-erp.firebasestorage.app",
-      messagingSenderId: "379300236732",
-      appId: "1:379300236732:web:0ca625d707b736536b2fb9",
-      measurementId: "G-FMKTEY0L5R"
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
   </script>
 
   <script>
-    const i18n = {
-      ar: {
-        app_name: "OpsHub-Dev",
-        app_sub: "منصة إدارة تشغيلية متعددة الفروع للمطاعم – HQ · فروع · HR · IT · صيانة",
-        mode_label: "واجهة متصلة بقاعدة بيانات Firestore (تجريبية)",
-        user_not_logged: "غير مسجل دخول",
-        section_exec: "المستوى التنفيذي",
-        section_support: "الموارد والدعم",
-        nav_dashboard: "لوحة التحكم العامة",
-        nav_branches: "إدارة الفروع والمبيعات",
-        nav_warehouse: "المستودع المركزي",
-        nav_kitchen: "المطبخ المركزي",
-        nav_hr: "الموارد البشرية HR",
-        nav_training: "التدريب والتطوير",
-        nav_it: "تذاكر الـ IT",
-        nav_maintenance: "الصيانة والأصول",
-        footer_phase: "المرحلة الحالية: واجهة + ربط Firestore",
-        footer_next: "المرحلة القادمة: توسيع الجداول والصلاحيات",
-        card_sales_title: "مبيعات اليوم (كل الفروع)",
-        card_sales_sub: "أرقام تجريبية للعرض فقط",
-        card_sales_delta: "+ 12% عن أمس",
-        card_stock_title: "حالة المخزون المركزي",
-        card_stock_sub: "مواد حرجة تحتاج إعادة طلب",
-        card_stock_tag1: "لحم طازج",
-        card_stock_tag2: "خبز برجر",
-        card_stock_tag3: "علب تغليف",
-        card_staff_title: "الموظفون النشطون اليوم",
-        card_staff_sub: "كل الفروع + HQ",
-        card_staff_tag1: "10 فروع",
-        card_staff_tag2: "مطبخ مركزي",
-        card_staff_tag3: "مستودع",
-        card_tickets_title: "تذاكر IT / صيانة مفتوحة",
-        card_tickets_sub: "تحتاج متابعة",
-        card_tickets_tag1: "5 IT",
-        card_tickets_tag2: "9 صيانة",
-        view_dashboard_title: "لوحة التحكم العامة",
-        view_dashboard_sub: "نظرة سريعة على الفروع، المبيعات، المخزون، والموارد البشرية على مستوى الشركة.",
-        btn_refresh: "تحديث الأرقام",
-        btn_export: "تصدير تقرير",
-        tbl_branch: "الفرع",
-        tbl_sales: "مبيعات اليوم",
-        tbl_stock_status: "حالة المخزون",
-        tbl_staff_on_shift: "عدد الموظفين في الوردية",
-        tbl_notes: "ملاحظات",
-        status_good: "جيد",
-        status_medium: "متوسط",
-        status_attention: "تحتاج متابعة",
-        status_under_control: "تحت السيطرة",
-        status_in_progress: "قيد التنفيذ",
-        note_none: "لا يوجد تنبيهات",
-        note_request: "طلب تحويل من المستودع",
-        note_training: "تدريب موظفين جدد",
-        btn_add: "إضافة",
-        btn_edit: "تعديل",
-        btn_delete: "حذف",
-        side_pos_title: "نظرة على فرع / قسم محدد",
-        side_pos_sub: "هذه واجهة شكلية لعرض تفاصيل فرع أو قسم حسب الدور والصلاحيات.",
-        side_context_branch: "فرع: جدة - التحلية",
-        chip_role_label: "الدور الحالي:",
-        chip_hint: "هذه البيانات تجريبية، لكن قسم الفروع و HR الآن متصلين فعليًا بـ Firestore.",
-        side_tbl_col1: "العنصر",
-        side_tbl_col2: "القيمة",
-        side_tbl_col3: "الحالة",
-        side_item1: "تذاكر مفتوحة",
-        side_item2: "تنبيهات مخزون",
-        side_item3: "مهام اليوم",
-        note_ui_only: "* ملاحظة: قسم الفروع (branches) و HR (employees) متصلين بـ Firestore. باقي الأقسام واجهة فقط.",
-        login_title: "تسجيل الدخول إلى OpsHub-Dev",
-        login_sub: "هذا تسجيل دخول تجريبي فقط لتحديد الدور وعرض الأقسام المناسبة لكل إدارة.",
-        login_username_label: "اسم المستخدم",
-        login_password_label: "كلمة المرور",
-        login_role_label: "اختر الدور",
-        login_btn: "دخول (وضع تجريبي)",
-        login_hint: "يمكنك إدخال أي اسم مستخدم وكلمة مرور الآن، الأهم هو اختيار الدور لتجربة الصلاحيات.",
-        role_admin: "إدارة عليا (Admin)",
-        role_hq: "إدارة HQ",
-        role_branch: "مدير فرع",
-        role_hr: "HR",
-        role_it: "IT",
-        role_maintenance: "صيانة",
-        theme_dark: "دارك",
-      },
-      en: {
-        app_name: "OpsHub-Dev",
-        app_sub: "Multi-branch restaurant operations platform – HQ · Branches · HR · IT · Maintenance",
-        mode_label: "UI connected to Firestore (demo)",
-        user_not_logged: "Not logged in",
-        section_exec: "Executive",
-        section_support: "Support & Resources",
-        nav_dashboard: "Global Dashboard",
-        nav_branches: "Branches & Sales",
-        nav_warehouse: "Central Warehouse",
-        nav_kitchen: "Central Kitchen",
-        nav_hr: "HR Management",
-        nav_training: "Training & Development",
-        nav_it: "IT Tickets",
-        nav_maintenance: "Maintenance & Assets",
-        footer_phase: "Current phase: UI + Firestore",
-        footer_next: "Next: Expand modules & permissions",
-        card_sales_title: "Today’s Sales (All Branches)",
-        card_sales_sub: "Sample numbers for demo only",
-        card_sales_delta: "+ 12% vs yesterday",
-        card_stock_title: "Central Stock Status",
-        card_stock_sub: "Critical items need reordering",
-        card_stock_tag1: "Fresh meat",
-        card_stock_tag2: "Burger buns",
-        card_stock_tag3: "Packaging boxes",
-        card_staff_title: "Active Staff Today",
-        card_staff_sub: "All branches + HQ",
-        card_staff_tag1: "10 branches",
-        card_staff_tag2: "Central kitchen",
-        card_staff_tag3: "Warehouse",
-        card_tickets_title: "Open IT / Maintenance Tickets",
-        card_tickets_sub: "Need attention",
-        card_tickets_tag1: "5 IT",
-        card_tickets_tag2: "9 Maintenance",
-        view_dashboard_title: "Global Dashboard",
-        view_dashboard_sub: "Quick overview of branches, sales, stock, and HR across the company.",
-        btn_refresh: "Refresh",
-        btn_export: "Export report",
-        tbl_branch: "Branch",
-        tbl_sales: "Today’s sales",
-        tbl_stock_status: "Stock status",
-        tbl_staff_on_shift: "Staff on shift",
-        tbl_notes: "Notes",
-        status_good: "Good",
-        status_medium: "Medium",
-        status_attention: "Needs attention",
-        status_under_control: "Under control",
-        status_in_progress: "In progress",
-        note_none: "No alerts",
-        note_request: "Transfer requested from warehouse",
-        note_training: "New staff training",
-        btn_add: "Add",
-        btn_edit: "Edit",
-        btn_delete: "Delete",
-        side_pos_title: "Selected Branch / Department",
-        side_pos_sub: "Demo view for branch or department details based on role.",
-        side_context_branch: "Branch: Jeddah - Tahlia",
-        chip_role_label: "Current role:",
-        chip_hint: "Demo data, but branches & HR sections are now connected to Firestore.",
-        side_tbl_col1: "Item",
-        side_tbl_col2: "Value",
-        side_tbl_col3: "Status",
-        side_item1: "Open tickets",
-        side_item2: "Stock alerts",
-        side_item3: "Today’s tasks",
-        note_ui_only: "* Note: Branches (branches) and HR (employees) sections are connected to Firestore. Others are UI only.",
-        login_title: "Sign in to OpsHub-Dev",
-        login_sub: "Demo login to choose a role and see the relevant sections.",
-        login_username_label: "Username",
-        login_password_label: "Password",
-        login_role_label: "Select role",
-        login_btn: "Sign in (demo)",
-        login_hint: "You can type any username/password now. Role selection controls what you see.",
-        role_admin: "Top Management (Admin)",
-        role_hq: "HQ Management",
-        role_branch: "Branch Manager",
-        role_hr: "HR",
-        role_it: "IT",
-        role_maintenance: "Maintenance",
-        theme_dark: "Dark",
-      },
-    };
-
     let currentLang = "ar";
-    let currentRole = null;
+    let currentRole = "admin";
     let currentView = "dashboard";
 
-    const langArBtn = document.getElementById("lang-ar");
-    const langEnBtn = document.getElementById("lang-en");
-    const themeToggle = document.getElementById("theme-toggle");
-    const headerUser = document.getElementById("header-user");
-    const chipRole = document.getElementById("chip-role");
-    const loginOverlay = document.getElementById("login-overlay");
-    const loginBtn = document.getElementById("login-btn");
-    const loginError = document.getElementById("login-error");
-    const loginUsername = document.getElementById("login-username");
-    const loginPassword = document.getElementById("login-password");
-    const loginRole = document.getElementById("login-role");
-    const navButtons = document.querySelectorAll(".nav-btn");
+    const navItems = document.querySelectorAll(".nav-item");
+    const topTitle = document.getElementById("top-title");
+    const topSubtitle = document.getElementById("top-subtitle");
+    const btnLang = document.getElementById("btn-lang");
+    const roleButtons = document.querySelectorAll(".role-pill");
     const viewMainTitle = document.getElementById("view-main-title");
     const viewMainSub = document.getElementById("view-main-sub");
     const mainTableHead = document.getElementById("main-table-head");
     const mainTableBody = document.getElementById("main-table-body");
-    const sideContext = document.getElementById("side-context");
-
     const btnAdd = document.getElementById("btn-add");
     const btnEdit = document.getElementById("btn-edit");
     const btnDelete = document.getElementById("btn-delete");
 
     let branchesCache = {};
-    let selectedBranchKey = null;
-
     let employeesCache = {};
+    let ticketsCache = {};
+    let selectedBranchKey = null;
     let selectedEmployeeKey = null;
+    let selectedTicketKey = null;
 
-    function applyLang(lang) {
-      currentLang = lang;
-      document.documentElement.lang = lang;
-      document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
-
-      const dict = i18n[lang];
-      document.querySelectorAll("[data-i18n]").forEach((el) => {
-        const key = el.getAttribute("data-i18n");
-        if (dict[key]) el.textContent = dict[key];
-      });
-
-      if (lang === "ar") {
-        langArBtn.classList.add("active");
-        langEnBtn.classList.remove("active");
-      } else {
-        langEnBtn.classList.add("active");
-        langArBtn.classList.remove("active");
-      }
-
-      setViewContent(currentView);
-    }
-
-    function toggleTheme() {
-      document.body.classList.toggle("light");
-      const isLight = document.body.classList.contains("light");
-      themeToggle.classList.toggle("active", !isLight);
-      themeToggle.textContent = isLight
-        ? currentLang === "ar"
-          ? "لايت"
-          : "Light"
-        : i18n[currentLang].theme_dark;
-    }
-
-    function setActiveNav(view) {
-      navButtons.forEach((btn) => {
-        btn.classList.toggle("active", btn.dataset.view === view);
-      });
-      currentView = view;
-    }
-
-    function filterNavByRole(role) {
-      navButtons.forEach((btn) => {
-        const roles = (btn.dataset.roles || "").split(",");
-        if (!roles.length || roles.includes(role) || roles.includes("admin")) {
-          btn.style.display = "";
-        } else {
-          btn.style.display = "none";
-        }
-      });
-    }
-
-    function renderBranchesTable() {
+    function setViewContent(view) {
       const lang = currentLang;
+      currentView = view;
 
+      if (view === "dashboard") {
+        topTitle.textContent = lang === "ar" ? "لوحة التحكم العامة" : "Executive Dashboard";
+        topSubtitle.textContent =
+          lang === "ar"
+            ? "نظرة سريعة على الفروع، الموظفين، التذاكر، والمخزون."
+            : "Quick overview of branches, employees, tickets, and inventory.";
+        viewMainTitle.textContent =
+          lang === "ar" ? "نظرة على فرع / قسم محدد" : "Branch / Department snapshot";
+        viewMainSub.textContent =
+          lang === "ar"
+            ? "هذه واجهة شكلية لتفاصيل فرع أو قسم حسب الدور والصلاحيات."
+            : "A mock interface for branch or department details based on role and permissions.";
+        mainTableHead.innerHTML = `
+          <th>${lang === "ar" ? "الحالة" : "Status"}</th>
+          <th>${lang === "ar" ? "العنصر" : "Item"}</th>
+          <th>${lang === "ar" ? "القيمة" : "Value"}</th>
+        `;
+        mainTableBody.innerHTML = `
+          <tr>
+            <td>${lang === "ar" ? "تحتاج متابعة" : "Needs attention"}</td>
+            <td>${lang === "ar" ? "تذاكر مفتوحة" : "Open tickets"}</td>
+            <td>4</td>
+          </tr>
+          <tr>
+            <td>${lang === "ar" ? "تحت السيطرة" : "Under control"}</td>
+            <td>${lang === "ar" ? "تجهيزات مخزون" : "Stock preparations"}</td>
+            <td>2</td>
+          </tr>
+          <tr>
+            <td>${lang === "ar" ? "قد أُنجزت" : "Completed"}</td>
+            <td>${lang === "ar" ? "مهام اليوم" : "Today tasks"}</td>
+            <td>7</td>
+          </tr>
+        `;
+      } else if (view === "branches") {
+        topTitle.textContent = lang === "ar" ? "إدارة الفروع والمواقع" : "Branch Management";
+        topSubtitle.textContent =
+          lang === "ar"
+            ? "إضافة وتعديل وحذف الفروع وربطها بالمناطق."
+            : "Add, edit, and remove branches and link them to regions.";
+        viewMainTitle.textContent =
+          lang === "ar" ? "الفروع المسجلة في النظام" : "Registered branches";
+        viewMainSub.textContent =
+          lang === "ar"
+            ? "يتم حفظ بيانات الفروع في Firestore داخل مجموعة branches."
+            : "Branch data is stored in Firestore under the branches collection.";
+        loadBranchesFromFirestore();
+      } else if (view === "hr") {
+        topTitle.textContent = lang === "ar" ? "الموارد البشرية HR (متقدم)" : "HR Management (Advanced)";
+        topSubtitle.textContent =
+          lang === "ar"
+            ? "إدارة الموظفين، الأقسام، والوظائف التشغيلية."
+            : "Manage employees, departments, and operational roles.";
+        viewMainTitle.textContent =
+          lang === "ar" ? "الموظفون المسجلون في النظام" : "Registered employees";
+        viewMainSub.textContent =
+          lang === "ar"
+            ? "يتم حفظ بيانات الموظفين في Firestore داخل مجموعة employees."
+            : "Employee data is stored in Firestore under the employees collection.";
+        loadEmployeesFromFirestore();
+      } else if (view === "it") {
+        topTitle.textContent = lang === "ar" ? "تذاكر الـ IT" : "IT Tickets";
+        topSubtitle.textContent =
+          lang === "ar"
+            ? "تذاكر الدعم الفني من الفروع، مع الأولوية والحالة ونوع المشكلة."
+            : "Support tickets from branches with priority, status, and issue type.";
+        viewMainTitle.textContent =
+          lang === "ar" ? "تذاكر الـ IT (متقدم)" : "IT Tickets (Advanced)";
+        viewMainSub.textContent =
+          lang === "ar"
+            ? "يتم حفظ تذاكر الدعم الفني في Firestore داخل مجموعة tickets."
+            : "IT support tickets are stored in Firestore under the tickets collection.";
+        loadTicketsFromFirestore();
+      } else {
+        topTitle.textContent =
+          lang === "ar" ? "وحدة قيد التطوير" : "Module under development";
+        topSubtitle.textContent =
+          lang === "ar"
+            ? "هذه الوحدة سيتم تفعيلها في المرحلة القادمة."
+            : "This module will be activated in the next phase.";
+        viewMainTitle.textContent =
+          lang === "ar" ? "واجهة تجريبية" : "Experimental interface";
+        viewMainSub.textContent =
+          lang === "ar"
+            ? "البيانات هنا للعرض فقط، بدون ربط فعلي."
+            : "Data here is for display only, without actual binding.";
+        mainTableHead.innerHTML = `
+          <th>${lang === "ar" ? "الحقل" : "Field"}</th>
+          <th>${lang === "ar" ? "القيمة" : "Value"}</th>
+          <th>${lang === "ar" ? "ملاحظات" : "Notes"}</th>
+        `;
+        mainTableBody.innerHTML = `
+          <tr>
+            <td>${lang === "ar" ? "الوحدة" : "Module"}</td>
+            <td>${view}</td>
+            <td>${lang === "ar" ? "قيد التطوير" : "Under development"}</td>
+          </tr>
+        `;
+      }
+    }
+
+    navItems.forEach((item) => {
+      item.addEventListener("click", () => {
+        navItems.forEach((i) => i.classList.remove("active"));
+        item.classList.add("active");
+        const view = item.getAttribute("data-view");
+        setViewContent(view);
+      });
+    });
+
+    btnLang.addEventListener("click", () => {
+      currentLang = currentLang === "ar" ? "en" : "ar";
+      document.body.dir = currentLang === "ar" ? "rtl" : "ltr";
+      btnLang.textContent = currentLang === "ar" ? "العربية" : "English";
+      setViewContent(currentView);
+    });
+
+    roleButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        roleButtons.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentRole = btn.getAttribute("data-role");
+      });
+    });
+
+    // ========== Firestore: Branches ==========
+    async function loadBranchesFromFirestore() {
+      const lang = currentLang;
       mainTableHead.innerHTML = `
-        <th>${lang === "ar" ? "الفرع" : "Branch"}</th>
+        <th>${lang === "ar" ? "اسم الفرع" : "Branch name"}</th>
         <th>${lang === "ar" ? "المدينة" : "City"}</th>
-        <th>${lang === "ar" ? "الكود" : "Code"}</th>
         <th>${lang === "ar" ? "الحالة" : "Status"}</th>
-        <th>${lang === "ar" ? "ملاحظات" : "Notes"}</th>
       `;
-
       mainTableBody.innerHTML = "";
       selectedBranchKey = null;
 
-      const keys = Object.keys(branchesCache);
+      const snapshot = await db.collection("branches").orderBy("name", "asc").get();
+      branchesCache = {};
+      snapshot.forEach((doc) => {
+        branchesCache[doc.id] = doc.data();
+      });
+
+      if (!Object.keys(branchesCache).length) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 3;
+        td.textContent = lang === "ar" ? "لا توجد فروع حتى الآن." : "No branches yet.";
+        tr.appendChild(td);
+        mainTableBody.appendChild(tr);
+        return;
+      }
+
+      Object.keys(branchesCache).forEach((key) => {
+        const b = branchesCache[key];
+        const tr = document.createElement("tr");
+        tr.dataset.key = key;
+        tr.style.cursor = "pointer";
+
+        const statusClass =
+          b.status === "open"
+            ? "status-ok"
+            : b.status === "limited"
+            ? "status-warn"
+            : "status-bad";
+
+        const statusLabel =
+          b.status === "open"
+            ? (lang === "ar" ? "يعمل" : "Open")
+            : b.status === "limited"
+            ? (lang === "ar" ? "تشغيل جزئي" : "Limited")
+            : (lang === "ar" ? "مغلق" : "Closed");
+
+        tr.innerHTML = `
+          <td>${b.name || ""}</td>
+          <td>${b.city || ""}</td>
+          <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
+        `;
+
+        tr.addEventListener("click", () => {
+          selectedBranchKey = key;
+          selectedEmployeeKey = null;
+          selectedTicketKey = null;
+          document.querySelectorAll("#main-table-body tr").forEach((row) => {
+            row.style.backgroundColor = "";
+          });
+          tr.style.backgroundColor = "rgba(34,197,94,0.08)";
+        });
+
+        mainTableBody.appendChild(tr);
+      });
+    }
+
+    async function addBranch() {
+      const lang = currentLang;
+      const name = prompt(lang === "ar" ? "اسم الفرع:" : "Branch name:");
+      if (!name) return;
+      const city = prompt(lang === "ar" ? "المدينة:" : "City:") || "";
+      const statusInput = prompt(
+        lang === "ar"
+          ? "الحالة (open / limited / closed):"
+          : "Status (open / limited / closed):",
+        "open"
+      );
+      const status = statusInput || "open";
+
+      await db.collection("branches").add({
+        name,
+        city,
+        status
+      });
+      loadBranchesFromFirestore();
+    }
+
+    async function editBranch() {
+      const lang = currentLang;
+      if (!selectedBranchKey) {
+        alert(lang === "ar" ? "اختر فرع من الجدول أولاً." : "Select a branch row first.");
+        return;
+      }
+      const b = branchesCache[selectedBranchKey];
+      if (!b) return;
+
+      const name = prompt(lang === "ar" ? "اسم الفرع:" : "Branch name:", b.name || "") || "";
+      const city = prompt(lang === "ar" ? "المدينة:" : "City:", b.city || "") || "";
+      const statusInput = prompt(
+        lang === "ar"
+          ? "الحالة (open / limited / closed):"
+          : "Status (open / limited / closed):",
+        b.status || "open"
+      );
+      const status = statusInput || "open";
+
+      await db.collection("branches").doc(selectedBranchKey).update({
+        name,
+        city,
+        status
+      });
+      loadBranchesFromFirestore();
+    }
+
+    async function deleteBranch() {
+      const lang = currentLang;
+      if (!selectedBranchKey) {
+        alert(lang === "ar" ? "اختر فرع من الجدول أولاً." : "Select a branch row first.");
+        return;
+      }
+      if (
+        !confirm(
+          lang === "ar"
+            ? "هل أنت متأكد من حذف هذا الفرع؟"
+            : "Are you sure you want to delete this branch?"
+        )
+      ) {
+        return;
+      }
+      await db.collection("branches").doc(selectedBranchKey).delete();
+      selectedBranchKey = null;
+      loadBranchesFromFirestore();
+    }
+
+    // ========== Firestore: Employees (HR) ==========
+    async function loadEmployeesFromFirestore() {
+      const lang = currentLang;
+      mainTableHead.innerHTML = `
+        <th>${lang === "ar" ? "اسم الموظف" : "Employee name"}</th>
+        <th>${lang === "ar" ? "القسم" : "Department"}</th>
+        <th>${lang === "ar" ? "الفرع" : "Branch"}</th>
+        <th>${lang === "ar" ? "الحالة" : "Status"}</th>
+      `;
+      mainTableBody.innerHTML = "";
+      selectedEmployeeKey = null;
+
+      const snapshot = await db.collection("employees").orderBy("name", "asc").get();
+      employeesCache = {};
+      snapshot.forEach((doc) => {
+        employeesCache[doc.id] = doc.data();
+      });
+
+      if (!Object.keys(employeesCache).length) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 4;
+        td.textContent = lang === "ar" ? "لا يوجد موظفون حتى الآن." : "No employees yet.";
+        tr.appendChild(td);
+        mainTableBody.appendChild(tr);
+        return;
+      }
+
+      Object.keys(employeesCache).forEach((key) => {
+        const e = employeesCache[key];
+        const tr = document.createElement("tr");
+        tr.dataset.key = key;
+        tr.style.cursor = "pointer";
+
+        const statusClass =
+          e.status === "active"
+            ? "status-ok"
+            : e.status === "on_leave"
+            ? "status-warn"
+            : "status-bad";
+
+        const statusLabel =
+          e.status === "active"
+            ? (lang === "ar" ? "نشط" : "Active")
+            : e.status === "on_leave"
+            ? (lang === "ar" ? "إجازة" : "On leave")
+            : (lang === "ar" ? "موقوف" : "Suspended");
+
+        tr.innerHTML = `
+          <td>${e.name || ""}</td>
+          <td>${e.department || ""}</td>
+          <td>${e.branch || ""}</td>
+          <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
+        `;
+
+        tr.addEventListener("click", () => {
+          selectedEmployeeKey = key;
+          selectedBranchKey = null;
+          selectedTicketKey = null;
+          document.querySelectorAll("#main-table-body tr").forEach((row) => {
+            row.style.backgroundColor = "";
+          });
+          tr.style.backgroundColor = "rgba(34,197,94,0.08)";
+        });
+
+        mainTableBody.appendChild(tr);
+      });
+    }
+
+    async function addEmployee() {
+      const lang = currentLang;
+      const name = prompt(lang === "ar" ? "اسم الموظف:" : "Employee name:");
+      if (!name) return;
+      const department = prompt(
+        lang === "ar" ? "القسم (مثال: HR / IT / تشغيل):" : "Department (e.g. HR / IT / Ops):"
+      ) || "";
+      const branch = prompt(
+        lang === "ar" ? "الفرع (مثال: جدة - التحلية):" : "Branch (e.g. Jeddah - Tahlia):"
+      ) || "";
+      const statusInput = prompt(
+        lang === "ar"
+          ? "الحالة (active / on_leave / suspended):"
+          : "Status (active / on_leave / suspended):",
+        "active"
+      );
+      const status = statusInput || "active";
+
+      await db.collection("employees").add({
+        name,
+        department,
+        branch,
+        status
+      });
+      loadEmployeesFromFirestore();
+    }
+
+    async function editEmployee() {
+      const lang = currentLang;
+      if (!selectedEmployeeKey) {
+        alert(lang === "ar" ? "اختر موظف من الجدول أولاً." : "Select an employee row first.");
+        return;
+      }
+      const e = employeesCache[selectedEmployeeKey];
+      if (!e) return;
+
+      const name = prompt(lang === "ar" ? "اسم الموظف:" : "Employee name:", e.name || "") || "";
+      const department = prompt(
+        lang === "ar" ? "القسم:" : "Department:",
+        e.department || ""
+      ) || "";
+      const branch = prompt(
+        lang === "ar" ? "الفرع:" : "Branch:",
+        e.branch || ""
+      ) || "";
+      const statusInput = prompt(
+        lang === "ar"
+          ? "الحالة (active / on_leave / suspended):"
+          : "Status (active / on_leave / suspended):",
+        e.status || "active"
+      );
+      const status = statusInput || "active";
+
+      await db.collection("employees").doc(selectedEmployeeKey).update({
+        name,
+        department,
+        branch,
+        status
+      });
+      loadEmployeesFromFirestore();
+    }
+
+    async function deleteEmployee() {
+      const lang = currentLang;
+      if (!selectedEmployeeKey) {
+        alert(lang === "ar" ? "اختر موظف من الجدول أولاً." : "Select an employee row first.");
+        return;
+      }
+      if (
+        !confirm(
+          lang === "ar"
+            ? "هل أنت متأكد من حذف هذا الموظف؟"
+            : "Are you sure you want to delete this employee?"
+        )
+      ) {
+        return;
+      }
+      await db.collection("employees").doc(selectedEmployeeKey).delete();
+      selectedEmployeeKey = null;
+      loadEmployeesFromFirestore();
+    }
+
+    // ========== Firestore: IT Tickets (Advanced) ==========
+    function renderTicketsTable() {
+      const lang = currentLang;
+
+      mainTableHead.innerHTML = `
+        <th>${lang === "ar" ? "رقم التذكرة" : "Ticket No."}</th>
+        <th>${lang === "ar" ? "العنوان" : "Title"}</th>
+        <th>${lang === "ar" ? "الفرع" : "Branch"}</th>
+        <th>${lang === "ar" ? "نوع المشكلة" : "Issue Type"}</th>
+        <th>${lang === "ar" ? "الأولوية" : "Priority"}</th>
+        <th>${lang === "ar" ? "الحالة" : "Status"}</th>
+      `;
+
+      mainTableBody.innerHTML = "";
+      selectedTicketKey = null;
+
+      const keys = Object.keys(ticketsCache);
       if (!keys.length) {
         const tr = document.createElement("tr");
         const td = document.createElement("td");
-        td.colSpan = 5;
-        td.textContent = lang === "ar" ? "لا توجد فروع مسجلة بعد." : "No branches yet.";
+        td.colSpan = 6;
+        td.textContent = lang === "ar" ? "لا توجد تذاكر حتى الآن." : "No tickets yet.";
         tr.appendChild(td);
         mainTableBody.appendChild(tr);
         return;
       }
 
       keys.forEach((key) => {
-        const b = branchesCache[key];
+        const t = ticketsCache[key];
         const tr = document.createElement("tr");
         tr.dataset.key = key;
         tr.style.cursor = "pointer";
 
+        const statusClass =
+          t.status === "open"
+            ? "status-bad"
+            : t.status === "in_progress"
+            ? "status-warn"
+            : "status-ok";
+
+        const statusLabel =
+          t.status === "open"
+            ? (lang === "ar" ? "مفتوحة" : "Open")
+            : t.status === "in_progress"
+            ? (lang === "ar" ? "تحت المعالجة" : "In progress")
+            : (lang === "ar" ? "مغلقة" : "Closed");
+
+        const priorityLabel =
+          t.priority === "low"
+            ? (lang === "ar" ? "منخفضة" : "Low")
+            : t.priority === "medium"
+            ? (lang === "ar" ? "متوسطة" : "Medium")
+            : t.priority === "high"
+            ? (lang === "ar" ? "عالية" : "High")
+            : (lang === "ar" ? "عاجلة" : "Critical");
+
         tr.innerHTML = `
-          <td>${b.name || ""}</td>
-          <td>${b.city || ""}</td>
-          <td>${b.code || ""}</td>
-          <td>
-            <span class="status-pill ${b.is_active ? "status-ok" : "status-bad"}">
-              ${b.is_active
-                ? lang === "ar"
-                  ? "نشط"
-                  : "Active"
-                : lang === "ar"
-                ? "متوقف"
-                : "Inactive"}
-            </span>
-          </td>
-          <td><span class="pill-small">${b.note || ""}</span></td>
+          <td>${t.ticket_no || ""}</td>
+          <td>${t.title || ""}</td>
+          <td>${t.branch || ""}</td>
+          <td>${t.issue_type || ""}</td>
+          <td>${priorityLabel}</td>
+          <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
         `;
 
         tr.addEventListener("click", () => {
-          selectedBranchKey = key;
+          selectedTicketKey = key;
+          selectedBranchKey = null;
           selectedEmployeeKey = null;
           document.querySelectorAll("#main-table-body tr").forEach((row) => {
             row.style.backgroundColor = "";
@@ -1180,514 +1252,172 @@
       });
     }
 
-    function renderEmployeesTable() {
-      const lang = currentLang;
-
-      mainTableHead.innerHTML = `
-        <th>${lang === "ar" ? "اسم الموظف" : "Employee Name"}</th>
-        <th>${lang === "ar" ? "الوظيفة" : "Job Title"}</th>
-        <th>${lang === "ar" ? "القسم" : "Department"}</th>
-        <th>${lang === "ar" ? "الفرع" : "Branch"}</th>
-        <th>${lang === "ar" ? "الرقم الوظيفي" : "Employee No."}</th>
-        <th>${lang === "ar" ? "الحالة" : "Status"}</th>
-      `;
-
-      mainTableBody.innerHTML = "";
-      selectedEmployeeKey = null;
-
-      const keys = Object.keys(employeesCache);
-      if (!keys.length) {
-        const tr = document.createElement("tr");
-        const td = document.createElement("td");
-        td.colSpan = 6;
-        td.textContent = lang === "ar" ? "لا يوجد موظفون مسجلون بعد." : "No employees yet.";
-        tr.appendChild(td);
-        mainTableBody.appendChild(tr);
-        return;
-      }
-
-      keys.forEach((key) => {
-        const e = employeesCache[key];
-        const tr = document.createElement("tr");
-        tr.dataset.key = key;
-        tr.style.cursor = "pointer";
-
-        const statusClass =
-          e.status === "active" ? "status-ok" : e.status === "on_leave" ? "status-warn" : "status-bad";
-
-        const statusLabel =
-          e.status === "active"
-            ? lang === "ar"
-              ? "نشط"
-              : "Active"
-            : e.status === "on_leave"
-            ? lang === "ar"
-              ? "إجازة"
-              : "On leave"
-            : lang === "ar"
-            ? "موقوف"
-            : "Suspended";
-
-        tr.innerHTML = `
-          <td>${e.name || ""}</td>
-          <td>${e.job_title || ""}</td>
-          <td>${e.department || ""}</td>
-          <td>${e.branch || ""}</td>
-          <td>${e.employee_no || ""}</td>
-          <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
-        `;
-
-        tr.addEventListener("click", () => {
-          selectedEmployeeKey = key;
-          selectedBranchKey = null;
-          document.querySelectorAll("#main-table-body tr").forEach((row) => {
-            row.style.backgroundColor = "";
-          });
-          tr.style.backgroundColor = "rgba(34,197,94,0.08)";
-        });
-
-        mainTableBody.appendChild(tr);
-      });
-    }
-
-    async function loadBranchesFromFirestore() {
-      const snapshot = await db.collection("branches").get();
-      branchesCache = {};
+    async function loadTicketsFromFirestore() {
+      const snapshot = await db.collection("tickets").orderBy("created_at", "desc").get();
+      ticketsCache = {};
       snapshot.forEach((doc) => {
-        branchesCache[doc.id] = doc.data();
+        ticketsCache[doc.id] = doc.data();
       });
-      renderBranchesTable();
+      renderTicketsTable();
     }
 
-    async function loadEmployeesFromFirestore() {
-      const snapshot = await db.collection("employees").get();
-      employeesCache = {};
-      snapshot.forEach((doc) => {
-        employeesCache[doc.id] = doc.data();
-      });
-      renderEmployeesTable();
-    }
-
-    async function addBranch() {
-      const lang = currentLang;
-      const name = prompt(lang === "ar" ? "اسم الفرع:" : "Branch name:");
-      if (!name) return;
-
-      const city = prompt(lang === "ar" ? "المدينة:" : "City:");
-      if (!city) return;
-
-      const code = prompt(lang === "ar" ? "كود الفرع (مثال JED-TH):" : "Branch code (e.g. JED-TH):");
-      if (!code) return;
-
-      await db.collection("branches").add({
-        name,
-        city,
-        code,
-        is_active: true,
-        note: "",
-        created_at: new Date()
-      });
-
-      loadBranchesFromFirestore();
-    }
-
-    async function editBranch() {
-      const lang = currentLang;
-      if (!selectedBranchKey) {
-        alert(lang === "ar" ? "اختر فرع من الجدول أولاً." : "Select a branch row first.");
-        return;
-      }
-
-      const b = branchesCache[selectedBranchKey];
-      if (!b) return;
-
-      const name = prompt(lang === "ar" ? "اسم الفرع:" : "Branch name:", b.name || "");
-      if (!name) return;
-
-      const city = prompt(lang === "ar" ? "المدينة:" : "City:", b.city || "");
-      if (!city) return;
-
-      const code = prompt(lang === "ar" ? "كود الفرع:" : "Branch code:", b.code || "");
-      if (!code) return;
-
-      const isActiveStr = prompt(
-        lang === "ar"
-          ? "نشط؟ (اكتب 1 للنشط، 0 لغير نشط):"
-          : "Active? (type 1 for active, 0 for inactive):",
-        b.is_active ? "1" : "0"
-      );
-      const is_active = isActiveStr === "1";
-
-      await db.collection("branches").doc(selectedBranchKey).update({
-        name,
-        city,
-        code,
-        is_active
-      });
-
-      loadBranchesFromFirestore();
-    }
-
-    async function deleteBranch() {
-      const lang = currentLang;
-      if (!selectedBranchKey) {
-        alert(lang === "ar" ? "اختر فرع من الجدول أولاً." : "Select a branch row first.");
-        return;
-      }
-
-      if (
-        !confirm(
-          lang === "ar"
-            ? "هل أنت متأكد من حذف هذا الفرع؟"
-            : "Are you sure you want to delete this branch?"
-        )
-      ) {
-        return;
-      }
-
-      await db.collection("branches").doc(selectedBranchKey).delete();
-      selectedBranchKey = null;
-      loadBranchesFromFirestore();
-    }
-
-    async function addEmployee() {
+    async function addTicket() {
       const lang = currentLang;
 
-      const name = prompt(lang === "ar" ? "اسم الموظف:" : "Employee name:");
-      if (!name) return;
-
-      const job_title = prompt(lang === "ar" ? "المسمى الوظيفي:" : "Job title:");
-      if (!job_title) return;
-
-      const department = prompt(
-        lang === "ar" ? "القسم (مثال: HR / IT / Kitchen):" : "Department (e.g. HR / IT / Kitchen):"
-      ) || "";
+      const title = prompt(lang === "ar" ? "عنوان التذكرة:" : "Ticket title:");
+      if (!title) return;
 
       const branch = prompt(
         lang === "ar" ? "الفرع (مثال: جدة - التحلية):" : "Branch (e.g. Jeddah - Tahlia):"
       ) || "";
 
-      const employee_no = prompt(
-        lang === "ar" ? "الرقم الوظيفي:" : "Employee number:"
-      ) || "";
-
-      const id_no = prompt(
-        lang === "ar" ? "رقم الهوية / الإقامة:" : "National / Residency ID:"
-      ) || "";
-
-      const hire_date = prompt(
-        lang === "ar" ? "تاريخ التعيين (مثال: 2024-01-15):" : "Hire date (e.g. 2024-01-15):"
-      ) || "";
-
-      const statusInput = prompt(
+      const issue_type = prompt(
         lang === "ar"
-          ? "الحالة (active / on_leave / suspended):"
-          : "Status (active / on_leave / suspended):",
-        "active"
+          ? "نوع المشكلة (شبكة / جهاز / نظام / إنترنت / POS / أخرى):"
+          : "Issue type (Network / Device / System / Internet / POS / Other):"
+      ) || "";
+
+      const priorityInput = prompt(
+        lang === "ar"
+          ? "الأولوية (low / medium / high / critical):"
+          : "Priority (low / medium / high / critical):",
+        "medium"
       );
-      const status = statusInput || "active";
+      const priority = priorityInput || "medium";
 
-      const salaryStr = prompt(
-        lang === "ar" ? "الراتب (اختياري):" : "Salary (optional):"
-      ) || "";
-      const salary = salaryStr ? Number(salaryStr) : null;
-
-      const notes = prompt(
-        lang === "ar" ? "ملاحظات (اختياري):" : "Notes (optional):"
+      const reporter = prompt(
+        lang === "ar" ? "اسم المبلّغ عن المشكلة:" : "Reporter name:"
       ) || "";
 
-      await db.collection("employees").add({
-        name,
-        job_title,
-        department,
+      const description = prompt(
+        lang === "ar" ? "وصف المشكلة (اختياري):" : "Issue description (optional):"
+      ) || "";
+
+      const status = "open";
+      const ticket_no = "IT-" + Date.now().toString().slice(-6);
+
+      await db.collection("tickets").add({
+        ticket_no,
+        title,
         branch,
-        employee_no,
-        id_no,
-        hire_date,
+        issue_type,
+        priority,
+        reporter,
+        description,
         status,
-        salary,
-        notes,
-        photo_url: "",
-        created_at: new Date()
+        created_at: new Date(),
+        closed_at: null
       });
 
-      loadEmployeesFromFirestore();
+      loadTicketsFromFirestore();
     }
 
-    async function editEmployee() {
+    async function editTicket() {
       const lang = currentLang;
-      if (!selectedEmployeeKey) {
-        alert(lang === "ar" ? "اختر موظف من الجدول أولاً." : "Select an employee row first.");
+      if (!selectedTicketKey) {
+        alert(lang === "ar" ? "اختر تذكرة من الجدول أولاً." : "Select a ticket row first.");
         return;
       }
 
-      const e = employeesCache[selectedEmployeeKey];
-      if (!e) return;
+      const t = ticketsCache[selectedTicketKey];
+      if (!t) return;
 
-      const name = prompt(lang === "ar" ? "اسم الموظف:" : "Employee name:", e.name || "");
-      if (!name) return;
-
-      const job_title = prompt(
-        lang === "ar" ? "المسمى الوظيفي:" : "Job title:",
-        e.job_title || ""
-      ) || "";
-
-      const department = prompt(
-        lang === "ar" ? "القسم:" : "Department:",
-        e.department || ""
+      const title = prompt(
+        lang === "ar" ? "عنوان التذكرة:" : "Ticket title:",
+        t.title || ""
       ) || "";
 
       const branch = prompt(
         lang === "ar" ? "الفرع:" : "Branch:",
-        e.branch || ""
+        t.branch || ""
       ) || "";
 
-      const employee_no = prompt(
-        lang === "ar" ? "الرقم الوظيفي:" : "Employee number:",
-        e.employee_no || ""
+      const issue_type = prompt(
+        lang === "ar" ? "نوع المشكلة:" : "Issue type:",
+        t.issue_type || ""
       ) || "";
 
-      const id_no = prompt(
-        lang === "ar" ? "رقم الهوية / الإقامة:" : "National / Residency ID:",
-        e.id_no || ""
+      const priorityInput = prompt(
+        lang === "ar"
+          ? "الأولوية (low / medium / high / critical):"
+          : "Priority (low / medium / high / critical):",
+        t.priority || "medium"
+      );
+      const priority = priorityInput || "medium";
+
+      const reporter = prompt(
+        lang === "ar" ? "اسم المبلّغ:" : "Reporter:",
+        t.reporter || ""
       ) || "";
 
-      const hire_date = prompt(
-        lang === "ar" ? "تاريخ التعيين:" : "Hire date:",
-        e.hire_date || ""
+      const description = prompt(
+        lang === "ar" ? "وصف المشكلة:" : "Description:",
+        t.description || ""
       ) || "";
 
       const statusInput = prompt(
         lang === "ar"
-          ? "الحالة (active / on_leave / suspended):"
-          : "Status (active / on_leave / suspended):",
-        e.status || "active"
+          ? "الحالة (open / in_progress / closed):"
+          : "Status (open / in_progress / closed):",
+        t.status || "open"
       );
-      const status = statusInput || "active";
+      const status = statusInput || "open";
 
-      const salaryStr = prompt(
-        lang === "ar" ? "الراتب:" : "Salary:",
-        e.salary != null ? String(e.salary) : ""
-      ) || "";
-      const salary = salaryStr ? Number(salaryStr) : null;
+      const closed_at =
+        status === "closed"
+          ? (t.closed_at || new Date())
+          : null;
 
-      const notes = prompt(
-        lang === "ar" ? "ملاحظات:" : "Notes:",
-        e.notes || ""
-      ) || "";
-
-      await db.collection("employees").doc(selectedEmployeeKey).update({
-        name,
-        job_title,
-        department,
+      await db.collection("tickets").doc(selectedTicketKey).update({
+        title,
         branch,
-        employee_no,
-        id_no,
-        hire_date,
+        issue_type,
+        priority,
+        reporter,
+        description,
         status,
-        salary,
-        notes
+        closed_at
       });
 
-      loadEmployeesFromFirestore();
+      loadTicketsFromFirestore();
     }
 
-    async function deleteEmployee() {
+    async function deleteTicket() {
       const lang = currentLang;
-      if (!selectedEmployeeKey) {
-        alert(lang === "ar" ? "اختر موظف من الجدول أولاً." : "Select an employee row first.");
+      if (!selectedTicketKey) {
+        alert(lang === "ar" ? "اختر تذكرة من الجدول أولاً." : "Select a ticket row first.");
         return;
       }
 
       if (
         !confirm(
           lang === "ar"
-            ? "هل أنت متأكد من حذف هذا الموظف؟"
-            : "Are you sure you want to delete this employee?"
+            ? "هل أنت متأكد من حذف هذه التذكرة؟"
+            : "Are you sure you want to delete this ticket?"
         )
       ) {
         return;
       }
 
-      await db.collection("employees").doc(selectedEmployeeKey).delete();
-      selectedEmployeeKey = null;
-      loadEmployeesFromFirestore();
+      await db.collection("tickets").doc(selectedTicketKey).delete();
+      selectedTicketKey = null;
+      loadTicketsFromFirestore();
     }
 
-    function setViewContent(view) {
-      const lang = currentLang;
-      const dict = i18n[lang];
-
-      if (view === "dashboard") {
-        viewMainTitle.textContent = dict.view_dashboard_title;
-        viewMainSub.textContent = dict.view_dashboard_sub;
-        mainTableHead.innerHTML = `
-          <th>${dict.tbl_branch}</th>
-          <th>${dict.tbl_sales}</th>
-          <th>${dict.tbl_stock_status}</th>
-          <th>${dict.tbl_staff_on_shift}</th>
-          <th>${dict.tbl_notes}</th>
-        `;
-        mainTableBody.innerHTML = `
-          <tr>
-            <td>${lang === "ar" ? "جدة - التحلية" : "Jeddah - Tahlia"}</td>
-            <td>38,500 SAR</td>
-            <td><span class="status-pill status-ok">${dict.status_good}</span></td>
-            <td>22</td>
-            <td><span class="pill-small">${dict.note_none}</span></td>
-          </tr>
-        `;
-      } else if (view === "branches") {
-        viewMainTitle.textContent =
-          lang === "ar" ? "إدارة الفروع والمبيعات" : "Branches & Sales";
-        viewMainSub.textContent =
-          lang === "ar"
-            ? "قائمة الفروع من Firestore، مع إمكانية الإضافة والتعديل والحذف."
-            : "Branches list from Firestore with add/edit/delete.";
-        loadBranchesFromFirestore();
-      } else if (view === "warehouse") {
-        viewMainTitle.textContent =
-          lang === "ar" ? "المستودع المركزي" : "Central Warehouse";
-        viewMainSub.textContent =
-          lang === "ar"
-            ? "إدارة المواد الخام، حركات المخزون، التحويل للفروع والمطبخ المركزي، وتنبيهات النقص."
-            : "Raw materials, stock movements, transfers to branches and central kitchen, and low-stock alerts.";
-        mainTableHead.innerHTML = "";
-        mainTableBody.innerHTML = "";
-      } else if (view === "kitchen") {
-        viewMainTitle.textContent =
-          lang === "ar" ? "المطبخ المركزي" : "Central Kitchen";
-        viewMainSub.textContent =
-          lang === "ar"
-            ? "إدارة الوصفات، أوامر الإنتاج، وتحويل المنتجات الجاهزة إلى الفروع."
-            : "Recipes, production orders, and transfers of finished products to branches.";
-        mainTableHead.innerHTML = "";
-        mainTableBody.innerHTML = "";
-      } else if (view === "hr") {
-        viewMainTitle.textContent =
-          lang === "ar" ? "الموارد البشرية HR (متقدم)" : "HR Management (Advanced)";
-        viewMainSub.textContent =
-          lang === "ar"
-            ? "بيانات الموظفين (اسم، وظيفة، قسم، فرع، رقم وظيفي، حالة، راتب، ملاحظات)."
-            : "Employees data (name, job, department, branch, employee no, status, salary, notes).";
-        loadEmployeesFromFirestore();
-      } else if (view === "training") {
-        viewMainTitle.textContent =
-          lang === "ar" ? "التدريب والتطوير" : "Training & Development";
-        viewMainSub.textContent =
-          lang === "ar"
-            ? "برامج تدريب، دورات إلزامية، اختبارات، ونسب إكمال لكل فرع."
-            : "Training programs, mandatory courses, tests, and completion rates per branch.";
-        mainTableHead.innerHTML = "";
-        mainTableBody.innerHTML = "";
-      } else if (view === "it") {
-        viewMainTitle.textContent =
-          lang === "ar" ? "تذاكر الـ IT" : "IT Tickets";
-        viewMainSub.textContent =
-          lang === "ar"
-            ? "تذاكر الدعم الفني من الفروع، حالة كل تذكرة، والأولوية."
-            : "Support tickets from branches, status, and priority.";
-        mainTableHead.innerHTML = "";
-        mainTableBody.innerHTML = "";
-      } else if (view === "maintenance") {
-        viewMainTitle.textContent =
-          lang === "ar" ? "الصيانة والأصول" : "Maintenance & Assets";
-        viewMainSub.textContent =
-          lang === "ar"
-            ? "الأصول (أفران، ثلاجات، مكائن)، جداول الصيانة، وبلاغات الأعطال من الفروع."
-            : "Assets (ovens, fridges, machines), maintenance schedules, and incident reports.";
-        mainTableHead.innerHTML = "";
-        mainTableBody.innerHTML = "";
-      }
-
-      if (currentRole === "branch") {
-        sideContext.textContent =
-          lang === "ar" ? "فرع: جدة - التحلية" : "Branch: Jeddah - Tahlia";
-      } else if (currentRole === "hr") {
-        sideContext.textContent = lang === "ar" ? "قسم: HR" : "Dept: HR";
-      } else if (currentRole === "it") {
-        sideContext.textContent = lang === "ar" ? "قسم: IT" : "Dept: IT";
-      } else if (currentRole === "maintenance") {
-        sideContext.textContent =
-          lang === "ar" ? "قسم: صيانة" : "Dept: Maintenance";
-      } else if (currentRole === "hq") {
-        sideContext.textContent = lang === "ar" ? "HQ" : "HQ";
-      } else if (currentRole === "admin") {
-        sideContext.textContent =
-          lang === "ar" ? "إدارة عليا (Admin)" : "Top Management (Admin)";
-      }
-    }
-
-    langArBtn.addEventListener("click", () => applyLang("ar"));
-    langEnBtn.addEventListener("click", () => applyLang("en"));
-    themeToggle.addEventListener("click", toggleTheme);
-
-    navButtons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const view = btn.dataset.view;
-        if (!currentRole) {
-          loginError.textContent =
-            currentLang === "ar"
-              ? "سجّل الدخول أولاً لتجربة الصلاحيات."
-              : "Please sign in first to test roles.";
-          loginOverlay.style.display = "flex";
-          return;
-        }
-        setActiveNav(view);
-        setViewContent(view);
-      });
-    });
-
-    loginBtn.addEventListener("click", () => {
-      const username = loginUsername.value.trim();
-      const password = loginPassword.value.trim();
-      const role = loginRole.value;
-
-      if (!username || !password) {
-        loginError.textContent =
-          currentLang === "ar"
-            ? "أدخل اسم المستخدم وكلمة المرور (أي شيء الآن، فقط للعرض)."
-            : "Enter username and password (anything for now, demo only).";
-        return;
-      }
-
-      currentRole = role;
-      loginError.textContent = "";
-      loginOverlay.style.display = "none";
-
-      const roleLabel = {
-        admin: currentLang === "ar" ? "إدارة عليا (Admin)" : "Admin",
-        hq: currentLang === "ar" ? "إدارة HQ" : "HQ",
-        branch: currentLang === "ar" ? "مدير فرع" : "Branch Manager",
-        hr: "HR",
-        it: "IT",
-        maintenance:
-          currentLang === "ar" ? "صيانة" : "Maintenance",
-      }[role];
-
-      headerUser.textContent =
-        (currentLang === "ar" ? "وضع تجريبي: " : "Demo: ") +
-        username +
-        " (" +
-        roleLabel +
-        ")";
-      chipRole.textContent = roleLabel;
-
-      filterNavByRole(role);
-      setActiveNav("dashboard");
-      setViewContent("dashboard");
-    });
-
+    // ========== Buttons wiring ==========
     btnAdd.addEventListener("click", () => {
       if (currentView === "branches") {
         addBranch();
       } else if (currentView === "hr") {
         addEmployee();
+      } else if (currentView === "it") {
+        addTicket();
       } else {
+        const lang = currentLang;
         alert(
-          currentLang === "ar"
-            ? "زر الإضافة مفعّل حاليًا في شاشات الفروع و HR فقط."
-            : "Add button is currently active only in Branches and HR views."
+          lang === "ar"
+            ? "زر الإضافة مفعّل حاليًا في شاشات الفروع و HR و IT فقط."
+            : "Add button is currently active only in Branches, HR, and IT views."
         );
       }
     });
@@ -1697,11 +1427,14 @@
         editBranch();
       } else if (currentView === "hr") {
         editEmployee();
+      } else if (currentView === "it") {
+        editTicket();
       } else {
+        const lang = currentLang;
         alert(
-          currentLang === "ar"
-            ? "زر التعديل مفعّل حاليًا في شاشات الفروع و HR فقط."
-            : "Edit button is currently active only in Branches and HR views."
+          lang === "ar"
+            ? "زر التعديل مفعّل حاليًا في شاشات الفروع و HR و IT فقط."
+            : "Edit button is currently active only in Branches, HR, and IT views."
         );
       }
     });
@@ -1711,17 +1444,20 @@
         deleteBranch();
       } else if (currentView === "hr") {
         deleteEmployee();
+      } else if (currentView === "it") {
+        deleteTicket();
       } else {
+        const lang = currentLang;
         alert(
-          currentLang === "ar"
-            ? "زر الحذف مفعّل حاليًا في شاشات الفروع و HR فقط."
-            : "Delete button is currently active only in Branches and HR views."
+          lang === "ar"
+            ? "زر الحذف مفعّل حاليًا في شاشات الفروع و HR و IT فقط."
+            : "Delete button is currently active only in Branches, HR, and IT views."
         );
       }
     });
 
-    applyLang("ar");
-    themeToggle.classList.add("active");
+    // ========== Init ==========
+    setViewContent("dashboard");
   </script>
 </body>
 </html>
