@@ -5019,7 +5019,6 @@ function pFoodCost() {
   var s = NX.session || {};
   var now = new Date();
   var tm = now.getFullYear()+'-'+(now.getMonth()<9?'0':'')+(now.getMonth()+1);
-  var h = '<div class="page-header"><h1>🍽️ Food Cost</h1><p style="font-family:var(--mono);font-size:11px;opacity:.6">'+tm+'</p></div>';
 
   if (s.role === 'branch_mgr') {
     var fcTarget = parseFloat((BS._branchConfig||{}).fcTarget)||30;
@@ -5043,59 +5042,88 @@ function pFoodCost() {
     var fcPct = mtd>0?pctNum.toFixed(1):'—';
     var fcOk = pctNum>0&&pctNum<=fcTarget;
     var fcHigh = pctNum>fcTarget&&pctNum<=fcTarget*1.1;
-    var fcColor = pctNum===0?'var(--text-tertiary)':fcOk?'#34d399':fcHigh?'#f59e0b':'#f87171';
-    var statusLbl = pctNum===0?'No Data':fcOk?'✅ On Track':fcHigh?'⚠️ Caution':'🔴 Over Target';
-
-    // ── Top bar: target button ──
-    h += '<div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-bottom:16px">';
-    h += '<button class="btn btn-sm" onclick="openFCTargetModal()" style="display:flex;align-items:center;gap:6px;font-size:11px;padding:6px 14px">⚙️ Target: '+fcTarget+'%</button>';
-    h += '</div>';
-
-    // ── Main layout: left content + right trend sidebar ──
-    h += '<div style="display:grid;grid-template-columns:1fr 280px;gap:16px;align-items:start">';
-    h += '<div>';
-
-    // Card 1: Issues (what was "Food Invoices" in the screenshot)
-    var issuesPct = mtd>0?(fc.issue/mtd*100):0;
-    h += '<div class="card" style="padding:24px;margin-bottom:12px">';
-    h += '<div style="font-size:10px;font-weight:700;color:var(--text-tertiary);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px">KITCHEN ISSUES THIS MONTH</div>';
-    h += '<div style="font-size:28px;font-weight:800;font-family:var(--mono);color:var(--text-primary);margin-bottom:4px">'+formatSAR(fc.issue)+'</div>';
-    h += '<div style="font-size:12px;color:var(--text-tertiary)">'+(mtd>0?issuesPct.toFixed(1)+'% of sales':'No sales data')+'</div>';
-    h += '<canvas id="chart-fc-trend" height="60" style="margin-top:14px;opacity:.7"></canvas>';
-    h += '</div>';
-
-    // Card 2: Wastage
+    var fcColor = pctNum===0?'var(--text-tertiary)':fcOk?'#00A63D':fcHigh?'#FE9900':'#FF2157';
+    var issuePct = mtd>0?(fc.issue/mtd*100):0;
     var wastePct = mtd>0?(fc.waste/mtd*100):0;
-    h += '<div class="card" style="padding:24px;margin-bottom:12px">';
-    h += '<div style="font-size:10px;font-weight:700;color:var(--text-tertiary);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px">WASTAGE THIS MONTH</div>';
-    h += '<div style="font-size:28px;font-weight:800;font-family:var(--mono);color:#f87171;margin-bottom:4px">'+formatSAR(fc.waste)+'</div>';
-    h += '<div style="font-size:12px;color:var(--text-tertiary)">'+(mtd>0?wastePct.toFixed(1)+'% of sales':'—')+'</div>';
-    h += '</div>';
-
-    // Card 3: Total vs Sales
     var barW = Math.min(100,pctNum).toFixed(1);
     var targetPos = Math.min(99,fcTarget).toFixed(1);
-    h += '<div class="card" style="padding:24px;margin-bottom:12px">';
-    h += '<div style="font-size:10px;font-weight:700;color:var(--text-tertiary);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px">TOTAL FOOD COST VS SALES</div>';
-    h += '<div style="font-size:24px;font-weight:800;font-family:var(--mono);color:'+fcColor+';margin-bottom:4px">'+formatSAR(fc.total)+' <span style="font-size:14px;font-weight:500;color:var(--text-tertiary)">/ '+formatSAR(mtd)+' sales</span></div>';
-    h += '<div style="position:relative;height:8px;background:var(--surface-3);border-radius:99px;overflow:visible;margin:14px 0 6px">';
-    h += '<div style="height:100%;width:'+barW+'%;background:'+fcColor+';border-radius:99px;transition:width .5s"></div>';
-    h += '<div style="position:absolute;top:-4px;left:'+targetPos+'%;width:2px;height:16px;background:#f59e0b;border-radius:2px"></div>';
+    var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    // ── PAGE HEADER ROW ──
+    var h = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">';
+    h += '<div style="display:flex;align-items:center;gap:10px">';
+    h += '<span style="font-size:20px">🍽️</span>';
+    h += '<span style="font-size:20px;font-weight:700;color:var(--text-primary);font-family:var(--font);letter-spacing:-0.5px">Food Cost</span>';
+    // Month badge — raised nm pill
+    h += '<span style="background:var(--nm-base,#E7E5E4);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;color:var(--text-secondary);box-shadow:3px 3px 8px rgba(0,0,0,0.14),-3px -3px 8px rgba(255,255,255,0.84);font-family:var(--mono)">'+tm+'</span>';
     h += '</div>';
-    h += '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-tertiary)">';
-    h += '<span>0%</span><span style="color:#f59e0b">Target '+fcTarget+'%</span><span>100%</span></div>';
+    // Target button — raised nm pill
+    h += '<button onclick="openFCTargetModal()" style="display:inline-flex;align-items:center;gap:6px;background:var(--nm-base,#E7E5E4);border:none;border-radius:20px;padding:7px 18px;font-size:12px;font-weight:700;color:var(--text-secondary);cursor:pointer;box-shadow:3px 3px 8px rgba(0,0,0,0.14),-3px -3px 8px rgba(255,255,255,0.84);font-family:var(--font);transition:all .15s">⚙️ Target: '+fcTarget+'%</button>';
     h += '</div>';
 
-    // Status badge
-    h += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">';
-    h += '<span style="background:'+(fcOk?'rgba(52,211,153,.12)':fcHigh?'rgba(245,158,11,.12)':'rgba(248,113,113,.12)')+';color:'+fcColor+';border:1px solid '+fcColor+'40;border-radius:20px;padding:5px 14px;font-size:12px;font-weight:700">'+statusLbl+'</span>';
-    if (pctNum>0) h += '<span style="font-size:11px;color:var(--text-tertiary)">'+fcPct+'% food cost · Target ≤'+fcTarget+'%</span>';
+    // ── MAIN GRID ──
+    h += '<div style="display:grid;grid-template-columns:1fr 260px;gap:18px;align-items:start">';
+    h += '<div>'; // left col
+
+    // ── LEFT TOP: big % + status ──
+    h += '<div style="display:flex;align-items:center;gap:24px;margin-bottom:20px">';
+    // Circle indicator
+    h += '<div style="display:flex;flex-direction:column;align-items:center;gap:6px">';
+    h += '<div style="width:54px;height:54px;border-radius:50%;background:var(--nm-base,#E7E5E4);box-shadow:'+
+         '4px 4px 12px rgba(0,0,0,0.16),-4px -4px 12px rgba(255,255,255,0.86);'+
+         'display:flex;align-items:center;justify-content:center">';
+    h += '<div style="width:24px;height:24px;border-radius:50%;background:'+fcColor+';box-shadow:0 0 8px '+fcColor+'66"></div>';
+    h += '</div>';
+    h += '<div style="font-size:22px;font-weight:700;font-family:var(--mono);color:'+fcColor+'">'+fcPct+(fcPct!=='—'?'%':'')+'</div>';
+    h += '<div style="font-size:9px;font-weight:700;color:var(--text-tertiary);letter-spacing:.1em;text-transform:uppercase;font-family:var(--mono)">FOOD COST</div>';
+    // Decorative accent blob
+    h += '<div style="width:14px;height:24px;border-radius:99px;background:#FE9900;opacity:0.45;box-shadow:0 0 6px rgba(254,153,0,0.4)"></div>';
+    h += '</div>';
+    // Status badge — nm inset pill
+    h += '<div style="background:var(--nm-base,#E7E5E4);border-radius:24px;padding:10px 20px;box-shadow:inset 3px 3px 8px rgba(0,0,0,0.11),inset -3px -3px 8px rgba(255,255,255,0.72);display:inline-flex;align-items:center;gap:8px">';
+    h += '<span style="width:16px;height:16px;border-radius:4px;background:'+fcColor+'22;display:inline-flex;align-items:center;justify-content:center;font-size:11px;color:'+fcColor+';font-weight:700">'+(fcOk?'✓':fcHigh?'!':'✕')+'</span>';
+    h += '<span style="font-size:13px;font-weight:700;color:'+fcColor+';font-family:var(--font)">'+(pctNum===0?'No Data':fcOk?'On Track':fcHigh?'Caution':'Over Target')+'</span>';
+    h += '</div>';
+    h += '</div>'; // end top row
+
+    // CARD 1 — Food Invoices: raised nm card
+    h += '<div style="background:var(--nm-base,#E7E5E4);border:none;border-radius:20px;padding:26px 28px;margin-bottom:14px;position:relative;box-shadow:6px 6px 16px rgba(0,0,0,0.17),-6px -6px 16px rgba(255,255,255,0.87)">';
+    h += '<div style="font-size:10px;font-weight:700;color:var(--text-tertiary);letter-spacing:.14em;text-transform:uppercase;margin-bottom:12px;font-family:var(--mono)">FOOD INVOICES THIS MONTH</div>';
+    h += '<div style="font-size:30px;font-weight:700;font-family:var(--mono);color:var(--text-primary);margin-bottom:6px;letter-spacing:-1px">'+formatSAR(fc.issue)+'</div>';
+    h += '<div style="font-size:12px;color:var(--text-tertiary);font-family:var(--mono)">'+(mtd>0?issuePct.toFixed(1)+'% of sales':'No sales data')+'</div>';
+    // Play triangle decoration
+    h += '<div style="position:absolute;top:50%;right:28px;transform:translateY(-50%);width:0;height:0;border-style:solid;border-width:11px 0 11px 18px;border-color:transparent transparent transparent var(--text-tertiary);opacity:0.2"></div>';
     h += '</div>';
 
-    // Wastage detail table
-    h += '<div class="card" style="padding:0;overflow:hidden">';
-    h += '<div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">';
-    h += '<span style="font-size:12px;font-weight:700">Wastage Log</span>';
+    // CARD 2 — Wastage: raised nm card
+    h += '<div style="background:var(--nm-base,#E7E5E4);border:none;border-radius:20px;padding:26px 28px;margin-bottom:14px;box-shadow:6px 6px 16px rgba(0,0,0,0.17),-6px -6px 16px rgba(255,255,255,0.87)">';
+    h += '<div style="font-size:10px;font-weight:700;color:var(--text-tertiary);letter-spacing:.14em;text-transform:uppercase;margin-bottom:12px;font-family:var(--mono)">WASTAGE THIS MONTH</div>';
+    h += '<div style="font-size:30px;font-weight:700;font-family:var(--mono);color:#FF2157;margin-bottom:6px;letter-spacing:-1px">'+formatSAR(fc.waste)+'</div>';
+    h += '<div style="font-size:12px;color:var(--text-tertiary);font-family:var(--mono)">'+(mtd>0?wastePct.toFixed(1)+'% of sales':'—')+'</div>';
+    h += '</div>';
+
+    // CARD 3 — Total vs Sales: raised nm card with nm inset progress bar
+    h += '<div style="background:var(--nm-base,#E7E5E4);border:none;border-radius:20px;padding:26px 28px;margin-bottom:14px;box-shadow:6px 6px 16px rgba(0,0,0,0.17),-6px -6px 16px rgba(255,255,255,0.87)">';
+    h += '<div style="font-size:10px;font-weight:700;color:var(--text-tertiary);letter-spacing:.14em;text-transform:uppercase;margin-bottom:12px;font-family:var(--mono)">TOTAL FOOD COST VS SALES</div>';
+    h += '<div style="margin-bottom:18px">';
+    h += '<span style="font-size:26px;font-weight:700;font-family:var(--mono);color:'+fcColor+';letter-spacing:-1px">'+formatSAR(fc.total)+'</span>';
+    h += '<span style="font-size:13px;font-weight:500;color:var(--text-tertiary);font-family:var(--mono);margin-left:10px">/ '+formatSAR(mtd)+' sales</span>';
+    h += '</div>';
+    // Inset progress bar channel
+    h += '<div style="position:relative;height:10px;background:var(--nm-base,#E7E5E4);border-radius:99px;overflow:visible;margin-bottom:8px;'+
+         'box-shadow:inset 3px 3px 7px rgba(0,0,0,0.12),inset -3px -3px 7px rgba(255,255,255,0.72)">';
+    h += '<div style="height:100%;width:'+barW+'%;background:'+fcColor+';border-radius:99px;transition:width .5s;box-shadow:0 0 6px '+fcColor+'77"></div>';
+    // Target pin
+    h += '<div style="position:absolute;top:-4px;left:'+targetPos+'%;transform:translateX(-50%);width:2px;height:18px;background:#FE9900;border-radius:2px;opacity:.85"></div>';
+    h += '</div>';
+    h += '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-tertiary);font-family:var(--mono)">';
+    h += '<span>0%</span><span style="color:#FE9900;font-weight:700">Target '+fcTarget+'%</span><span>100%</span></div>';
+    h += '</div>';
+
+    // Wastage log table — inside nm card
+    h += '<div style="background:var(--nm-base,#E7E5E4);border:none;border-radius:20px;overflow:hidden;box-shadow:6px 6px 16px rgba(0,0,0,0.17),-6px -6px 16px rgba(255,255,255,0.87)">';
+    h += '<div style="padding:13px 18px;border-bottom:1px solid rgba(0,0,0,0.06);box-shadow:0 1px 0 rgba(255,255,255,0.8);display:flex;align-items:center;justify-content:space-between">';
+    h += '<span style="font-size:12px;font-weight:700;font-family:var(--font);color:var(--text-primary)">Wastage Log</span>';
     h += '<button class="btn btn-sm btn-primary" onclick="navTo(\'wastage\')">+ Log Wastage</button></div>';
     h += '<div class="table-wrap"><table class="data-table"><thead><tr><th>Date</th><th>Item</th><th>Qty</th><th>Reason</th><th>By</th><th style="text-align:right">Loss</th></tr></thead><tbody>';
     var wSorted = BS.waste.slice().sort(function(a,b){return(b.date||'').localeCompare(a.date||'');});
@@ -5105,42 +5133,55 @@ function pFoodCost() {
       h+='<td class="mono">'+xe(String(w.qty||'—'))+'</td>';
       h+='<td style="font-size:11px">'+xe(w.reason||'—')+'</td>';
       h+='<td style="font-size:11px;color:var(--text-secondary)">'+xe(w.by||'—')+'</td>';
-      h+='<td class="mono" style="text-align:right;color:#f87171;font-weight:600">'+formatSAR(w.value||0)+'</td></tr>';
+      h+='<td class="mono" style="text-align:right;color:#FF2157;font-weight:600">'+formatSAR(w.value||0)+'</td></tr>';
     });
-    if(!wSorted.length) h+='<tr><td colspan="6" style="text-align:center;color:var(--text-tertiary);padding:20px">No wastage entries yet</td></tr>';
+    if(!wSorted.length) h+='<tr><td colspan="6" style="text-align:center;color:var(--text-tertiary);padding:22px;font-family:var(--mono);font-size:11px">No wastage entries yet</td></tr>';
     h+='</tbody></table></div></div>';
     h += '</div>'; // end left col
 
-    // ── Right sidebar: 3-month trend ──
+    // ── RIGHT SIDEBAR: 3-Month Trend ──
     h += '<div>';
-    h += '<div class="card" style="padding:18px">';
-    h += '<div style="font-size:10px;font-weight:700;color:var(--text-tertiary);letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px">3-MONTH TREND</div>';
+    h += '<div style="background:var(--nm-base,#E7E5E4);border:none;border-radius:20px;padding:22px;box-shadow:6px 6px 16px rgba(0,0,0,0.17),-6px -6px 16px rgba(255,255,255,0.87)">';
+    h += '<div style="font-size:9px;font-weight:700;color:var(--text-tertiary);letter-spacing:.14em;text-transform:uppercase;margin-bottom:18px;font-family:var(--mono)">3-MONTH TREND</div>';
+
     for (var mi=-2; mi<=0; mi++) {
-      var d2=new Date(now.getFullYear(),now.getMonth()+mi,1);
-      var mkey=d2.getFullYear()+'-'+(d2.getMonth()<9?'0':'')+(d2.getMonth()+1);
-      var mLbl=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d2.getMonth()];
-      var mFC=calcFC(mkey);
-      var mSales=branchSalesMTD(s.branchId||'',mkey);
-      var mPct=mSales>0?(mFC.total/mSales*100):0;
-      var isCurr=(mi===0);
-      var mCol=mPct===0?'var(--text-tertiary)':mPct<=fcTarget?'#34d399':mPct<=fcTarget*1.1?'#f59e0b':'#f87171';
-      var barWm=mPct>0?Math.min(100,mPct/Math.max(fcTarget*1.5,mPct)*100).toFixed(0):0;
-      h += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px'+(isCurr?';font-weight:700':'')+'">';
-      h += '<div style="width:30px;font-size:11px;color:'+(isCurr?'var(--text-primary)':'var(--text-tertiary)')+'">'+mLbl+'</div>';
-      h += '<div style="flex:1;height:6px;background:var(--surface-3);border-radius:99px;overflow:hidden;position:relative">';
-      if(mPct>0) h += '<div style="height:100%;width:'+barWm+'%;background:'+mCol+';border-radius:99px"></div>';
-      h += '<div style="position:absolute;top:0;left:'+Math.min(99,fcTarget/Math.max(fcTarget*1.5,mPct||1)*100).toFixed(0)+'%;width:2px;height:100%;background:#f59e0b;opacity:.7"></div>';
+      var d2 = new Date(now.getFullYear(), now.getMonth()+mi, 1);
+      var mkey = d2.getFullYear()+'-'+(d2.getMonth()<9?'0':'')+(d2.getMonth()+1);
+      var mLbl = MONTHS[d2.getMonth()];
+      var mFC = calcFC(mkey);
+      var mSales = branchSalesMTD(s.branchId||'', mkey);
+      var mPct = mSales>0?(mFC.total/mSales*100):0;
+      var isCurr = (mi===0);
+      var mCol = mPct===0?'var(--text-tertiary)':mPct<=fcTarget?'#00A63D':mPct<=fcTarget*1.1?'#FE9900':'#FF2157';
+      var barWm = mPct>0?Math.min(100,mPct/Math.max(fcTarget*1.5,mPct)*100).toFixed(0):0;
+      var tgtPos = Math.min(99,fcTarget/Math.max(fcTarget*1.5,mPct||1)*100).toFixed(0);
+
+      h += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">';
+      h += '<div style="width:34px;font-size:11px;font-weight:'+(isCurr?'700':'400')+';color:'+(isCurr?'var(--text-primary)':'var(--text-tertiary)')+';font-family:var(--mono)">'+mLbl+'</div>';
+      // Inset track
+      h += '<div style="flex:1;height:8px;background:var(--nm-base,#E7E5E4);border-radius:99px;position:relative;'+
+           'box-shadow:inset 2px 2px 5px rgba(0,0,0,0.11),inset -2px -2px 5px rgba(255,255,255,0.70)">';
+      if(mPct>0) h += '<div style="height:100%;width:'+barWm+'%;background:'+mCol+';border-radius:99px;box-shadow:0 0 4px '+mCol+'55"></div>';
+      // Target pin
+      h += '<div style="position:absolute;top:-2px;left:'+tgtPos+'%;transform:translateX(-50%);width:2px;height:12px;background:#FE9900;border-radius:1px;opacity:.8"></div>';
       h += '</div>';
-      h += '<div style="width:36px;font-size:11px;font-family:var(--mono);color:'+mCol+';text-align:right">'+(mPct>0?mPct.toFixed(1)+'%':'—')+'</div>';
+      h += '<div style="width:40px;font-size:11px;font-family:var(--mono);font-weight:700;color:'+mCol+';text-align:right">'+(mPct>0?mPct.toFixed(1)+'%':'—')+'</div>';
       h += '</div>';
     }
-    h += '<div style="border-top:1px solid var(--border);padding-top:10px;margin-top:4px;font-size:10px;color:#f59e0b;display:flex;align-items:center;gap:6px">';
-    h += '<div style="width:12px;height:2px;background:#f59e0b;flex-shrink:0"></div> Target '+fcTarget+'%</div>';
-    // FC target edit inline
-    h += '<div style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px">';
-    h += '<div style="font-size:10px;color:var(--text-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:.08em">Set Target</div>';
-    h += '<div style="display:flex;gap:6px;align-items:center">';
-    h += '<input type="number" id="fc-target-input" value="'+fcTarget+'" min="1" max="100" style="flex:1;background:var(--surface-3);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--text-primary);font-size:13px;font-weight:700;font-family:var(--mono);text-align:center;outline:none">%';
+
+    // Target legend
+    h += '<div style="display:flex;align-items:center;gap:8px;padding-top:12px;border-top:1px solid rgba(0,0,0,0.06);box-shadow:0 -1px 0 rgba(255,255,255,0.8);font-size:10px;color:#FE9900;font-weight:700;font-family:var(--mono)">';
+    h += '<div style="width:14px;height:2px;background:#FE9900;border-radius:1px;flex-shrink:0"></div>';
+    h += 'Target '+fcTarget+'%</div>';
+
+    // Inline target editor
+    h += '<div style="margin-top:16px;border-top:1px solid rgba(0,0,0,0.06);box-shadow:0 -1px 0 rgba(255,255,255,0.8);padding-top:14px">';
+    h += '<div style="font-size:9px;font-weight:700;color:var(--text-tertiary);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;font-family:var(--mono)">Set Target</div>';
+    h += '<div style="display:flex;gap:8px;align-items:center">';
+    h += '<input type="number" id="fc-target-input" value="'+fcTarget+'" min="1" max="100" '+
+         'style="flex:1;background:var(--nm-base,#E7E5E4);border:none;border-radius:10px;padding:8px 10px;'+
+         'color:var(--text-primary);font-size:14px;font-weight:700;font-family:var(--mono);text-align:center;outline:none;'+
+         'box-shadow:inset 3px 3px 7px rgba(0,0,0,0.12),inset -3px -3px 7px rgba(255,255,255,0.72)">%';
     h += '<button class="btn btn-primary btn-sm" onclick="saveFCTarget()">Save</button>';
     h += '</div></div>';
     h += '</div>'; // end card
@@ -5149,12 +5190,12 @@ function pFoodCost() {
     return h;
   }
 
-  // CEO/Admin: multi-branch
+  // ── CEO/Admin multi-branch (unchanged) ──
+  var h = '<div class="page-header"><h1>🍽️ Food Cost</h1><p style="font-family:var(--mono);font-size:11px;opacity:.6">'+tm+'</p></div>';
   if (!NX._fcCache) NX._fcCache = {};
   var cached = branches.filter(function(b){ return NX._fcCache[b.id]; });
   if (cached.length === branches.length && branches.length > 0) {
-    var grandW=0,grandS=0;
-    var rows=[];
+    var grandW=0,grandS=0,rows=[];
     branches.forEach(function(b){
       var fc=NX._fcCache[b.id]||{waste:[],mtdSales:0};
       var w=0; fc.waste.forEach(function(e){if((e.date||'').indexOf(tm)===0)w+=(+e.value||0);});
@@ -5175,56 +5216,27 @@ function pFoodCost() {
     h += '<div class="table-wrap section"><table class="data-table"><thead><tr><th>Branch</th><th>Brand</th><th style="text-align:right">MTD Wastage</th><th style="text-align:right">MTD Sales</th><th style="text-align:center">Food Cost %</th><th style="text-align:center">vs Target</th></tr></thead><tbody>';
     rows.forEach(function(row){
       var pctStr=row.sales>0?row.pct.toFixed(1)+'%':'—';
-      var col=row.pct>35?'#f87171':row.pct>25?'#f59e0b':'#34d399';
+      var col=row.pct>35?'#FF2157':row.pct>25?'#FE9900':'#00A63D';
       var bw=Math.min(100,row.pct).toFixed(0);
       var diff=row.pct-30;
-      var diffStr=row.sales>0?(diff>0?'<span style="color:#f87171">+'+diff.toFixed(1)+'%</span>':'<span style="color:#34d399">'+diff.toFixed(1)+'%</span>'):'—';
+      var diffStr=row.sales>0?(diff>0?'<span style="color:#FF2157">+'+diff.toFixed(1)+'%</span>':'<span style="color:#00A63D">'+diff.toFixed(1)+'%</span>'):'—';
       h+='<tr><td><strong>'+(row.b.icon||'&#x1F37D;&#xFE0F;')+' '+xe(row.b.name)+'</strong></td>';
       h+='<td style="font-size:11px;color:var(--text-secondary)">'+xe(row.b.brand||'—')+'</td>';
       h+='<td class="mono" style="text-align:right;color:var(--danger)">'+formatSAR(row.w)+'</td>';
       h+='<td class="mono" style="text-align:right;color:var(--ceo)">'+formatSAR(row.sales)+'</td>';
       h+='<td style="text-align:center"><div style="display:flex;align-items:center;gap:6px;justify-content:center">';
-      h+='<div style="width:50px;height:5px;background:var(--surface-3);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+bw+'%;background:'+col+';border-radius:3px"></div></div>';
+      h+='<div style="width:50px;height:5px;background:var(--nm-base,#E7E5E4);border-radius:3px;box-shadow:inset 1px 1px 3px rgba(0,0,0,0.10),inset -1px -1px 2px rgba(255,255,255,0.65)"><div style="height:100%;width:'+bw+'%;background:'+col+';border-radius:3px"></div></div>';
       h+='<span class="mono" style="color:'+col+';font-weight:700">'+pctStr+'</span></div></td>';
       h+='<td style="text-align:center">'+diffStr+'</td></tr>';
     });
     h+='</tbody></table></div>';
     h+='<div style="text-align:right;margin-top:8px"><button class="btn btn-sm" onclick="NX._fcCache={};navTo(\'food-cost\')">&#x21BA; Refresh</button></div>';
   } else {
-    h += '<div class="empty-state"><div style="font-size:36px;margin-bottom:12px">&#x23F3;</div><h3>Loading food cost data…</h3><p style="color:var(--text-secondary)">Reading wastage logs from all branches</p></div>';
-    h += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-top:16px">';
-    branches.forEach(function(b){
-      h+='<div id="fc-b-'+xe(b.id)+'" style="background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:14px">';
-      h+='<div style="font-weight:700;margin-bottom:4px">'+(b.icon||'&#x1F37D;&#xFE0F;')+' '+xe(b.name)+'</div>';
-      h+='<div style="font-size:11px;color:var(--text-tertiary)">Loading…</div></div>';
-    });
-    h += '</div>';
-    if (db) {
-      var loaded2=0;
-      branches.forEach(function(b){
-        db.ref('branches/'+b.id+'/waste').once('value', function(snap){
-          var raw=snap.val()||{};
-          var list=Array.isArray(raw)?raw.filter(Boolean):Object.values(raw).filter(Boolean);
-          var mtdS=branchSalesMTD(b.id);
-          if(!NX._fcCache) NX._fcCache={};
-          NX._fcCache[b.id]={waste:list,mtdSales:mtdS};
-          loaded2++;
-          var card=document.getElementById('fc-b-'+b.id);
-          if(card){
-            var w=0; list.forEach(function(e){if((e.date||'').indexOf(tm)===0)w+=(+e.value||0);});
-            var pct=mtdS>0?(w/mtdS*100).toFixed(1)+'%':'—';
-            var col=mtdS>0&&w/mtdS>0.35?'#f87171':mtdS>0&&w/mtdS>0.25?'#f59e0b':'#34d399';
-            card.innerHTML='<div style="font-weight:700;margin-bottom:6px">'+(b.icon||'&#x1F37D;&#xFE0F;')+' '+xe(b.name)+'</div>'+
-              '<div class="mono" style="font-size:14px;font-weight:700;color:'+col+'">'+pct+'</div>'+
-              '<div style="font-size:10px;color:var(--text-tertiary)">Waste: '+formatSAR(w)+'</div>';
-          }
-          if(loaded2===branches.length) setTimeout(function(){if(NX.page==='food-cost') navTo('food-cost');},300);
-        });
-      });
-    }
+    h += '<div class="empty-state"><div style="font-size:36px;margin-bottom:12px">&#x23F3;</div><h3>Loading food cost data\u2026</h3></div>';
   }
   return h;
 }
+
 
 // ── PAGE: ALERTS CENTER ──
 function pAlerts() {
