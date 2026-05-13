@@ -1,2 +1,0 @@
-# ERP-OPS
-FULL APP
